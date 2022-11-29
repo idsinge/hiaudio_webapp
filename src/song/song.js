@@ -2,7 +2,7 @@ import { TrackHandler } from './track_handler'
 import { FileUploader } from './fileuploader'
 import WaveformPlaylist from 'waveform-playlist'
 import { TelegramLogin } from '../js/telegramlogin'
-import { doFetch, telegramLoginCallback, doAfterSongFetched } from './song_helper'
+import { doFetch, getSong, telegramLoginCallback, doAfterSongFetched } from './song_helper'
 import { Recorder } from './record'
 
 
@@ -46,13 +46,13 @@ export const fileUploader = new FileUploader(SONG_ID, trackHandler, LOADER_ELEM_
 export const recorder = new Recorder()
 
 const songId = SONG_ID
-let query = `query GetTracks($songId: Float!) {
-  songInfoById(songId: $songId){title, doc_url},tracks(songId: $songId){ id, message {message_id, date, audio{title, file_unique_id}, voice{file_unique_id}}, file_path}
-}`
-let body = JSON.stringify({
-  query,
-  variables: { songId }, 
-})
+// let query = `query GetTracks($songId: Float!) {
+//   songInfoById(songId: $songId){title, doc_url},tracks(songId: $songId){ id, message {message_id, date, audio{title, file_unique_id}, voice{file_unique_id}}, file_path}
+// }`
+// let body = JSON.stringify({
+//   query,
+//   variables: { songId },
+// })
 if(USER_INFO){
   const userInfo = JSON.parse(USER_INFO)
   query = `query GetTracks($songId: Float!, $userInfo: UserInfo) {
@@ -60,7 +60,9 @@ if(USER_INFO){
   }`
   body = JSON.stringify({
     query,
-    variables: { songId, userInfo }, 
+    variables: { songId, userInfo },
   })
 }
-doFetch(body, doAfterSongFetched)
+// doFetch(body, doAfterSongFetched)
+
+getSong(songId, doAfterSongFetched)
