@@ -9,10 +9,10 @@ export class Recorder {
         // const constraints = { audio: true }
         const constraints = {  }
 
-        navigator.getUserMedia = (navigator.getUserMedia ||
-            navigator.webkitGetUserMedia ||
-            navigator.mozGetUserMedia ||
-            navigator.msGetUserMedia)
+        // navigator.getUserMedia = (navigator.getUserMedia ||
+        //     navigator.webkitGetUserMedia ||
+        //     navigator.mozGetUserMedia ||
+        //     navigator.msGetUserMedia)
 
         const gotStream = (stream) => {
             console.log("gotStrem", stream);
@@ -29,9 +29,9 @@ export class Recorder {
         if (navigator.mediaDevices) {
             console.log("mediadevices", navigator.mediaDevices);
             // navigator.mediaDevices.getUserMedia(constraints)
-            navigator.mediaDevices.getUserMedia()
-                .then(gotStream)
-                .catch(logError)
+            // navigator.mediaDevices.getUserMedia()
+            //     .then(gotStream)
+            //     .catch(logError)
         } else if (navigator.getUserMedia && 'MediaRecorder' in window) {
             navigator.getUserMedia(
                 constraints,

@@ -1,38 +1,22 @@
-const MODE = 'STAGE'
-const DEVPORT = 8080
-
-/* PROD and STAGE CONFIG:  
-   Telegram Login Widget won't work (only one domain allowed for widget). 
-   You can create your own bot and use it for login. 
-   Follow these steps: https://github.com/gilpanal/beatbytebot_webapp/wiki/Telegram-Login-Widget
-   and chenge to BOT_NAME_PROD variable to your bot name 
-*/
-/* DEV CONFIG: you need to run https://github.com/gilpanal/bunchofsongs_api */
+const MODE = 'DEV'
+const DEVPORT = 7007
 
 const ENVIRONMENTS = {
-    PROD:{
-        BOT_NAME:'beatbytebot',
-        ENDPOINT:'https://beatbytebotapi.herokuapp.com/graphql',
-        UPLOAD_ENDPOINT:'https://beatbytebotapi.herokuapp.com/fileUpload',
-        DOWNLOAD_ENDPOINT: 'https://beatbytebotapi.herokuapp.com/fileDownload?'
+    PROD:{       
+        ENDPOINT:'',
+        UPLOAD_ENDPOINT:'',      
     },
-    STAGE:{
-        BOT_NAME:'bunchofsongs_bot',
-        ENDPOINT:'https://bunchofsongsapi.herokuapp.com/graphql',
-        UPLOAD_ENDPOINT:'https://bunchofsongsapi.herokuapp.com/fileUpload',
-        DOWNLOAD_ENDPOINT: 'https://bunchofsongsapi.herokuapp.com/fileDownload?'
+    STAGE:{        
+        ENDPOINT:'',
+        UPLOAD_ENDPOINT:''
     },
-    DEV:{
-        BOT_NAME:'bostel_bot',
+    DEV:{       
         ENDPOINT:'http://localhost:'+DEVPORT+'/graphql',
-        UPLOAD_ENDPOINT:'http://localhost:'+DEVPORT+'/fileUpload',
-        DOWNLOAD_ENDPOINT: 'https://bunchofsongsapi.herokuapp.com/fileDownload?'
+        UPLOAD_ENDPOINT:'http://localhost:'+DEVPORT+'/fileUpload'       
     }
 }
 
-module.exports = {
-    BOT_NAME: ENVIRONMENTS[MODE].BOT_NAME,
+module.exports = {    
     ENDPOINT: ENVIRONMENTS[MODE].ENDPOINT,
-    UPLOAD_ENDPOINT: ENVIRONMENTS[MODE].UPLOAD_ENDPOINT,
-    DOWNLOAD_ENDPOINT: ENVIRONMENTS[MODE].DOWNLOAD_ENDPOINT
+    UPLOAD_ENDPOINT: ENVIRONMENTS[MODE].UPLOAD_ENDPOINT    
 }

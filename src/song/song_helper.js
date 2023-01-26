@@ -1,4 +1,4 @@
-import { ENDPOINT, DOWNLOAD_ENDPOINT } from '../js/config'
+import { ENDPOINT } from '../js/config'
 import { LOADER_ELEM_ID, SONG_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './song'
 
 function Track(id, title, link, customClass) {
@@ -28,7 +28,7 @@ export const getSong = (songId, callback, extraParams) => {
         return r.json()
     })
     .then((data) => {
-        console.log("in getSong data=", data);
+        
         if (data) {
             tracksInfo = data
         }
