@@ -1,10 +1,48 @@
-import { ENDPOINT, DOWNLOAD_ENDPOINT } from '../js/config'
+import { ENDPOINT } from '../js/config'
 import { LOADER_ELEM_ID, SONG_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './song'
 
-function Track(title, link, customClass) {
-    this.name = title
-    this.src = DOWNLOAD_ENDPOINT + link
+function Track(id, title, link, customClass) {
+    this.id = id;
+    this.name = title;
+    this.src = ENDPOINT + "/trackfile/" + id
     this.customClass = customClass
+}
+
+
+export const getSong = (songId, callback, extraParams) => {
+
+    let errorIs = null
+    let tracksInfo = {}
+
+    fetch(ENDPOINT + "/song/" + songId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+    })
+    .then((r) => {
+        if (!r.ok) {
+            errorIs = r.statusText
+        }
+        return r.json()
+    })
+    .then((data) => {
+        
+        if (data) {
+            tracksInfo = data
+        }
+    })
+    .catch((error) => {
+        errorIs = error
+    })
+    .then(() => {
+        if (errorIs) {
+            alert(errorIs)
+        }
+        callback(tracksInfo, extraParams)
+    })
+
 }
 
 export const doFetch = (body, callback, extraParams) => {
@@ -64,7 +102,7 @@ export const telegramLoginCallback = (telegramUser) => {
 
 export const startLoader = (loaderId) => {
     const loaderElement = document.getElementById(loaderId)
-    loaderElement.classList.add(loaderId) 
+    loaderElement.classList.add(loaderId)
 }
 
 export const cancelLoader = (loaderId) => {
@@ -82,22 +120,29 @@ const successfulLoginAtPage = (info) => {
 }
 
 const createArrayOfTracks = (tracksInfo) => {
-    const isAdmin = tracksInfo.songInfoById && tracksInfo.songInfoById.user_permission
+    //const isAdmin = tracksInfo.songInfoById && tracksInfo.songInfoById.user_permission
+    const isAdmin = true;
     if (isAdmin) {
         setUserPermission(true)
         fileUploader.enableUpload()
     }
     if (tracksInfo.tracks) {
         const arrayLoad = []
-        tracksInfo.tracks.forEach((element) => {            
+        tracksInfo.tracks.forEach((element) => {
             if(element){
-                const audio = element?.message?.audio || element?.message?.voice
-                const title = audio.title || element.message.date
-                const track_id = audio.file_unique_id + '_' + element.message.date
-                const customClass = { chatId: SONG_ID, message_id: element.message.message_id, name: title, track_id: track_id }
-                const newTrack = new Track(title, element.file_path , customClass)            
+                console.log("foreach: ", element);
+                // const audio = element?.message?.audio || element?.message?.voice
+                // const title = audio.title || element.message.date
+                // const track_id = audio.file_unique_id + '_' + element.message.date
+                // const customClass = { chatId: SONG_ID, message_id: element.message.message_id, name: title, track_id: track_id }
+                // const newTrack = new Track(title, element.file_path , customClass)
+                // arrayLoad.push(newTrack)
+
+                const title = element.title
+                const customClass = { name: title, track_id: element.id }
+                const newTrack = new Track(element.id, title, element.path , customClass)
                 arrayLoad.push(newTrack)
-            }            
+            }
         })
         createTrackList(arrayLoad, isAdmin)
     } else {
@@ -135,8 +180,8 @@ const drawSongDetailInfo = (tracksInfo) => {
         lyricsHtml = `<a href="#" onclick="window.open('${songInfo.doc_url}', 'lyrics_popup', 'fullscreen=yes',false); return false">Lyrics</a>`
         document.getElementById('post-header').insertAdjacentHTML('afterbegin', lyricsHtml)
     }
-    if (songInfo) {
-        songName = songInfo.title
+    if (tracksInfo.title) {
+        songName = tracksInfo.title
         songNameHtml = `<h1 class="post-title">${songName}</h1>`
     }
     document.getElementById('post-header').insertAdjacentHTML('afterbegin', songNameHtml)
