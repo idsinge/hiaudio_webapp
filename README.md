@@ -14,8 +14,9 @@ DEVPORT is `7007` by default or the number choosen for the API in case you use a
 
 ## More info:
 
-Wiki: https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/wikis/SOURCE-CODE/Links-and-other-info
-Project Dev Board: https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/boards
+- Wiki: https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/wikis/SOURCE-CODE/Links-and-other-info
+
+- Project Dev Board: https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/boards
 
 ## Acknowledgements:
 <!-- prettier-ignore-start -->
