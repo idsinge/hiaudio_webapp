@@ -5,6 +5,19 @@ let listElelemts = ''
 let errorIs = null
 let songs = []
 
+const queryString = window.location.search
+const isAuthenticated = queryString.split('auth=')[1]
+
+if (isAuthenticated) {
+  document.getElementById('menuRight').innerHTML = `<a class="button" href="https://localhost:7007/profile">Profile</a>
+  <div>
+      <input type="text" class="newtitle" id="newtitle" placeholder="new song title" title="newtitle" >
+      <input type="submit" id="newsong" value="Create new song"></input>
+  </div>`
+} else {
+  document.getElementById('menuRight').innerHTML = `<a class="button" href="https://localhost:7007/login">Google Login</a>`
+}
+
 fetch(ENDPOINT + '/songs', {
   method: 'GET',
   headers: {
@@ -12,12 +25,12 @@ fetch(ENDPOINT + '/songs', {
     'Accept': 'application/json',
   }
 }).then((r) => {
-    if (!r.ok) {
-      errorIs = r.statusText
-    }
-    return r.json()
-  })
-  .then(data => {    
+  if (!r.ok) {
+    errorIs = r.statusText
+  }
+  return r.json()
+})
+  .then(data => {
     if (data.songs) {
       songs = data.songs
     }
@@ -66,9 +79,13 @@ const paintListOfSongs = (songsList) => {
   document.getElementById('searchInput').removeAttribute('disabled')
 }
 
-document.getElementById('newsong').addEventListener("click", (e) => {
+const newProjectButton = document.getElementById('newsong')
+newProjectButton && newProjectButton.addEventListener("click", (e) => {
   let newtitle = document.getElementById('newtitle').value
-
+  if (!newtitle) {
+    alert('Introduce a valid title, please')
+    return
+  }
   let body = JSON.stringify({
     title: newtitle
   })
@@ -91,8 +108,10 @@ document.getElementById('newsong').addEventListener("click", (e) => {
     .then(data => {
       if (data.song) {
         window.location.href = '/song/song.html?songId=' + data.song.id
+      } else {        
+        throw new Error(data)
       }
-    }).catch((error) => {
+    }).catch((error) => {      
       errorIs = error
     })
 
