@@ -130,7 +130,7 @@ const createArrayOfTracks = (tracksInfo) => {
         const arrayLoad = []
         tracksInfo.tracks.forEach((element) => {
             if(element){
-                console.log("foreach: ", element);
+                //console.log("foreach: ", element);
                 // const audio = element?.message?.audio || element?.message?.voice
                 // const title = audio.title || element.message.date
                 // const track_id = audio.file_unique_id + '_' + element.message.date
