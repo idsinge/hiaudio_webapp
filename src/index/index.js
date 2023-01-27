@@ -8,6 +8,12 @@ let songs = []
 const queryString = window.location.search
 const isAuthenticated = queryString.split('auth=')[1]
 
+const domainIs = window.location.host
+let uriSongPage = '/song.html?songId='
+if(domainIs !== 'localhost:80'){
+  uriSongPage = '/webapp' + uriSongPage
+}
+
 if (isAuthenticated) {
   document.getElementById('menuRight').innerHTML = `<a class="button" href="https://localhost:7007/profile">Profile</a>
   <div>
@@ -62,11 +68,11 @@ const paintListOfSongs = (songsList) => {
       const template = `
         <div class="grid-div">
           <div class="card">
-            <a href="../song/song.html?songId=${element.id}">
+            <a href="${uriSongPage + element.id}">
               <img src="${element.photo_url || SONG_COVER}" alt="Card image cap" class="card-img">
             </a>
             <div class="card-container">
-              <a href="../song/song.html?songId=${element.id}" class="card-link blue">${element.title}</a>
+              <a href="${uriSongPage +element.id}" class="card-link blue">${element.title}</a>
               <p>${collection}</p>
             </div>
           </div>
@@ -107,7 +113,7 @@ newProjectButton && newProjectButton.addEventListener("click", (e) => {
     })
     .then(data => {
       if (data.song) {
-        window.location.href = '/song/song.html?songId=' + data.song.id
+        window.location.href =  uriSongPage + data.song.id
       } else {        
         throw new Error(data)
       }

@@ -7,6 +7,13 @@ import { Recorder } from './record'
 const queryString = window.location.search
 export const SONG_ID = parseFloat(queryString.split('songId=')[1])
 
+const goHomeLink = document.getElementById('goHome')
+if(window.location.host === 'localhost:80'){
+  goHomeLink.href = window.location.origin + '/index.html'
+} else {
+  goHomeLink.href = window.location.origin
+}
+  
 export const LOADER_ELEM_ID = 'loader'
 export let USER_INFO = null
 export let USER_PERMISSION = false

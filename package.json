@@ -6,8 +6,8 @@
   "author": "gilpanal",
   "website": "https://github.com/gilpanal",
   "scripts": {
-    "dev": "parcel src/index.html src/song/song.html --port 80 --https",
-    "build": "parcel build src/index.html src/song/song.html",
+    "dev": "parcel src/index.html src/song.html --port 80 --https",
+    "build": "parcel build src/index.html src/song.html --public-url .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
