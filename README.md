@@ -5,12 +5,13 @@
 4. Rename "src/js/config_template.js" to "src/js/config.js". See Note 1.
 5. Do the following asjustment: https://github.com/gilpanal/beatbytebot_webapp/wiki/Solved-Issues
 6. npm run dev
-7. Open https://localhost:80/index.html. For HTTP see Note 2.
+7. Open https://localhost:80/index.html. For HTTP see Notes 2 and 3.
 
 #### NOTES:
 1. In case you are also running the API project locally (). Verify `MODE=DEV` at `config.js`
 DEVPORT is `7007` by default or the number choosen for the API in case you use a different port.
 2. For http remove the `--https` param in `package.json`: `... --port 80 --https"`
+3. Webapp local dev version is not working for API methods like `newsong` or `fileUpload` as it relies on session cookie which is not shared among domains (**localhost:7007** vs **localhost:80**)
 
 ## More info:
 
