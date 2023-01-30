@@ -6,32 +6,27 @@ export class Recorder {
 
     init() {
         let userMediaStream
-        // const constraints = { audio: true }
-        const constraints = {  }
+        const constraints = { audio: true }
 
-        // navigator.getUserMedia = (navigator.getUserMedia ||
-        //     navigator.webkitGetUserMedia ||
-        //     navigator.mozGetUserMedia ||
-        //     navigator.msGetUserMedia)
+        navigator.getUserMedia = (navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia)
 
-        const gotStream = (stream) => {
-            console.log("gotStrem", stream);
+        const gotStream = (stream) => {            
             userMediaStream = stream
             playlist.initRecorder(userMediaStream)
             $(".btn-record").removeClass("disabled")
         }
 
-        const logError = (err) => {
-            console.log("error on getusermedi");
+        const logError = (err) => {            
             console.error(err);
         }
 
-        if (navigator.mediaDevices) {
-            console.log("mediadevices", navigator.mediaDevices);
-            // navigator.mediaDevices.getUserMedia(constraints)
-            // navigator.mediaDevices.getUserMedia()
-            //     .then(gotStream)
-            //     .catch(logError)
+        if (navigator.mediaDevices) {            
+            navigator.mediaDevices.getUserMedia(constraints)            
+                .then(gotStream)
+                .catch(logError)
         } else if (navigator.getUserMedia && 'MediaRecorder' in window) {
             navigator.getUserMedia(
                 constraints,
