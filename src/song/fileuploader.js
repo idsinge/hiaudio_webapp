@@ -64,22 +64,23 @@ export class FileUploader {
         const dataFormValue = type ? file : file.dom.files[0]
         const dataFormFileName = type ? file.fileName : file.dom.files[0].name
         formData.append('song_id', this.songId)
+        //formData.append(dataFormName, dataFormValue, dataFormFileName) 
         formData.append("audio", dataFormValue, dataFormFileName)
         formData.append('user_info', USER_INFO)
 
         XHR.addEventListener('load', (event) => {
             cancelLoader(LOADER_ELEM_ID)
-            // if(event.srcElement && event.srcElement.response){
-            //     console.log("upload response ", event.srcElement.response);
-            //     const respJson = JSON.parse(event.srcElement.response)
-            //     if(respJson.ok){
-            //         trackHandler.displayOptMenuForNewTrack(respJson)
-            //     } else {
-            //         alert('Oops! Something went wrong.')
-            //     }
-            // } else {
-            //     alert('Oops! Something went wrong.')
-            // }
+            if(event.srcElement && event.srcElement.response){
+                //console.log("upload response ", event.srcElement.response);
+                const respJson = JSON.parse(event.srcElement.response)
+                if(respJson.ok){
+                    trackHandler.displayOptMenuForNewTrack(respJson)
+                } else {
+                    alert('Oops! Something went wrong.')
+                }
+            } else {
+                alert('Oops! Something went wrong.')
+            }
         })
 
         XHR.addEventListener('error', (event) => {

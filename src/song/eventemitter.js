@@ -381,7 +381,7 @@ ee.on('audiorenderingfinished', function (type, data, trackPos) {
   // but received from Playlist.js in event audiorenderingfinished  
   if(trackPos >= 0 && USER_PERMISSION){    
     data.name = 'audio';
-    data.fileName = Date.now()   
+    data.fileName = Date.now()  + '.wav' 
     fileUploader.sendData(data, 'blob')
   }
   else if (type == 'wav'){
