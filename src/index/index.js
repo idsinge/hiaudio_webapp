@@ -15,13 +15,13 @@ if(domainIs !== 'localhost:80'){
 }
 
 if (isAuthenticated) {
-  document.getElementById('menuRight').innerHTML = `<a class="button" href="https://localhost:7007/profile">Profile</a>
+  document.getElementById('menuRight').innerHTML = `<a class="button" href="${window.location.origin}/profile">Profile</a>
   <div>
       <input type="text" class="newtitle" id="newtitle" placeholder="new song title" title="newtitle" >
       <input type="submit" id="newsong" value="Create new song"></input>
   </div>`
 } else {
-  document.getElementById('menuRight').innerHTML = `<a class="button" href="https://localhost:7007/login">Google Login</a>`
+  document.getElementById('menuRight').innerHTML = `<a class="button" href="${window.location.origin}/login">Google Login</a>`
 }
 
 fetch(ENDPOINT + '/songs', {

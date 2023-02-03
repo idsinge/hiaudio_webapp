@@ -11,8 +11,8 @@ const ENVIRONMENTS = {
         UPLOAD_ENDPOINT:''
     },
     DEV:{       
-        ENDPOINT:'http://localhost:'+DEVPORT+'/graphql',
-        UPLOAD_ENDPOINT:'http://localhost:'+DEVPORT+'/fileUpload'       
+        ENDPOINT:'https://localhost:'+DEVPORT,
+        UPLOAD_ENDPOINT:'https://localhost:'+DEVPORT+'/fileUpload'         
     }
 }
 
