@@ -1,3 +1,4 @@
+import { ENDPOINT } from '../js/config'
 import { doFetch, startLoader, cancelLoader } from './song_helper'
 import { USER_INFO, SONG_ID, LOADER_ELEM_ID, playlist } from './song'
 
@@ -63,27 +64,18 @@ export class TrackHandler {
         }
     }
     sendDeleteRequest(pos, chat_id, message_id, track_id, doAfterDeleted) {
-   
-        chat_id = parseFloat(chat_id)
-        message_id = parseInt(message_id)
-
-        const userInfo = JSON.parse(USER_INFO)
-
-        const query = `query DeleteTrack($chat_id: Float!, $message_id: Int!, $track_id: String!, $userInfo: UserInfo!) {
-            deleteMessage(chat_id: $chat_id, message_id: $message_id, track_id: $track_id, userInfo: $userInfo ){ ok, description }
-        }`
-        const body = JSON.stringify({
-            query,
-            variables: { chat_id, message_id, track_id, userInfo },
-        })
         startLoader(LOADER_ELEM_ID)
-        doFetch(body, doAfterDeleted, pos)       
+        fetch(ENDPOINT+'/deletetrack/' + track_id, {
+            method: 'DELETE',
+        }).then(res => res.json()).then(res => {
+            doAfterDeleted(res, pos)
+        })       
     }
-    doAfterDeleted (deleteTrackResult, pos){
+    doAfterDeleted(deleteTrackResult, pos) {
         cancelLoader(LOADER_ELEM_ID)
-        if (deleteTrackResult.deleteMessage && deleteTrackResult.deleteMessage.ok) {                       
-            const index = parseInt(pos)                     
-            playlist.clear(index)                           
+        if (deleteTrackResult.ok) {
+            const index = parseInt(pos)
+            playlist.clear(index)
         }
     }
 }

@@ -16,7 +16,7 @@ if(window.location.host === 'localhost:80'){
   
 export const LOADER_ELEM_ID = 'loader'
 export let USER_INFO = null
-export let USER_PERMISSION = true
+export let USER_PERMISSION = false
 
 export const setUser = (userIs) => {
     USER_INFO = userIs

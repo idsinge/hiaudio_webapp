@@ -86,19 +86,6 @@ export const doAfterSongFetched = (tracksInfo) => {
     drawSongDetailInfo(tracksInfo)
 }
 
-export const telegramLoginCallback = (telegramUser) => {
-    setUser(telegramUser)
-    const userInfo = JSON.parse(telegramUser)
-    const songId = SONG_ID
-    const query = `query GetUserPermission($songId: Float!, $userInfo: UserInfo) {
-        songInfoById(songId: $songId, userInfo: $userInfo ){user_permission}
-    }`
-    const body = JSON.stringify({
-        query,
-        variables: { songId, userInfo },
-    })
-    doFetch(body, successfulLoginAtPage)
-}
 
 export const startLoader = (loaderId) => {
     const loaderElement = document.getElementById(loaderId)
@@ -110,18 +97,10 @@ export const cancelLoader = (loaderId) => {
     loaderElement.classList.remove(loaderId)
 }
 
-const successfulLoginAtPage = (info) => {
 
-    if (info && info.songInfoById.user_permission) {
-        setUserPermission(true)
-        fileUploader.enableUpload()
-        trackHandler.displayOptMenuForTracks()
-    }
-}
 
 const createArrayOfTracks = (tracksInfo) => {
-    //const isAdmin = tracksInfo.songInfoById && tracksInfo.songInfoById.user_permission
-    const isAdmin = true;
+    const isAdmin = tracksInfo.owner || false
     if (isAdmin) {
         setUserPermission(true)
         fileUploader.enableUpload()
