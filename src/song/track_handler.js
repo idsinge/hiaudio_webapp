@@ -7,11 +7,15 @@ export class TrackHandler {
         const element = newTrack.result
         const audio = element?.message?.audio || element?.message?.voice
         const title = audio.title || element.message.date
-        const track_id = audio.file_unique_id + '_' + element.message.date
+        // const track_id = audio.file_unique_id + '_' + element.message.date
+        const track_id = audio.file_unique_id 
         const controlsList = document.getElementsByClassName('controls')
         const message_id = element.message.message_id
-        const pos = controlsList.length - 1  
-        this.createMenuOptButton(controlsList, pos, message_id, title, track_id, SONG_ID)
+        let pos = controlsList.length - 1 
+        if(pos>=0){
+            this.createMenuOptButton(controlsList, pos, message_id, title, track_id, SONG_ID)
+        }
+        
     }
     displayOptMenuForTracks() {
 
