@@ -1,6 +1,6 @@
 ## How to run it locally:
 1. git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp.git
-2. cd webapp
+2. cd beatbytebot_webapp
 3. npm i
 4. Rename "src/js/config_template.js" to "src/js/config.js". See Note 1.
 5. Do the following asjustment: https://github.com/gilpanal/beatbytebot_webapp/wiki/Solved-Issues
