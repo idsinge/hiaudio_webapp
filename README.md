@@ -1,11 +1,14 @@
 ## How to run it locally:
-1. git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp.git
-2. cd beatbytebot_webapp
-3. npm i
-4. Rename "src/js/config_template.js" to "src/js/config.js". See Note 1.
+
+1. `git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp.git`
+2. `cd beatbytebot_webapp`
+3. `npm i`
+4. Rename `src/js/config_template.js` to `src/js/config.js`. See `Note 1`.
 5. Do the following asjustment: https://github.com/gilpanal/beatbytebot_webapp/wiki/Solved-Issues
-6. npm run dev
-7. Open https://localhost:80/index.html and apply rule at Note 4. For HTTP see Notes 2 and 3.
+6. In package.json, change `--out-dir ../public` to `--out-dir dist`
+7. `npm run dev`
+8. Open `https://localhost:80/index.html` and apply rule at `Note 4`. For HTTP see `Notes 2 and 3`.
+
 
 #### NOTES:
 1. In case you are also running the API project locally (). Verify `MODE=DEV` at `config.js`
