@@ -4,7 +4,7 @@
   "description": "Simple Web DAW",
   "main": "index.js",
   "author": "Telecom Paris",
-  "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/tree/main/webapp",
+  "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp",
   "scripts": {
     "dev": "parcel src/index.html src/song.html --port 80 --https --out-dir ../public --public-url .",
     "build": "parcel build src/index.html src/song.html --out-dir ../public --public-url .",
@@ -37,7 +37,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/tree/main/webapp.git"
+    "url": "git@gitlab.enst.fr:idsinge/hiaudio/beatbytebot_webapp.git"
   },
   "bugs": {
     "url": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/issues"

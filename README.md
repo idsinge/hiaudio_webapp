@@ -1,5 +1,5 @@
 ## How to run it locally:
-1. git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/tree/main/webapp.git
+1. git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp.git
 2. cd webapp
 3. npm i
 4. Rename "src/js/config_template.js" to "src/js/config.js". See Note 1.
