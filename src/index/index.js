@@ -11,7 +11,7 @@ const isAuthenticated = queryString.split('auth=')[1]
 const domainIs = window.location.host
 let uriSongPage = '/song.html?songId='
 if(domainIs !== 'localhost:80'){
-  uriSongPage = '/webapp' + uriSongPage
+  uriSongPage = '/public' + uriSongPage
 }
 
 if (isAuthenticated) {

@@ -1,13 +1,13 @@
 {
-  "name": "beatbytebot_webapp",
+  "name": "himusic",
   "version": "0.0.1",
-  "description": "Simple Web DAW connected to Telegram Bot",
+  "description": "Simple Web DAW",
   "main": "index.js",
-  "author": "gilpanal",
-  "website": "https://github.com/gilpanal",
+  "author": "Telecom Paris",
+  "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/tree/main/webapp",
   "scripts": {
-    "dev": "parcel src/index.html src/song.html --port 80 --https",
-    "build": "parcel build src/index.html src/song.html --public-url .",
+    "dev": "parcel src/index.html src/song.html --port 80 --https --out-dir ../public --public-url .",
+    "build": "parcel build src/index.html src/song.html --out-dir ../public --public-url .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -37,10 +37,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gilpanal/beatbytebot_webapp.git"
+    "url": "git+https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/tree/main/webapp.git"
   },
   "bugs": {
-    "url": "https://github.com/gilpanal/beatbytebot_webapp/issues"
+    "url": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/issues"
   },
-  "homepage": "https://beatbytebot.web.app"
+  "homepage": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt"
 }
