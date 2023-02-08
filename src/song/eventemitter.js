@@ -142,7 +142,7 @@ $container.on("click", ".btn-stop", function() {
   if(isRecording){
     isRecording = false
     if(USER_PERMISSION) {
-      const newTrackPos = playlist.getInfo().length - 1 
+      const newTrackPos = playlist.getInfo().tracks.length - 1 
       ee.emit('startaudiorendering', 'wav', newTrackPos)
     }
   }
@@ -231,7 +231,7 @@ $container.on("click", ".btn-trim-audio", function() {
   ee.emit("trim");
 });
 
-$container.on("click", ".btn-info", function() {
+$container.on("click", ".btn.print", function() {
   console.log(playlist.getInfo());
 });
 
@@ -373,6 +373,10 @@ ee.on("audiosourcesloaded", function() {
 
 ee.on("audiosourcesrendered", function() {
   displayLoadingData("Tracks have been rendered");
+});
+
+ee.on("audiosourceserror", function(e) {
+  displayLoadingData(e.message);
 });
 
 ee.on('audiorenderingfinished', function (type, data, trackPos) {

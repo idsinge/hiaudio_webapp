@@ -37,9 +37,15 @@ export const playlist = WaveformPlaylist({
   },
   controls: {
     show: true,
-    width: 200
+    width:200,
+    widgets: {
+      stereoPan: false,
+      collapse:false,      
+      remove: false,
+    },
   },
   zoomLevels: [500, 1000, 3000, 5000],
+  isAutomaticScroll: true,
   timescale: true
 })
 
