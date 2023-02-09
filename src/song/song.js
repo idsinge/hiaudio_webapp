@@ -8,7 +8,7 @@ const queryString = window.location.search
 export const SONG_ID = parseFloat(queryString.split('songId=')[1])
 
 const goHomeLink = document.getElementById('goHome')
-if(window.location.host === 'localhost:80'){
+if(window.location.host === 'localhost:80' || window.location.origin === 'http://localhost'){
   goHomeLink.href = window.location.origin + '/index.html'
 } else {
   goHomeLink.href = window.location.origin
@@ -37,9 +37,15 @@ export const playlist = WaveformPlaylist({
   },
   controls: {
     show: true,
-    width: 200
+    width:200,
+    widgets: {
+      stereoPan: false,
+      collapse:false,      
+      remove: false,
+    },
   },
   zoomLevels: [500, 1000, 3000, 5000],
+  isAutomaticScroll: true,
   timescale: true
 })
 

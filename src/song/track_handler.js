@@ -20,10 +20,10 @@ export class TrackHandler {
     displayOptMenuForTracks() {
 
         const controlsList = document.getElementsByClassName('controls')
-        const arrayTracks = playlist.getInfo()
+        const arrayTracks = playlist.getInfo().tracks
 
         for (let i = 0; i < controlsList.length; i++) {
-            if(arrayTracks[i].customClass){
+            if(arrayTracks && arrayTracks[i].customClass){
                 const message_id = arrayTracks[i].customClass.message_id
                 const name = arrayTracks[i].customClass.name
                 const track_id = arrayTracks[i].customClass.track_id
@@ -73,6 +73,9 @@ export class TrackHandler {
             method: 'DELETE',
         }).then(res => res.json()).then(res => {
             doAfterDeleted(res, pos)
+        }).catch(err =>{
+            console.log(err)
+            cancelLoader(LOADER_ELEM_ID)
         })       
     }
     doAfterDeleted(deleteTrackResult, pos) {
