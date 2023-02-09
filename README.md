@@ -5,7 +5,7 @@
 3. `npm i`
 4. Rename `src/js/config_template.js` to `src/js/config.js`. See `Note 1`.
 5. Do the following asjustment: https://github.com/gilpanal/beatbytebot_webapp/wiki/Solved-Issues. See Note 5.
-6. In package.json, change `--out-dir ../public` to `--out-dir dist`
+6. In `package.json`, at `"scripts/dev"` entry remove `--out-dir ../public --public-url .` for local test in a separate instance.
 7. `npm run dev`
 8. Open `https://localhost:80/index.html` and apply rule at `Note 4`. For HTTP see `Notes 2 and 3`.
 

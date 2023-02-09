@@ -1,0 +1,40 @@
+/* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_profile_card */
+.profile-card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+    font-family: arial;
+}
+
+.user-title {
+    color: grey;
+    font-size: 18px;
+}
+
+h1 {
+    margin:22pt;
+}
+button {
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 8px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+}
+
+.social-link {
+    text-decoration: none;
+    font-size: 22px;
+    color: black;
+}
+
+button:hover,
+.social-link:hover {
+    opacity: 0.7;
+}
