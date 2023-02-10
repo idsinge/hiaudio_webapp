@@ -11,6 +11,6 @@
 }
 @media screen and (max-width: 530px) {
     .grid {        
-        margin: 8.5em auto;       
+        margin: 0.5em auto 8.5em auto;       
     }
 }
