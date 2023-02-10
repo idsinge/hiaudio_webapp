@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="css/loader.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="profile/user.css">
-
 </head>
 
 <body>
@@ -21,24 +20,21 @@
             <li><a id="goHome" href="">himusic</a></li>
         </ol>
     </header>
-
     <main>
-        <!-- <div id="loader" class="loader"></div> -->
-
-        <h2 style="text-align:center">User Profile Card</h2>
-
-        <div class="profile-card">
-            <img src="https://www.w3schools.com/w3images/team2.jpg" alt="John" style="width:100%">
-            <h1>John Doe</h1>
-            <p class="user-title">CEO & Founder, Example</p>
-            <p>Harvard University</p>
-            <div style="margin: 24px 0;">
-                <a class="social-link" href="#"><i class="fa fa-dribbble"></i></a>
-                <a class="social-link" href="#"><i class="fa fa-twitter"></i></a>
-                <a class="social-link" href="#"><i class="fa fa-linkedin"></i></a>
-                <a class="social-link" href="#"><i class="fa fa-facebook"></i></a>
-            </div>
-            <p><button>Contact</button></p>
+        <div id="profilecard" class="profile-card" hidden>
+            <img id="profilepicture" src="" alt="User Picture">
+            <h1 id="username"></h1>
+            <p id="emailaddress" class="user-title"></p>
+            <p>
+            <form action="/logout">
+                <button type="submit">Logout</button>
+            </form>
+            </p>
+        </div>
+        <div id="logincard" class="profile-card" hidden>
+            <form action="/login">
+                <button type="submit" class="btn btn-info">Login</button>
+            </form>
         </div>
     </main>
     <footer class="footer">hi music 2022</footer>
