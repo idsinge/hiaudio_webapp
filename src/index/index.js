@@ -11,19 +11,20 @@ const isAuthenticated = queryString.split('auth=')[1]
 const domainIs = window.location.host
 let uriSongPage = '/song.html?songId='
 let uriProfilePage = window.location.origin
-if(domainIs !== 'localhost:80' && window.location.origin !== 'http://localhost'){
+if (domainIs !== 'localhost:80' && window.location.origin !== 'http://localhost') {
   uriSongPage = '/public' + uriSongPage
-  uriProfilePage += '/public/profile.html' 
+  uriProfilePage += '/public'
 }
 
 if (isAuthenticated) {
-  document.getElementById('menuRight').innerHTML = `<a class="btn btn-info" role="button" href="${uriProfilePage}">Profile</a>
-  <div>
-      <input type="text" class="newtitle" id="newtitle" placeholder="new song title" title="newtitle" >
-      <input type="submit" id="newsong" value="Create new song"></input>
-  </div>`
+  document.getElementById('useroptions').innerHTML = `<li class="nav-item">
+    <a class="nav-link" href="${uriProfilePage+'/profile.html'}">Profile</a>
+  </li>
+  <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModal">New Music</a>
+      </li>`
 } else {
-  document.getElementById('menuRight').innerHTML = `<a class="btn btn-info" role="button" href="${window.location.origin}/login">Google Login</a>`
+  document.getElementById('useroptions').innerHTML = `<a class="dropdown-item" href="${window.location.origin}/login">Google Login</a>`
 }
 
 fetch(ENDPOINT + '/songs', {
@@ -74,7 +75,7 @@ const paintListOfSongs = (songsList) => {
               <img src="${element.photo_url || SONG_COVER}" alt="Card image cap" class="card-img">
             </a>
             <div class="card-container">
-              <a href="${uriSongPage +element.id}" class="card-link blue">${element.title}</a>
+              <a href="${uriSongPage + element.id}" class="card-link blue">${element.title}</a>
               <p>${collection}</p>
             </div>
           </div>
@@ -115,11 +116,11 @@ newProjectButton && newProjectButton.addEventListener("click", (e) => {
     })
     .then(data => {
       if (data.song) {
-        window.location.href =  uriSongPage + data.song.id
-      } else {        
+        window.location.href = uriSongPage + data.song.id
+      } else {
         throw new Error(data)
       }
-    }).catch((error) => {      
+    }).catch((error) => {
       errorIs = error
     })
 
