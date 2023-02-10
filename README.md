@@ -1,5 +1,7 @@
 ## How to run it locally:
 
+Requirement: Node.js v14
+
 1. `git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp.git`
 2. `cd beatbytebot_webapp`
 3. `npm i`
