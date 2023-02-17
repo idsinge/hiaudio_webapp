@@ -2,7 +2,7 @@
 
 Requirement: Node.js v14
 
-0. `nvm use 14`
+0. `nvm use 14` (https://github.com/nvm-sh/nvm)
 
 1. `git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp.git`
 2. `cd beatbytebot_webapp`
@@ -11,7 +11,7 @@ Requirement: Node.js v14
 5. Do the following asjustment: https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/wikis/SOURCE-CODE/Changes-at-waveform-playlist. See `Note 5`.
 6. `npm run dev`
 7. Open `https://localhost:80/index.html`. In Chrome it may require to apply rule at `Note 4`. For HTTP see `Notes 2 and 3`.
-8. To build a new version for backend repo, run the command `npm run build` and the sources will be placed at `public` folder (https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/tree/main/public). See `Note 6` to make it easy to debug.
+8. To build a new version for backend repo, run the command `npm run build` and the sources will be placed at `public` folder (https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/tree/main/public). See `Note 6` to make it easy to debug. **IMPORTANT**: Remove the content of the `public` folder before running  `npm run build` command
 
 
 #### NOTES:
