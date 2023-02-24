@@ -2,7 +2,7 @@
  * This script is provided to give an example how the playlist can be controlled using the event emitter.
  * This enables projects to create/control the useability of the project.
 */
-import { playlist, fileUploader, USER_PERMISSION } from './song'
+import { playlist, fileUploader, USER_PERMISSION } from './composition'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
 var ee = playlist.getEventEmitter();

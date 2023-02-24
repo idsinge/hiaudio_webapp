@@ -17,7 +17,7 @@ Requirement: Node.js v14
 #### NOTES:
 1. For a different endpoint change `MODE=DEV` at `config.js`. `DEVPORT` is `7007` by default.
 2. For http remove the `--https` param in `package.json`: `... --port 80 --https"`
-3. Webapp local dev version is not working for API methods like `newsong` or `fileUpload` or `login` as it relies on session cookie which is not shared among domains (**localhost:7007** vs **localhost:80**)
+3. Webapp local dev version is not working for API methods like `newcomposition` or `fileUpload` or `login` as it relies on session cookie which is not shared among domains (**localhost:7007** vs **localhost:80**)
 4. `chrome://flags/#allow-insecure-localhost`
 5. For `waveform-playlist` changes go to `node_modules/waveform-playlist/build/waveform-playlist.umd.js`. Source: https://github.com/gilpanal/beatbytebot_webapp/wiki/Solved-Issues
 6. [Debuggable Frontend with Backend](https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/wikis/SOURCE-CODE/Debuggable-Frontend-with-Backend)

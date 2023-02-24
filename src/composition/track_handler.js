@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../js/config'
-import { doFetch, startLoader, cancelLoader } from './song_helper'
-import { USER_INFO, SONG_ID, LOADER_ELEM_ID, playlist } from './song'
+import { doFetch, startLoader, cancelLoader } from './composition_helper'
+import { USER_INFO, COMPOSITION_ID, LOADER_ELEM_ID, playlist } from './composition'
 
 export class TrackHandler {
     displayOptMenuForNewTrack(newTrack){        
@@ -13,7 +13,7 @@ export class TrackHandler {
         const message_id = element.message.message_id
         let pos = controlsList.length - 1 
         if(pos>=0){
-            this.createMenuOptButton(controlsList, pos, message_id, title, track_id, SONG_ID)
+            this.createMenuOptButton(controlsList, pos, message_id, title, track_id, COMPOSITION_ID)
         }
         
     }

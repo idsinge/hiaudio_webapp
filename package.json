@@ -6,8 +6,8 @@
   "author": "Telecom Paris",
   "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp",
   "scripts": {
-    "dev": "parcel src/index.html src/song.html src/profile.html --port 80 --https",
-    "build": "parcel build src/index.html src/song.html src/profile.html --out-dir ../public --public-url .",
+    "dev": "parcel src/index.html src/composition.html src/profile.html --port 80 --https --out-dir ../public --public-url .",
+    "build": "parcel build src/index.html src/composition.html src/profile.html --out-dir ../public --public-url .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
