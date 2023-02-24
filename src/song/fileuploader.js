@@ -6,8 +6,8 @@ import { USER_INFO, LOADER_ELEM_ID, trackHandler } from './song'
 import { startLoader, cancelLoader } from './song_helper'
 
 export class FileUploader {
-    constructor(songId, trackhandler, loaderElementId) {
-        this.songId = songId
+    constructor(compositionId, trackhandler, loaderElementId) {
+        this.compositionId = compositionId
         this.trackhandler = trackhandler
         this.loaderElementId = loaderElementId
     }
@@ -63,7 +63,7 @@ export class FileUploader {
         const dataFormName = type ? file.name : file.dom.name
         const dataFormValue = type ? file : file.dom.files[0]
         const dataFormFileName = type ? file.fileName : file.dom.files[0].name
-        formData.append('song_id', this.songId)
+        formData.append('composition_id', this.compositionId)
         //formData.append(dataFormName, dataFormValue, dataFormFileName) 
         formData.append("audio", dataFormValue, dataFormFileName)
         formData.append('user_info', USER_INFO)

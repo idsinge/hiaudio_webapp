@@ -1,18 +1,18 @@
-import SONG_COVER from '../img/agp.png'
+import COMPOSITION_COVER from '../img/agp.png'
 import { ENDPOINT } from '../js/config'
 
 let listElelemts = ''
 let errorIs = null
-let songs = []
+let compositions = []
 
 const queryString = window.location.search
 const isAuthenticated = queryString.split('auth=')[1]
 
 const domainIs = window.location.host
-let uriSongPage = '/song.html?songId='
+let uriCompositionPage = '/song.html?compositionId='
 let uriProfilePage = window.location.origin
 if (domainIs !== 'localhost:80' && window.location.origin !== 'http://localhost') {
-  uriSongPage = '/public' + uriSongPage
+  uriCompositionPage = '/public' + uriCompositionPage
   uriProfilePage += '/public'
 }
 
@@ -27,7 +27,7 @@ if (isAuthenticated) {
   document.getElementById('useroptions').innerHTML = `<a class="dropdown-item" href="${window.location.origin}/login">Google Login</a>`
 }
 
-fetch(ENDPOINT + '/songs', {
+fetch(ENDPOINT + '/compositions', {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json',
@@ -40,16 +40,16 @@ fetch(ENDPOINT + '/songs', {
   return r.json()
 })
   .then(data => {
-    if (data.songs) {
-      songs = data.songs
+    if (data.compositions) {
+      compositions = data.compositions
     }
   }).catch((error) => {
     errorIs = error
   }).then(() => {
-    renderHomePage(songs, errorIs)
+    renderHomePage(compositions, errorIs)
   })
 
-const renderHomePage = (songsList, error) => {
+const renderHomePage = (compositionsList, error) => {
 
   const loaderElement = document.getElementById('loader')
   loaderElement.classList.remove('loader')
@@ -57,12 +57,12 @@ const renderHomePage = (songsList, error) => {
   if (error) {
     alert(error)
   } else {
-    paintListOfSongs(songsList)
+    paintListOfCompositions(compositionsList)
   }
 }
 
-const paintListOfSongs = (songsList) => {
-  songsList.forEach((element) => {
+const paintListOfCompositions = (compositionsList) => {
+  compositionsList.forEach((element) => {
     if (element) {
       let collection = ''
       if (element.collection) {
@@ -71,11 +71,11 @@ const paintListOfSongs = (songsList) => {
       const template = `
         <div class="grid-div">
           <div class="card">
-            <a href="${uriSongPage + element.id}">
-              <img src="${element.photo_url || SONG_COVER}" alt="Card image cap" class="card-img">
+            <a href="${uriCompositionPage + element.id}">
+              <img src="${element.photo_url || COMPOSITION_COVER}" alt="Card image cap" class="card-img">
             </a>
             <div class="card-container">
-              <a href="${uriSongPage + element.id}" class="card-link blue">${element.title}</a>
+              <a href="${uriCompositionPage + element.id}" class="card-link blue">${element.title}</a>
               <p>${collection}</p>
             </div>
           </div>
@@ -88,7 +88,7 @@ const paintListOfSongs = (songsList) => {
   document.getElementById('searchInput').removeAttribute('disabled')
 }
 
-const newProjectButton = document.getElementById('newsong')
+const newProjectButton = document.getElementById('newcomposition')
 newProjectButton && newProjectButton.addEventListener("click", (e) => {
   let newtitle = document.getElementById('newtitle').value
   if (!newtitle) {
@@ -100,7 +100,7 @@ newProjectButton && newProjectButton.addEventListener("click", (e) => {
   })
 
 
-  fetch(ENDPOINT + '/newsong', {
+  fetch(ENDPOINT + '/newcomposition', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -115,8 +115,8 @@ newProjectButton && newProjectButton.addEventListener("click", (e) => {
       return r.json()
     })
     .then(data => {
-      if (data.song) {
-        window.location.href = uriSongPage + data.song.id
+      if (data.composition) {
+        window.location.href = uriCompositionPage + data.composition.id
       } else {
         throw new Error(data)
       }

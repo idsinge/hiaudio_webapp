@@ -1,11 +1,11 @@
 import { TrackHandler } from './track_handler'
 import { FileUploader } from './fileuploader'
 import WaveformPlaylist from 'waveform-playlist'
-import { doFetch, getSong, doAfterSongFetched } from './song_helper'
+import { doFetch, getComposition, doAfterCompositionFetched } from './song_helper'
 import { Recorder } from './record'
 
 const queryString = window.location.search
-export const SONG_ID = parseFloat(queryString.split('songId=')[1])
+export const COMPOSITION_ID = parseFloat(queryString.split('compositionId=')[1])
 
 const goHomeLink = document.getElementById('goHome')
 if(window.location.host === 'localhost:80' || window.location.origin === 'http://localhost'){
@@ -50,9 +50,9 @@ export const playlist = WaveformPlaylist({
 })
 
 export const trackHandler = new TrackHandler()
-export const fileUploader = new FileUploader(SONG_ID, trackHandler, LOADER_ELEM_ID)
+export const fileUploader = new FileUploader(COMPOSITION_ID, trackHandler, LOADER_ELEM_ID)
 export const recorder = new Recorder()
 
-const songId = SONG_ID
+const compositionId = COMPOSITION_ID
 
-getSong(songId, doAfterSongFetched)
+getComposition(compositionId, doAfterCompositionFetched)

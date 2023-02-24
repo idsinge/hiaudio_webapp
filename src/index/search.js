@@ -4,9 +4,9 @@ const input = document.getElementById('searchInput')
 
 input.onkeyup = (evt) => {
   evt = evt || window.event
-  searchSong()
+  searchComposition()
 }
-const searchSong = () => {    
+const searchComposition = () => {    
     const filter = input.value.toUpperCase()
     const ul = document.getElementById('grid')
     const li = ul.getElementsByClassName('grid-div')    

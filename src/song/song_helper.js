@@ -1,5 +1,5 @@
 import { ENDPOINT } from '../js/config'
-import { LOADER_ELEM_ID, SONG_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './song'
+import { LOADER_ELEM_ID, COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './song'
 
 function Track(id, title, link, customClass) {
     this.id = id;
@@ -9,12 +9,12 @@ function Track(id, title, link, customClass) {
 }
 
 
-export const getSong = (songId, callback, extraParams) => {
+export const getComposition = (compositionId, callback, extraParams) => {
 
     let errorIs = null
     let tracksInfo = {}
 
-    fetch(ENDPOINT + "/song/" + songId, {
+    fetch(ENDPOINT + "/composition/" + compositionId, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -81,9 +81,9 @@ export const doFetch = (body, callback, extraParams) => {
 
 }
 
-export const doAfterSongFetched = (tracksInfo) => {
+export const doAfterCompositionFetched = (tracksInfo) => {
     createArrayOfTracks(tracksInfo)
-    drawSongDetailInfo(tracksInfo)
+    drawCompositionDetailInfo(tracksInfo)
 }
 
 
@@ -113,7 +113,7 @@ const createArrayOfTracks = (tracksInfo) => {
                 // const audio = element?.message?.audio || element?.message?.voice
                 // const title = audio.title || element.message.date
                 // const track_id = audio.file_unique_id + '_' + element.message.date
-                // const customClass = { chatId: SONG_ID, message_id: element.message.message_id, name: title, track_id: track_id }
+                // const customClass = { chatId: COMPOSITION_ID, message_id: element.message.message_id, name: title, track_id: track_id }
                 // const newTrack = new Track(title, element.file_path , customClass)
                 // arrayLoad.push(newTrack)
 
@@ -150,18 +150,18 @@ const createTrackList = (arrayLoad, isAdmin) => {
         }
     })
 }
-const drawSongDetailInfo = (tracksInfo) => {
+const drawCompositionDetailInfo = (tracksInfo) => {
     let lyricsHtml = null
-    let songName = 'No name'
-    let songNameHtml = '<h1 class="post-title">No name</h1>'
-    const songInfo = tracksInfo.songInfoById
-    if (songInfo && songInfo.doc_url) {
-        lyricsHtml = `<a href="#" onclick="window.open('${songInfo.doc_url}', 'lyrics_popup', 'fullscreen=yes',false); return false">Lyrics</a>`
+    let compositionName = 'No name'
+    let compositionNameHtml = '<h1 class="post-title">No name</h1>'
+    const compositionInfo = tracksInfo.compositionInfoById
+    if (compositionInfo && compositionInfo.doc_url) {
+        lyricsHtml = `<a href="#" onclick="window.open('${compositionInfo.doc_url}', 'lyrics_popup', 'fullscreen=yes',false); return false">Lyrics</a>`
         document.getElementById('post-header').insertAdjacentHTML('afterbegin', lyricsHtml)
     }
     if (tracksInfo.title) {
-        songName = tracksInfo.title
-        songNameHtml = `<h1 class="post-title">${songName}</h1>`
+        compositionName = tracksInfo.title
+        compositionNameHtml = `<h1 class="post-title">${compositionName}</h1>`
     }
-    document.getElementById('post-header').insertAdjacentHTML('afterbegin', songNameHtml)
+    document.getElementById('post-header').insertAdjacentHTML('afterbegin', compositionNameHtml)
 }
