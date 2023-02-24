@@ -9,7 +9,7 @@ const queryString = window.location.search
 const isAuthenticated = queryString.split('auth=')[1]
 
 const domainIs = window.location.host
-let uriCompositionPage = '/song.html?compositionId='
+let uriCompositionPage = '/composition.html?compositionId='
 let uriProfilePage = window.location.origin
 if (domainIs !== 'localhost:80' && window.location.origin !== 'http://localhost') {
   uriCompositionPage = '/public' + uriCompositionPage

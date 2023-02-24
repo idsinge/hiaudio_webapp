@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../js/config'
-import { doFetch, startLoader, cancelLoader } from './song_helper'
-import { USER_INFO, COMPOSITION_ID, LOADER_ELEM_ID, playlist } from './song'
+import { doFetch, startLoader, cancelLoader } from './composition_helper'
+import { USER_INFO, COMPOSITION_ID, LOADER_ELEM_ID, playlist } from './composition'
 
 export class TrackHandler {
     displayOptMenuForNewTrack(newTrack){        

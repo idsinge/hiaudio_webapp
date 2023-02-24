@@ -1,7 +1,7 @@
 import { TrackHandler } from './track_handler'
 import { FileUploader } from './fileuploader'
 import WaveformPlaylist from 'waveform-playlist'
-import { doFetch, getComposition, doAfterCompositionFetched } from './song_helper'
+import { doFetch, getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
 
 const queryString = window.location.search

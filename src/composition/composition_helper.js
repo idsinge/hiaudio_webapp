@@ -1,5 +1,5 @@
 import { ENDPOINT } from '../js/config'
-import { LOADER_ELEM_ID, COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './song'
+import { LOADER_ELEM_ID, COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 
 function Track(id, title, link, customClass) {
     this.id = id;

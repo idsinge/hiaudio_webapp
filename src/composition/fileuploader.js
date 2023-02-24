@@ -2,8 +2,8 @@
 /* https://stackoverflow.com/a/38968948 */
 
 import { UPLOAD_ENDPOINT } from '../js/config'
-import { USER_INFO, LOADER_ELEM_ID, trackHandler } from './song'
-import { startLoader, cancelLoader } from './song_helper'
+import { USER_INFO, LOADER_ELEM_ID, trackHandler } from './composition'
+import { startLoader, cancelLoader } from './composition_helper'
 
 export class FileUploader {
     constructor(compositionId, trackhandler, loaderElementId) {

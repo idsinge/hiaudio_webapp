@@ -1,5 +1,5 @@
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/record.js */
-import { playlist } from './song'
+import { playlist } from './composition'
 
 
 export class Recorder {
