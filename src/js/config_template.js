@@ -1,4 +1,4 @@
-const MODE = 'DEV'
+const MODE = 'DEV' // 'STAGE'
 const DEVPORT = 7007
 
 const ENVIRONMENTS = {
@@ -7,8 +7,8 @@ const ENVIRONMENTS = {
         UPLOAD_ENDPOINT:'',      
     },
     STAGE:{        
-        ENDPOINT:'',
-        UPLOAD_ENDPOINT:''
+        ENDPOINT: window.location.protocol+'//'+window.location.host,
+        UPLOAD_ENDPOINT: window.location.protocol+'//'+window.location.host+'/fileUpload'
     },
     DEV:{       
         ENDPOINT:'https://localhost:'+DEVPORT,
