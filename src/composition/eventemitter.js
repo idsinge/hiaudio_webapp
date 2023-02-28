@@ -249,6 +249,13 @@ $container.on("change", ".select-seek-style", function (node) {
 });
 
 //track drop
+$container.on("change", "#fileInput", function(e) {  
+  var changeEvent = this.files;  
+  for (var i = 0; i < changeEvent.length; i++) {
+    ee.emit("newtrack", changeEvent[i]);
+  }
+});
+
 $container.on("dragenter", ".track-drop", function(e) {
   e.preventDefault();
   e.target.classList.add("drag-enter");

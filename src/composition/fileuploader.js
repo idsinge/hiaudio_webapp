@@ -12,7 +12,12 @@ export class FileUploader {
         this.loaderElementId = loaderElementId
     }
     enableUpload(){
-
+        const me = this
+        const inputElement = document.getElementById("fileInput");
+        inputElement.addEventListener("change", handleFiles, false);
+        function handleFiles() {         
+            me.fileReader(this.files[0])
+        }
         dropContainer.ondragover = dropContainer.ondragenter = (evt) => {
             evt.preventDefault()
         }
