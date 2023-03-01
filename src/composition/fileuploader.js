@@ -15,7 +15,8 @@ export class FileUploader {
         const me = this
         const inputElement = document.getElementById("fileInput");
         inputElement.addEventListener("change", handleFiles, false);
-        function handleFiles() {         
+        function handleFiles(event) {  
+            event.preventDefault()
             me.fileReader(this.files[0])
         }
         dropContainer.ondragover = dropContainer.ondragenter = (evt) => {
@@ -48,11 +49,11 @@ export class FileUploader {
             reader.readAsBinaryString(thefile)
         }
 
-        file.dom.addEventListener("change", () => {
-            if (reader.readyState === FileReader.LOADING) {
-                reader.abort()
-            }
-            reader.readAsBinaryString(file.dom.files[0])
+        file.dom.addEventListener('change', () => {
+            // if (reader.readyState === FileReader.LOADING) {
+            //     reader.abort()
+            // }
+            // reader.readAsBinaryString(file.dom.files[0])
         })
     }
     sendData(file, type) {
@@ -70,15 +71,16 @@ export class FileUploader {
         const dataFormFileName = type ? file.fileName : file.dom.files[0].name
         formData.append('composition_id', this.compositionId)
         //formData.append(dataFormName, dataFormValue, dataFormFileName) 
-        formData.append("audio", dataFormValue, dataFormFileName)
+        formData.append('audio', dataFormValue, dataFormFileName)
         formData.append('user_info', USER_INFO)
 
         XHR.addEventListener('load', (event) => {
             cancelLoader(LOADER_ELEM_ID)
             if(event.srcElement && event.srcElement.response){
-                //console.log("upload response ", event.srcElement.response);
+                //console.log('upload response ', event.srcElement.response)
                 const respJson = JSON.parse(event.srcElement.response)
                 if(respJson.ok){
+                    fileInput.value =''
                     trackHandler.displayOptMenuForNewTrack(respJson)
                 } else {
                     alert('Oops! Something went wrong.')
