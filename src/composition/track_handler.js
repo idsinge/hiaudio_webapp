@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../js/config'
-import { doFetch, startLoader, cancelLoader } from './composition_helper'
-import { USER_INFO, COMPOSITION_ID, LOADER_ELEM_ID, playlist } from './composition'
+import { startLoader, cancelLoader } from './composition_helper'
+import { COMPOSITION_ID, LOADER_ELEM_ID, playlist } from './composition'
 
 export class TrackHandler {
     displayOptMenuForNewTrack(newTrack){        
@@ -60,14 +60,13 @@ export class TrackHandler {
         listOptions.appendChild(listOptionsItem)
         document.getElementById(menuBtnId).appendChild(listOptions)
     }
-    deleteTrackConfirmDialog(event, callback, afterCallback) {
-
+    deleteTrackConfirmDialog(event, callback, afterCallback) {       
         const dialog = confirm('Delete ' + event.target.dataset.name + '?')
         if (dialog) {
-            callback(event.target.dataset.pos, event.target.dataset.chatId, event.target.id, event.target.dataset.trackId, afterCallback)
+            callback(event.target.dataset.pos, event.target.dataset.trackId, afterCallback)
         }
     }
-    sendDeleteRequest(pos, chat_id, message_id, track_id, doAfterDeleted) {
+    sendDeleteRequest(pos,  track_id, doAfterDeleted) {
         startLoader(LOADER_ELEM_ID)
         fetch(ENDPOINT+'/deletetrack/' + track_id, {
             method: 'DELETE',
@@ -81,8 +80,9 @@ export class TrackHandler {
     doAfterDeleted(deleteTrackResult, pos) {
         cancelLoader(LOADER_ELEM_ID)
         if (deleteTrackResult.ok) {
-            const index = parseInt(pos)
-            playlist.clear(index)
+            const arrayTracks = playlist.tracks            
+            const ee = playlist.getEventEmitter()
+            ee.emit("removeTrack", arrayTracks[pos])         
         }
     }
 }
