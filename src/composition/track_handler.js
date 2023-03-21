@@ -18,11 +18,14 @@ export class TrackHandler {
         
     }
     displayOptMenuForTracks() {
-
+        const menuBtns = document.querySelectorAll('.menuoptbtn')
+        if(menuBtns.length){
+            document.querySelectorAll('.menuoptbtn').forEach(e => e.remove())
+        }
         const controlsList = document.getElementsByClassName('controls')
         const arrayTracks = playlist.getInfo().tracks
 
-        for (let i = 0; i < controlsList.length; i++) {
+        for (let i = 0; i < arrayTracks.length; i++) {
             if(arrayTracks && arrayTracks[i].customClass){
                 const message_id = arrayTracks[i].customClass.message_id
                 const name = arrayTracks[i].customClass.name
@@ -82,7 +85,9 @@ export class TrackHandler {
         if (deleteTrackResult.ok) {
             const arrayTracks = playlist.tracks            
             const ee = playlist.getEventEmitter()
-            ee.emit("removeTrack", arrayTracks[pos])         
+            ee.emit('removeTrack', arrayTracks[pos])
+            const trackHandler = new TrackHandler()
+            trackHandler.displayOptMenuForTracks()
         }
     }
 }
