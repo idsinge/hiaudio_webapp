@@ -21,7 +21,7 @@ if (isAuthenticated) {
     <a class="nav-link" href="${uriProfilePage+'/profile.html'}">Profile</a>
   </li>
   <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModal">New Music</a>
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#newMusicModal">New Music</a>
       </li>`
 } else {
   document.getElementById('useroptions').innerHTML = `<a class="dropdown-item" href="${window.location.origin}/login">Google Login</a>`
@@ -91,12 +91,14 @@ const paintListOfCompositions = (compositionsList) => {
 const newProjectButton = document.getElementById('newcomposition')
 newProjectButton && newProjectButton.addEventListener("click", (e) => {
   let newtitle = document.getElementById('newtitle').value
+  const privacyLevel = document.querySelector('input[name="newMusicPrivacyRadios"]:checked').value
   if (!newtitle) {
     alert('Introduce a valid title, please')
     return
   }
   let body = JSON.stringify({
-    title: newtitle
+    title: newtitle,
+    privacy_level: privacyLevel
   })
 
 

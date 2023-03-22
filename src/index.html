@@ -35,17 +35,40 @@
         </div>
     </header>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="newMusicModal" tabindex="-1" aria-labelledby="newMusicModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New Music</h5>
+                    <h5 class="modal-title" id="newMusicModalLabel">New Music</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="newtitle" id="newtitle" placeholder="new music title" title="newtitle">
+                    <div class="form-group">
+                        <input type="text" class="newtitle" id="newtitle" placeholder="new music title" title="newtitle">
+                    </div>                    
+                    <div class="form-group">
+                        <label for="newMusicFormControl">Level of Privacy:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newMusicPrivacyRadios" id="newMusicPrivacyRadios1" value="1" checked>
+                            <label class="form-check-label" for="newMusicPrivacyRadios1">
+                              Public
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newMusicPrivacyRadios" id="newMusicPrivacyRadios2" value="2">
+                            <label class="form-check-label" for="newMusicPrivacyRadios2">
+                              Only registered users
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newMusicPrivacyRadios" id="newMusicPrivacyRadios3" value="3">
+                            <label class="form-check-label" for="newMusicPrivacyRadios3">
+                              Private
+                            </label>
+                          </div>
+                    </div>                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
