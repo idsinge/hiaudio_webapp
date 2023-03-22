@@ -13,6 +13,8 @@ export class TrackHandler {
         const message_id = element.message.message_id
         let pos = controlsList.length - 1 
         if(pos>=0){
+            const customClass = { name: title, track_id: track_id }
+            playlist.tracks[pos].customClass = customClass            
             this.createMenuOptButton(controlsList, pos, message_id, title, track_id, COMPOSITION_ID)
         }
         

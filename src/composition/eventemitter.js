@@ -2,7 +2,7 @@
  * This script is provided to give an example how the playlist can be controlled using the event emitter.
  * This enables projects to create/control the useability of the project.
 */
-import { playlist, fileUploader, USER_PERMISSION } from './composition'
+import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
 var ee = playlist.getEventEmitter();
@@ -378,7 +378,14 @@ ee.on("audiosourcesloaded", function() {
   displayLoadingData("Tracks have all finished decoding.");
 });
 
-ee.on("audiosourcesrendered", function() {
+ee.on("audiosourcesrendered", function() {  
+  if(USER_PERMISSION){   
+    const lastPosTrack = playlist.tracks.length - 1
+    const lasttrack = playlist.tracks[lastPosTrack]    
+    if(!lasttrack.customClass){         
+      trackHandler.displayOptMenuForNewTrack(fileUploader.lastupload)     
+    }    
+  }
   displayLoadingData("Tracks have been rendered");
 });
 

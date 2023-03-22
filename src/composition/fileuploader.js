@@ -10,6 +10,7 @@ export class FileUploader {
         this.compositionId = compositionId
         this.trackhandler = trackhandler
         this.loaderElementId = loaderElementId
+        this.lastupload = null
     }
     enableUpload(){
         const me = this
@@ -81,7 +82,10 @@ export class FileUploader {
                 const respJson = JSON.parse(event.srcElement.response)
                 if(respJson.ok){
                     fileInput.value =''
-                    trackHandler.displayOptMenuForNewTrack(respJson)
+                    this.lastupload = respJson
+                    if(type === 'blob'){
+                        trackHandler.displayOptMenuForNewTrack(respJson)
+                    }                    
                 } else {
                     alert('Oops! Something went wrong.')
                 }
