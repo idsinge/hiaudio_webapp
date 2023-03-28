@@ -107,6 +107,9 @@ const createArrayOfTracks = (tracksInfo) => {
     if (canUpload) {
         setUserPermission(true)
         fileUploader.enableUpload()
+        if (userRole === 1) {
+            enableCompositionSettings(tracksInfo)
+        }
     }
     if (tracksInfo.tracks) {
         const arrayLoad = []
@@ -167,4 +170,48 @@ const drawCompositionDetailInfo = (tracksInfo) => {
         compositionNameHtml = `<h1 class="post-title">${compositionName}</h1>`
     }
     document.getElementById('post-header').insertAdjacentHTML('afterbegin', compositionNameHtml)
+}
+
+const enableCompositionSettings = (tracksInfo) => {    
+    
+    setUIContributors(tracksInfo.contributors)    
+    setUITitle(tracksInfo.title)
+    setUIPrivacy(tracksInfo.privacy)
+    document.getElementById('useroptions').innerHTML = `<li class="nav-item">
+    <a class="nav-link" href="#" data-toggle="modal" data-target="#settingsModal">Settings</a>
+  </li>
+   `
+}
+
+const setUIPrivacy = (privacyLevel) => {    
+    const radiobtn = document.getElementById('settingsPrivacyRadios'+privacyLevel)
+    radiobtn.checked = true
+}
+
+const setUITitle = (title) => {
+    const textfield = document.getElementById('newtitle')
+    textfield.value = title
+}
+const setUIContributors = (contributors) => { 
+           
+    const button = document.getElementById("addContribButton")
+    const input = document.getElementById("contributorinput")
+    const ul = document.getElementById("listOfContributors")   
+    
+    if(contributors.length){
+        contributors.flatMap((elem) => addContributorToList(ul, elem.user_id))
+    }
+
+    button.addEventListener("click", function() {        
+        if(input.value){
+            addContributorToList(ul,input.value)
+        }
+    })
+}
+
+const addContributorToList = (ul, contrib) => {
+    const li = document.createElement("li")
+    li.className = 'list-group-item'
+    li.textContent = contrib
+    ul.appendChild(li)
 }
