@@ -1,6 +1,7 @@
 import { ENDPOINT } from '../js/config'
 import { LOADER_ELEM_ID, COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 
+export let CURRENT_USER_ID = null
 function Track(id, title, link, customClass) {
     this.id = id;
     this.name = title;
@@ -100,8 +101,10 @@ export const cancelLoader = (loaderId) => {
 
 
 const createArrayOfTracks = (tracksInfo) => {
-    const isAdmin = tracksInfo.owner || false
-    if (isAdmin) {
+    const canUpload = tracksInfo.owner || (1<=tracksInfo.role && tracksInfo.role <= 3) || false
+    const userRole = tracksInfo.role
+    CURRENT_USER_ID = tracksInfo.viewer_id
+    if (canUpload) {
         setUserPermission(true)
         fileUploader.enableUpload()
     }
@@ -118,12 +121,12 @@ const createArrayOfTracks = (tracksInfo) => {
                 // arrayLoad.push(newTrack)
 
                 const title = element.title
-                const customClass = { name: title, track_id: element.id }
+                const customClass = { name: title, track_id: element.id, user_id: element.user_id}
                 const newTrack = new Track(element.id, title, element.path , customClass)
                 arrayLoad.push(newTrack)
             }
         })
-        createTrackList(arrayLoad, isAdmin)
+        createTrackList(arrayLoad, canUpload, userRole)
     } else {
         cancelLoader(LOADER_ELEM_ID)
         playlist.initExporter()
@@ -131,7 +134,7 @@ const createArrayOfTracks = (tracksInfo) => {
     }
 }
 
-const createTrackList = (arrayLoad, isAdmin) => {
+const createTrackList = (arrayLoad, canUpload, userRole) => {
     let errorIs = null
     playlist.load(arrayLoad).then(() => {
         playlist.initExporter()
@@ -144,8 +147,8 @@ const createTrackList = (arrayLoad, isAdmin) => {
             alert(errorIs)
         } else {
             recorder.init()
-            if (isAdmin) {
-                trackHandler.displayOptMenuForTracks()
+            if (canUpload) {
+                trackHandler.displayOptMenuForTracks(userRole)
             }
         }
     })
