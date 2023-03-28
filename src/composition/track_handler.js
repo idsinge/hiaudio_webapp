@@ -1,5 +1,5 @@
 import { ENDPOINT } from '../js/config'
-import { startLoader, cancelLoader } from './composition_helper'
+import { startLoader, cancelLoader, CURRENT_USER_ID } from './composition_helper'
 import { COMPOSITION_ID, LOADER_ELEM_ID, playlist } from './composition'
 
 export class TrackHandler {
@@ -13,13 +13,13 @@ export class TrackHandler {
         const message_id = element.message.message_id
         let pos = controlsList.length - 1 
         if(pos>=0){
-            const customClass = { name: title, track_id: track_id }
+            const customClass = { name: title, track_id: track_id, user_id:audio.user_id}
             playlist.tracks[pos].customClass = customClass            
             this.createMenuOptButton(controlsList, pos, message_id, title, track_id, COMPOSITION_ID)
         }
         
     }
-    displayOptMenuForTracks() {
+    displayOptMenuForTracks(role) {
         const menuBtns = document.querySelectorAll('.menuoptbtn')
         if(menuBtns.length){
             document.querySelectorAll('.menuoptbtn').forEach(e => e.remove())
@@ -28,12 +28,14 @@ export class TrackHandler {
         const arrayTracks = playlist.getInfo().tracks
 
         for (let i = 0; i < arrayTracks.length; i++) {
-            if(arrayTracks && arrayTracks[i].customClass){
-                const message_id = arrayTracks[i].customClass.message_id
-                const name = arrayTracks[i].customClass.name
-                const track_id = arrayTracks[i].customClass.track_id
-                const chatId = arrayTracks[i].customClass.chatId
-                this.createMenuOptButton(controlsList, i, message_id, name, track_id, chatId)
+            if(arrayTracks && arrayTracks[i].customClass){                
+                if ((role === 1 || role === 2)||(role === 3 && arrayTracks[i].customClass.user_id === CURRENT_USER_ID)){                   
+                    const message_id = arrayTracks[i].customClass.message_id
+                    const name = arrayTracks[i].customClass.name
+                    const track_id = arrayTracks[i].customClass.track_id
+                    const chatId = arrayTracks[i].customClass.chatId
+                    this.createMenuOptButton(controlsList, i, message_id, name, track_id, chatId)
+                }                
             }            
         }
     }
@@ -85,11 +87,12 @@ export class TrackHandler {
     doAfterDeleted(deleteTrackResult, pos) {
         cancelLoader(LOADER_ELEM_ID)
         if (deleteTrackResult.ok) {
+            const role = deleteTrackResult.role
             const arrayTracks = playlist.tracks            
             const ee = playlist.getEventEmitter()
             ee.emit('removeTrack', arrayTracks[pos])
             const trackHandler = new TrackHandler()
-            trackHandler.displayOptMenuForTracks()
+            trackHandler.displayOptMenuForTracks(role)
         }
     }
 }
