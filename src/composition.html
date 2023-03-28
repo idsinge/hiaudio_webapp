@@ -20,12 +20,89 @@
 
 <body>
 
-    <header class="site-header">
-        <ol class="breadcrumb">
-            <li><a id="goHome" href="">himusic</a></li>
-        </ol>
+    <header class="navbar navbar-expand-lg navbar-light bg-light">
+        <a id="goHome" class="navbar-brand" href="">himusic</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul id="useroptions" class="navbar-nav mr-auto"></ul>
+        </div>
     </header>
     <main class="container">
+        <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" class="newtitle" id="newtitle" placeholder=""
+                                title="newtitle" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsFormControl">Level of Privacy:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="settingsPrivacyRadios"
+                                    id="settingsPrivacyRadios1" value="1" checked>
+                                <label class="form-check-label" for="settingsPrivacyRadios1">
+                                    Public
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="settingsPrivacyRadios"
+                                    id="settingsPrivacyRadios2" value="2">
+                                <label class="form-check-label" for="settingsPrivacyRadios2">
+                                    Only registered users
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="settingsPrivacyRadios"
+                                    id="settingsPrivacyRadios3" value="3">
+                                <label class="form-check-label" for="settingsPrivacyRadios3">
+                                    Private
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label id="" for="listContributorsFormControl">Contributors:</label>
+                            <div class="container">
+                                <div class="row justify-center">
+                                  <div class="col-12">                                  
+                                    <div class="input-group mb-3">
+                                      <input id="contributorinput" type="email" class="form-control" placeholder="add by email" aria-label="Add an item" aria-describedby="basic-addon2">
+                                      <div class="input-group-append">
+                                        <button class="btn btn-outline-info" id="addContribButton" type="button">Add</button>
+                                      </div>
+                                    </div>                            
+                                  </div>
+                                  <div class="col-12">
+                                    <ul id="listOfContributors" class="list-group"></ul>                               
+                                  </div>
+                                </div>
+                              </div>                            
+                        </div>
+                        <div class="form-group">                            
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                <label class="custom-control-label" for="customSwitch1">Delete composition</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button id="updatecompositionbutton" type="button" class="btn btn-primary">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="wrapper">
             <article class="post">
                 <header id="post-header" class="post-header">
@@ -39,8 +116,8 @@
                             id="master-gain" />
 
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input automatic-scroll" type="checkbox"
-                                id="automatic_scroll" checked/>
+                            <input class="form-check-input automatic-scroll" type="checkbox" id="automatic_scroll"
+                                checked />
                             <label class="form-check-label" for="automatic_scroll">Automatic Scroll</label>
                         </div>
                     </form>
@@ -81,20 +158,21 @@
                                     title="Select cursor">
                                     <i class="fas fa-headphones"></i>
                                 </button>
-                                <button type="button" class="btn-shift btn btn-outline-dark" title="Shift audio in time">
+                                <button type="button" class="btn-shift btn btn-outline-dark"
+                                    title="Shift audio in time">
                                     <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
                                 </button>
                                 <button type="button" class="btn-select btn btn-outline-dark"
                                     title="Select audio region">
                                     <i class="fas fa-italic"></i>
-                                </button>                              
+                                </button>
                             </div>
 
                             <div class="btn-group btn-select-state-group">
                                 <button type="button" class="btn-loop btn btn-outline-success disabled"
                                     title="Loop a selected segment of audio">
                                     <i class="fas fa-redo-alt"></i>
-                                </button>                               
+                                </button>
                             </div>
                             <div class="btn-group">
                                 <button type="button" title="Download the current work as Wav file"
@@ -107,12 +185,12 @@
                     <div id="playlist"></div>
                     <div id="loader" class="loader"></div>
 
-                    <div class="playlist-bottom-bar input-group mb-3">                        
+                    <div class="playlist-bottom-bar input-group mb-3">
                         <form>
                             <div class="form-group">
                                 <div id="dropContainer" class="track-drop"></div>
-                                <input type="file" id="fileInput" name="audio" class="form-control-file"/>
-                            </div>                           
+                                <input type="file" id="fileInput" name="audio" class="form-control-file" />
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -122,6 +200,9 @@
     <footer class="footer">hi music 2022</footer>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
     <script src="composition/eventemitter.js"></script>
 </body>
 
