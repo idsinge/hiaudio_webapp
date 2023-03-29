@@ -48,6 +48,7 @@ const setUserInfo = (userinfo) => {
     document.getElementById('profilecard').hidden = false
     document.getElementById('profilepicture').src = userinfo.profile_pic
     document.getElementById('username').innerHTML = userinfo.name
+    document.getElementById('userid').innerHTML = 'User Id: ' + userinfo.user_id
     document.getElementById('emailaddress').innerHTML = userinfo.email
   } else {
     document.getElementById('logincard').hidden = false
