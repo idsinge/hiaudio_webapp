@@ -7,6 +7,7 @@ export const enableCompositionSettings = (tracksInfo) => {
     setUIContributors(tracksInfo.contributors, tracksInfo.id)
     setUITitle(tracksInfo.title)
     setUIPrivacy(tracksInfo.privacy)
+    saveButtonHandler(tracksInfo.id)
     document.getElementById('useroptions').innerHTML = `<li class="nav-item">
     <a class="nav-link" href="#" data-toggle="modal" data-target="#settingsModal">Settings</a>
   </li>
@@ -14,13 +15,13 @@ export const enableCompositionSettings = (tracksInfo) => {
 }
 
 const setUIPrivacy = (privacyLevel) => {
-    CURRENT_PRIVACY = privacyLevel    
+    CURRENT_PRIVACY = privacyLevel
     const radiobtn = document.getElementById('settingsPrivacyRadios' + privacyLevel)
     radiobtn.checked = true
 }
 
 const setUITitle = (title) => {
-    CURRENT_TITLE = title    
+    CURRENT_TITLE = title
     const textfield = document.getElementById('newtitle')
     textfield.value = title
 }
@@ -53,22 +54,19 @@ const addContributorToUI = (ul, contrib) => {
 const addContributorToList = async (ul, contrib, compositionId, role) => {
 
     const data = { email: contrib, composition_id: compositionId, role: parseInt(role) }
-    const resultAddContrib = await updateSettings('/addcontributor', data)
+    const resultAddContrib = await updateSettings('POST', '/addcontributor', data)
     if (resultAddContrib && resultAddContrib.ok) {
         addContributorToUI(ul, contrib)
-    } else {
-        console.log(resultAddContrib)
     }
-
 }
 
-const updateSettings = async (method, data) => {
-    
+const updateSettings = async (method, api, data) => {
+
     let body = JSON.stringify(data)
     let errorIs = null
     let response = null
     const request = {
-        method: 'POST',
+        method: method,
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -76,7 +74,7 @@ const updateSettings = async (method, data) => {
         body: body
     }
     try {
-        const sendRqst = await fetch(ENDPOINT + method, request)
+        const sendRqst = await fetch(ENDPOINT + api, request)
         const respToJson = await sendRqst.json()
         if (respToJson) {
             response = respToJson
@@ -88,25 +86,52 @@ const updateSettings = async (method, data) => {
     return response
 }
 
-const confirmSettingsButton = document.getElementById('updatecompositionbutton')
-confirmSettingsButton && confirmSettingsButton.addEventListener('click', (e) => {
+const saveButtonHandler = (compId) => {
+    const confirmSettingsButton = document.getElementById('updatecompositionbutton')
+    confirmSettingsButton && confirmSettingsButton.addEventListener('click', async (e) => {
+        const deleteComp = document.getElementById('deleteComposition').checked
+        if (deleteComp === true) {
+            await deleteComposition(compId)
+        } else {
+            const newtitle = document.getElementById('newtitle').value
+            if (newtitle !== CURRENT_TITLE) {
+                await updateTitle(compId, newtitle)
+            }
+            const newPrivacyLevel = document.querySelector('input[name="settingsPrivacyRadios"]:checked').value
+            const privacy = parseInt(newPrivacyLevel)
+            if (privacy !== CURRENT_PRIVACY) {
+                await updatePrivacy(compId, privacy)
+            }
+            //if no changes or updates are successfully => close modal dialog
+            $('#settingsModal').modal('hide')
+        }
+    })
+}
 
-    const newtitle = document.getElementById('newtitle').value
+const updateTitle = async (compId, newtitle) => {
 
-    if (newtitle !== CURRENT_TITLE) {
-        console.log('new title', newtitle)
-        // updateSettings
-        // CURRENT_TITLE = null
+    const data = { id: compId, title: newtitle }
+    const resultNewTitle = await updateSettings('PATCH', '/updatecomptitle', data)
+    if (resultNewTitle.ok) {
+        CURRENT_TITLE = newtitle
+        document.getElementById('comp-title').innerHTML = newtitle
     }
+}
+const updatePrivacy = async (compId, privacy) => {
 
-    const newPrivacyLevel = document.querySelector('input[name="settingsPrivacyRadios"]:checked').value
-
-    if (parseInt(newPrivacyLevel) !== CURRENT_PRIVACY) {
-        console.log('new privacy', newPrivacyLevel)
-        // updateSettings
-        // CURRENT_PRIVACY = null
+    const data = { id: compId, privacy: privacy }
+    const resultNewPrivacy = await updateSettings('PATCH', '/updateprivacy', data)
+    if (resultNewPrivacy.ok) {
+        CURRENT_PRIVACY = privacy
     }
-
-    //if no changes or updates are successfully => close modal dialog
-    $('#settingsModal').modal('hide')
-})
+}
+const deleteComposition = async (compId) => {
+    const dialog = confirm('Delete ' + CURRENT_TITLE + '?')
+    if (dialog) {
+        const data = { id: compId }
+        const resultDeleteComp = await updateSettings('DELETE', '/deletecomposition', data)        
+        if (resultDeleteComp.ok) {
+            window.location.href = window.location.origin
+        }
+    }
+}

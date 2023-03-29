@@ -168,7 +168,7 @@ const drawCompositionDetailInfo = (tracksInfo) => {
     }
     if (tracksInfo.title) {
         compositionName = tracksInfo.title
-        compositionNameHtml = `<h1 class="post-title">${compositionName}</h1>`
+        compositionNameHtml = `<h1 id="comp-title" class="post-title">${compositionName}</h1>`
     }
     document.getElementById('post-header').insertAdjacentHTML('afterbegin', compositionNameHtml)
 }
