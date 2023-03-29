@@ -45,7 +45,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <input type="text" class="newtitle" id="newtitle" placeholder=""
-                                title="newtitle" readonly>
+                                title="newtitle">
                         </div>
                         <div class="form-group">
                             <label for="settingsFormControl">Level of Privacy:</label>
@@ -78,6 +78,13 @@
                                   <div class="col-12">                                  
                                     <div class="input-group mb-3">
                                       <input id="contributorinput" type="email" class="form-control" placeholder="add by email" aria-label="Add an item" aria-describedby="basic-addon2">
+                                      <select class="custom-select" id="inputGroupSelectRole">
+                                        <option>Role...</option>
+                                        <option value="1">Owner</option>
+                                        <option value="2">Admin</option>
+                                        <option value="3" selected>Member</option>
+                                        <option value="4">Guest</option>
+                                      </select>
                                       <div class="input-group-append">
                                         <button class="btn btn-outline-info" id="addContribButton" type="button">Add</button>
                                       </div>
