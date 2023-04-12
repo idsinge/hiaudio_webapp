@@ -2,6 +2,7 @@ import { ENDPOINT } from '../js/config'
 
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null
+let CURRENT_OPENTOCONTRIB = null
 
 const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
 
@@ -9,6 +10,7 @@ export const enableCompositionSettings = (tracksInfo) => {
     setUIContributors(tracksInfo.contributors, tracksInfo.id)
     setUITitle(tracksInfo.title)
     setUIPrivacy(tracksInfo.privacy)
+    setOpenToContrib(tracksInfo.opentocontrib)
     saveButtonHandler(tracksInfo.id)
     document.getElementById('useroptions').innerHTML = `<li class="nav-item">
     <a class="nav-link" href="#" data-toggle="modal" data-target="#settingsModal">Settings</a>
@@ -27,6 +29,13 @@ const setUITitle = (title) => {
     const textfield = document.getElementById('newtitle')
     textfield.value = title
 }
+
+const setOpenToContrib = (status) => {     
+    CURRENT_OPENTOCONTRIB = status   
+    const checkbox = document.getElementById('opentocontribution')
+    checkbox.checked = status;
+}
+
 const setUIContributors = (contributors, compositionId) => {
 
     const button = document.getElementById('addContribButton')
@@ -102,6 +111,10 @@ const saveButtonHandler = (compId) => {
             if (privacy !== CURRENT_PRIVACY) {
                 await updatePrivacy(compId, privacy)
             }
+            const newOpenToContrib = document.getElementById('opentocontribution').checked                        
+            if ( newOpenToContrib !== CURRENT_OPENTOCONTRIB) {                
+                await updateOpenToContrib(compId, newOpenToContrib)
+            }            
             //if no changes or updates are successfully => close modal dialog
             $('#settingsModal').modal('hide')
         }
@@ -125,6 +138,16 @@ const updatePrivacy = async (compId, privacy) => {
         CURRENT_PRIVACY = privacy
     }
 }
+
+const updateOpenToContrib = async (compId, newstatus) => {
+
+    const data = { id: compId, opentocontrib: newstatus }
+    const resultNewOpenToContrib = await updateSettings('PATCH', '/updatecomptocontrib', data)
+    if (resultNewOpenToContrib.ok) {
+        CURRENT_OPENTOCONTRIB = newstatus
+    }
+}
+
 const deleteComposition = async (compId) => {
     const dialog = confirm('Delete ' + CURRENT_TITLE + '?')
     if (dialog) {
