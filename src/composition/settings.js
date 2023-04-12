@@ -3,6 +3,8 @@ import { ENDPOINT } from '../js/config'
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null
 
+const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
+
 export const enableCompositionSettings = (tracksInfo) => {
     setUIContributors(tracksInfo.contributors, tracksInfo.id)
     setUITitle(tracksInfo.title)
@@ -32,7 +34,7 @@ const setUIContributors = (contributors, compositionId) => {
     const ul = document.getElementById('listOfContributors')
 
     if (contributors.length) {
-        contributors.flatMap((elem) => addContributorToUI(ul, elem.user_id))
+        contributors.flatMap((elem) => addContributorToUI(ul, elem))
     }
 
     button.addEventListener('click', function () {
@@ -44,10 +46,11 @@ const setUIContributors = (contributors, compositionId) => {
     })
 }
 
-const addContributorToUI = (ul, contrib) => {
+const addContributorToUI = (ul, contrib) => {    
+    const role = ROLES[contrib.role]
     const li = document.createElement('li')
     li.className = 'list-group-item'
-    li.textContent = contrib
+    li.textContent = contrib.user_id + ' (' + role + ')'
     ul.appendChild(li)
 }
 
@@ -62,8 +65,7 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
 
 const updateSettings = async (method, api, data) => {
 
-    let body = JSON.stringify(data)
-    let errorIs = null
+    let body = JSON.stringify(data)    
     let response = null
     const request = {
         method: method,
@@ -79,8 +81,7 @@ const updateSettings = async (method, api, data) => {
         if (respToJson) {
             response = respToJson
         }
-    } catch (error) {
-        errorIs = error
+    } catch (error) {        
         alert(error)
     }
     return response
