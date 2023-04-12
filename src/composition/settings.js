@@ -55,11 +55,10 @@ const addContributorToUI = (ul, contrib) => {
 }
 
 const addContributorToList = async (ul, contrib, compositionId, role) => {
-
-    const data = { email: contrib, composition_id: compositionId, role: parseInt(role) }
-    const resultAddContrib = await updateSettings('POST', '/addcontributor', data)
+    const data = { user_id: contrib, composition_id: compositionId, role: parseInt(role) }
+    const resultAddContrib = await updateSettings('POST', '/addcontributorbyid', data)
     if (resultAddContrib && resultAddContrib.ok) {
-        addContributorToUI(ul, contrib)
+        addContributorToUI(ul, data)
     }
 }
 
