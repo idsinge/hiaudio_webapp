@@ -16,12 +16,44 @@ export const enableCompositionSettings = (tracksInfo) => {
     <a class="nav-link" href="#" data-toggle="modal" data-target="#settingsModal">Settings</a>
   </li>
    `
+    privateRadioButtonHandler()
 }
 
+const changeOpenToContrib = (newstate) => {
+    const opentocontribcheckbox = document.getElementById('opentocontribution')    
+    if(newstate === 0){
+        opentocontribcheckbox.checked = false
+        opentocontribcheckbox.disabled = true
+    } else {
+        opentocontribcheckbox.disabled = false
+    }
+}
+
+
+const privateRadioButtonHandler = () => {
+
+    const radioButtons = document.getElementsByName('settingsPrivacyRadios');
+   
+    for (let radiobutton of radioButtons) {
+
+        radiobutton.addEventListener('change', function () {
+            if (this.checked) {
+                if(parseInt(this.value) === 3) {
+                    changeOpenToContrib(0)
+                } else {
+                    changeOpenToContrib(1)
+                }                
+            } 
+        })
+    }
+}
 const setUIPrivacy = (privacyLevel) => {
     CURRENT_PRIVACY = privacyLevel
     const radiobtn = document.getElementById('settingsPrivacyRadios' + privacyLevel)
     radiobtn.checked = true
+    if(privacyLevel === 3){
+        changeOpenToContrib(0)
+    }
 }
 
 const setUITitle = (title) => {
