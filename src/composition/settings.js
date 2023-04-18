@@ -116,18 +116,22 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
     const newcontrib = { user_id: contrib, composition_id: compositionId, role: parseInt(role) }    
     const checkContribDuplicateInCurrent = checkIfObjectExists(CURRENT_CONTRIBUTORS,newcontrib)
     const checkContribDuplicateInNew = checkIfObjectExists(NEW_CONTRIBUTORS,newcontrib) 
-   
+    const roleInput = document.getElementById('inputGroupSelectRole').value
+    
     // #TODO: replace with API call to new endpoint to validate contributor
-    const response = await fetch(ENDPOINT + '/user/' + contrib)    
-    if(response && response.ok){                      
-        if(!CURRENT_CONTRIBUTORS  || (!checkContribDuplicateInCurrent && !checkContribDuplicateInNew)){
+    if(parseInt(roleInput) && (!CURRENT_CONTRIBUTORS  || (!checkContribDuplicateInCurrent && !checkContribDuplicateInNew ))){
+        
+        const response = await fetch(ENDPOINT + '/user/' + contrib)    
+        
+        if(response && response.ok){                      
+        
             NEW_CONTRIBUTORS.push(newcontrib)
             // remove from UI if is there
             const contribListElem = document.getElementById(contrib)
             if(contribListElem){
                 contribListElem.remove()
             }
-            addContributorToUI(ul, newcontrib)
+            addContributorToUI(ul, newcontrib)        
         }
     }
 }
