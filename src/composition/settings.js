@@ -12,6 +12,7 @@ export const enableCompositionSettings = (tracksInfo) => {
     setUIContributors(tracksInfo.contributors, tracksInfo.id)
     setUITitle(tracksInfo.title)
     setUIPrivacy(tracksInfo.privacy)
+    setCurrentUserRole(tracksInfo.role)
     setOpenToContrib(tracksInfo.opentocontrib)
     saveButtonHandler(tracksInfo.id)
     document.getElementById('useroptions').innerHTML = `<li class="nav-item">
@@ -68,6 +69,11 @@ const setOpenToContrib = (status) => {
     CURRENT_OPENTOCONTRIB = status   
     const checkbox = document.getElementById('opentocontribution')
     checkbox.checked = status
+}
+
+const setCurrentUserRole = (role) => {
+    const yourRole = document.getElementById('currentroleusersetting')
+    yourRole.innerHTML = 'You are: ' + ROLES[role]
 }
 
 const setUIContributors = (contributors, compositionId) => {
