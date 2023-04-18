@@ -71,6 +71,7 @@ const paintListOfCompositions = (compositionsList) => {
       const template = `
         <div class="grid-div">
           <div class="card">
+            ${element.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}
             <a href="${uriCompositionPage + element.id}">
               <img src="${element.photo_url || COMPOSITION_COVER}" alt="Card image cap" class="card-img">
             </a>
