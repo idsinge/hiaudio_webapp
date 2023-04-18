@@ -100,12 +100,16 @@ const addContributorToUI = (ul, contrib) => {
 }
 
 const checkIfObjectExists = (array, obj) => {
-    return array.some(function(arrayObj) {
-        // To compare new contributor with existing in settings
-        // do not consider "id" of the exisiting contributor        
-        let compareObject = (({ id, ...object }) => object)(arrayObj)
-        return (compareObject.user_id ===  obj.user_id && compareObject.role ===  obj.role)      
-    })
+    if(!array){
+        return false
+    } else {
+        return array.some(function(arrayObj) {
+            // To compare new contributor with existing in settings
+            // do not consider "id" of the exisiting contributor        
+            let compareObject = (({ id, ...object }) => object)(arrayObj)
+            return (compareObject.user_id ===  obj.user_id && compareObject.role ===  obj.role)      
+        })
+    }    
 }
 const addContributorToList = async (ul, contrib, compositionId, role) => {
     
