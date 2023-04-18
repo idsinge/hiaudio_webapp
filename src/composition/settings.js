@@ -3,6 +3,7 @@ import { ENDPOINT } from '../js/config'
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null
 let CURRENT_OPENTOCONTRIB = null
+let NEW_CONTRIBUTORS = []
 
 const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
 
@@ -32,7 +33,7 @@ const changeOpenToContrib = (newstate) => {
 
 const privateRadioButtonHandler = () => {
 
-    const radioButtons = document.getElementsByName('settingsPrivacyRadios');
+    const radioButtons = document.getElementsByName('settingsPrivacyRadios')
    
     for (let radiobutton of radioButtons) {
 
@@ -65,7 +66,7 @@ const setUITitle = (title) => {
 const setOpenToContrib = (status) => {     
     CURRENT_OPENTOCONTRIB = status   
     const checkbox = document.getElementById('opentocontribution')
-    checkbox.checked = status;
+    checkbox.checked = status
 }
 
 const setUIContributors = (contributors, compositionId) => {
@@ -96,9 +97,13 @@ const addContributorToUI = (ul, contrib) => {
 }
 
 const addContributorToList = async (ul, contrib, compositionId, role) => {
-    const data = { user_id: contrib, composition_id: compositionId, role: parseInt(role) }
-    const resultAddContrib = await updateSettings('POST', '/addcontributorbyid', data)
-    if (resultAddContrib && resultAddContrib.ok) {
+    // #TODO: replace with API call to new endpoint to validate contributor
+    const response = await fetch(ENDPOINT + '/user/' + contrib)    
+    if(response && response.ok){
+        const jsonData = await response.json()
+        const data = { user_id: jsonData.id, composition_id: compositionId, role: parseInt(role) }
+        // TODO: check if the new contrib exists and the role is the same        
+        NEW_CONTRIBUTORS.push(data)
         addContributorToUI(ul, data)
     }
 }
@@ -127,7 +132,7 @@ const updateSettings = async (method, api, data) => {
     return response
 }
 
-const saveButtonHandler = (compId) => {
+const saveButtonHandler = async (compId) => {
     const confirmSettingsButton = document.getElementById('updatecompositionbutton')
     confirmSettingsButton && confirmSettingsButton.addEventListener('click', async (e) => {
         const deleteComp = document.getElementById('deleteComposition').checked
@@ -146,7 +151,21 @@ const saveButtonHandler = (compId) => {
             const newOpenToContrib = document.getElementById('opentocontribution').checked                        
             if ( newOpenToContrib !== CURRENT_OPENTOCONTRIB) {                
                 await updateOpenToContrib(compId, newOpenToContrib)
+            }
+
+            if(NEW_CONTRIBUTORS.length > 0){
+                let copy_new_contribs = [...NEW_CONTRIBUTORS]
+                for (let i=0; i < NEW_CONTRIBUTORS.length; i++){                    
+                    const newcontrib = NEW_CONTRIBUTORS[i]
+                    const resultAddContrib = await updateSettings('POST', '/addcontributorbyid', newcontrib)                    
+                    if(resultAddContrib && resultAddContrib.ok){
+                        copy_new_contribs[i] = null                       
+                    }                       
+                }
+                const noEmptyValues = copy_new_contribs.filter((value) => value != null)
+                NEW_CONTRIBUTORS = noEmptyValues                        
             }            
+
             //if no changes or updates are successfully => close modal dialog
             $('#settingsModal').modal('hide')
         }
