@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../js/config'
 import { LOADER_ELEM_ID, COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
-import {enableCompositionSettings} from './settings'
+import {enableCompositionSettings, ROLES} from './settings'
 
 export let CURRENT_USER_ID = null
 function Track(id, title, link, customClass) {
@@ -159,7 +159,6 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
 }
 const drawCompositionDetailInfo = (tracksInfo) => {
     let lyricsHtml = null
-    let compositionName = 'No name'
     let compositionNameHtml = '<h1 class="post-title">No name</h1>'
     const compositionInfo = tracksInfo.compositionInfoById
     if (compositionInfo && compositionInfo.doc_url) {
@@ -167,8 +166,10 @@ const drawCompositionDetailInfo = (tracksInfo) => {
         document.getElementById('post-header').insertAdjacentHTML('afterbegin', lyricsHtml)
     }
     if (tracksInfo.title) {
-        compositionName = tracksInfo.title
-        compositionNameHtml = `<h1 id="comp-title" class="post-title">${compositionName}</h1>`
+        const compositionName = tracksInfo.title
+        compositionNameHtml = `${tracksInfo.opentocontrib ? '<br><span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}`
+        compositionNameHtml += `${tracksInfo.role ? '<br><span class="badge badge-success">'+ ROLES[tracksInfo.role] +'</span>' : ''}`
+        compositionNameHtml += `<p><h1 id="comp-title" class="post-title">${compositionName}</h1></p>`
     }
     document.getElementById('post-header').insertAdjacentHTML('afterbegin', compositionNameHtml)
 }

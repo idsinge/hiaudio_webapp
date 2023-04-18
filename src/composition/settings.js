@@ -6,7 +6,7 @@ let CURRENT_OPENTOCONTRIB = null
 let CURRENT_CONTRIBUTORS = null
 let NEW_CONTRIBUTORS = []
 
-const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
+export const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
 
 export const enableCompositionSettings = (tracksInfo) => {
     setUIContributors(tracksInfo.contributors, tracksInfo.id)
