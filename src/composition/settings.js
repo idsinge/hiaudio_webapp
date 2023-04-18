@@ -3,6 +3,7 @@ import { ENDPOINT } from '../js/config'
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null
 let CURRENT_OPENTOCONTRIB = null
+let CURRENT_CONTRIBUTORS = null
 let NEW_CONTRIBUTORS = []
 
 const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
@@ -76,6 +77,7 @@ const setUIContributors = (contributors, compositionId) => {
     const ul = document.getElementById('listOfContributors')
 
     if (contributors.length) {
+        CURRENT_CONTRIBUTORS = contributors
         contributors.flatMap((elem) => addContributorToUI(ul, elem))
     }
 
@@ -92,19 +94,37 @@ const addContributorToUI = (ul, contrib) => {
     const role = ROLES[contrib.role]
     const li = document.createElement('li')
     li.className = 'list-group-item'
+    li.id = contrib.user_id
     li.textContent = contrib.user_id + ' (' + role + ')'
     ul.appendChild(li)
 }
 
+const checkIfObjectExists = (array, obj) => {
+    return array.some(function(arrayObj) {
+        // To compare new contributor with existing in settings
+        // do not consider "id" of the exisiting contributor        
+        let compareObject = (({ id, ...object }) => object)(arrayObj)
+        return (compareObject.user_id ===  obj.user_id && compareObject.role ===  obj.role)      
+    })
+}
 const addContributorToList = async (ul, contrib, compositionId, role) => {
+    
+    const newcontrib = { user_id: contrib, composition_id: compositionId, role: parseInt(role) }    
+    const checkContribDuplicateInCurrent = checkIfObjectExists(CURRENT_CONTRIBUTORS,newcontrib)
+    const checkContribDuplicateInNew = checkIfObjectExists(NEW_CONTRIBUTORS,newcontrib) 
+   
     // #TODO: replace with API call to new endpoint to validate contributor
     const response = await fetch(ENDPOINT + '/user/' + contrib)    
-    if(response && response.ok){
-        const jsonData = await response.json()
-        const data = { user_id: jsonData.id, composition_id: compositionId, role: parseInt(role) }
-        // TODO: check if the new contrib exists and the role is the same        
-        NEW_CONTRIBUTORS.push(data)
-        addContributorToUI(ul, data)
+    if(response && response.ok){                      
+        if(!CURRENT_CONTRIBUTORS  || (!checkContribDuplicateInCurrent && !checkContribDuplicateInNew)){
+            NEW_CONTRIBUTORS.push(newcontrib)
+            // remove from UI if is there
+            const contribListElem = document.getElementById(contrib)
+            if(contribListElem){
+                contribListElem.remove()
+            }
+            addContributorToUI(ul, newcontrib)
+        }
     }
 }
 
