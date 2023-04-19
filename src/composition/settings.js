@@ -99,41 +99,70 @@ const addContributorToUI = (ul, contrib) => {
     ul.appendChild(li)
 }
 
-const checkIfObjectExists = (array, obj) => {
-    if(!array){
-        return false
-    } else {
-        return array.some(function(arrayObj) {
-            // To compare new contributor with existing in settings
-            // do not consider "id" of the exisiting contributor        
-            let compareObject = (({ id, ...object }) => object)(arrayObj)
-            return (compareObject.user_id ===  obj.user_id && compareObject.role ===  obj.role)      
-        })
-    }    
-}
 const addContributorToList = async (ul, contrib, compositionId, role) => {
-    
-    const newcontrib = { user_id: contrib, composition_id: compositionId, role: parseInt(role) }    
-    const checkContribDuplicateInCurrent = checkIfObjectExists(CURRENT_CONTRIBUTORS,newcontrib)
-    const checkContribDuplicateInNew = checkIfObjectExists(NEW_CONTRIBUTORS,newcontrib) 
-    const roleInput = document.getElementById('inputGroupSelectRole').value
-    
-    // #TODO: replace with API call to new endpoint to validate contributor
-    if(parseInt(roleInput) && (!CURRENT_CONTRIBUTORS  || (!checkContribDuplicateInCurrent && !checkContribDuplicateInNew ))){
+    const roleInput = document.getElementById('inputGroupSelectRole').value    
+    if(parseInt(roleInput) !== 0){
         
-        const response = await fetch(ENDPOINT + '/user/' + contrib)    
+        const newcontrib = { user_id: contrib, composition_id: compositionId, role: parseInt(role) }        
+        const indexContribDuplicateInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.user_id === contrib)
+        const indexContribDuplicateInNew = NEW_CONTRIBUTORS.findIndex(x => x.user_id === contrib)
+
+        let canAdd = false
+
+        if((indexContribDuplicateInNew < 0) && (indexContribDuplicateInCurrent < 0)){
+            canAdd = true
+        } else {
+            canAdd = checkDuplicateBeforeAdding(newcontrib, indexContribDuplicateInNew, indexContribDuplicateInCurrent, ul)    
+        }        
         
-        if(response && response.ok){                      
-        
-            NEW_CONTRIBUTORS.push(newcontrib)
-            // remove from UI if is there
-            const contribListElem = document.getElementById(contrib)
-            if(contribListElem){
-                contribListElem.remove()
+        if(canAdd){
+            // #TODO: replace with API call to new endpoint to validate contributor
+            const response = await fetch(ENDPOINT + '/user/' + contrib)            
+            if(response && response.ok){                             
+                NEW_CONTRIBUTORS.push(newcontrib)            
+                addContributorToUI(ul, newcontrib)        
             }
-            addContributorToUI(ul, newcontrib)        
+        }        
+    }   
+}
+
+const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) =>{
+    
+    let canAdd = false
+    const contribListElem = document.getElementById(newcontrib.user_id)
+    
+    if(contribListElem){
+    
+        if(atIndexCurrent >= 0 && atIndexNew < 0){
+            
+            if(CURRENT_CONTRIBUTORS[atIndexCurrent].role !== newcontrib.role){
+                canAdd = true
+                contribListElem.remove()  
+            }
+        } 
+        if(atIndexNew >= 0 && atIndexCurrent < 0){
+            
+            if(NEW_CONTRIBUTORS[atIndexNew].role !== newcontrib.role){
+                canAdd = true
+                NEW_CONTRIBUTORS.splice(atIndexNew,1)
+                contribListElem.remove()  
+            } 
         }
+        if(atIndexNew >= 0 && atIndexCurrent >= 0){
+                     
+           if(CURRENT_CONTRIBUTORS[atIndexCurrent].role === newcontrib.role){
+                NEW_CONTRIBUTORS.splice(atIndexNew,1)
+                contribListElem.remove()                
+                addContributorToUI(ul, newcontrib)
+           } 
+           if(NEW_CONTRIBUTORS.length && (NEW_CONTRIBUTORS[atIndexNew].role !== newcontrib.role)){
+                canAdd = true
+                NEW_CONTRIBUTORS.splice(atIndexNew,1)
+                contribListElem.remove() 
+           }
+        }              
     }
+    return canAdd
 }
 
 const updateSettings = async (method, api, data) => {
