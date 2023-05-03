@@ -22,7 +22,9 @@
 <body>
 
     <header class="navbar navbar-expand-lg navbar-light bg-light">
-        <a id="goHome" class="navbar-brand" href="">himusic</a>
+        <a id="goHome" class="navbar-brand" href="">
+            <img id="mainLogo" alt="" height="36" src="https://hi-audio.imt.fr/wp-content/themes/tpt-hiaudio/assets/images/hi_audio.svg">
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -211,7 +213,18 @@
             </article>
         </div>
     </main>
-    <footer class="footer">hi music 2022</footer>
+    <footer>
+		<div class="footerMenu">
+			<hr>
+			<ul>				
+				<li><a href="./static/about.html">About</a></li>
+				<li><a href="./static/terms.html">Terms of use</a></li>
+				<li><a href="./static/privacy.html">Privacy</a></li>
+				<li><a href="./static/cookies.html">Cookies</a></li>
+			</ul>
+            <span id="companyName">&copy; Hi-Audio</span>
+	    </div>		
+	</footer>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
