@@ -1,9 +1,32 @@
-/* https://www.w3schools.com/howto/howto_css_fixed_footer.asp */
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
+/* https://codepen.io/jason-knight/pen/poWpLzJ?editors=1100 */
+/* https://css-tricks.com/a-clever-sticky-footer-technique/ */
+html,
+body {
+    height: 100%;
+}
+
+body>footer {
+    position: sticky;
+    top: 100vh;
+    flex-grow: 0;      
+}
+
+.footerMenu {
+    display: flex;
     width: 100%;
-    background-color:#2196F3; 
-    text-align: right;       
+    text-align: right;
+    padding: 1rem clamp(1rem, 3vw, 2rem);    
+}
+
+.footerMenu ul {
+    flex-grow: 0;
+}
+
+.footerMenu li {
+    display: inline;
+    margin-right: 0.8rem;
+}
+
+#companyName{
+    min-width: fit-content;
 }
