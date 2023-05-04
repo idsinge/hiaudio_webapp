@@ -3,17 +3,19 @@ import { ENDPOINT } from '../js/config'
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null
 let CURRENT_OPENTOCONTRIB = null
-let CURRENT_CONTRIBUTORS = null
+let CURRENT_CONTRIBUTORS = []
 let NEW_CONTRIBUTORS = []
 
 export const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
 
 export const enableCompositionSettings = (tracksInfo) => {
-    setUIContributors(tracksInfo.contributors, tracksInfo.id)
+    setUIContributors(tracksInfo.contributors)
+    addContributorButtonHandler(tracksInfo.id)
     setUITitle(tracksInfo.title)
     setUIPrivacy(tracksInfo.privacy)    
     setOpenToContrib(tracksInfo.opentocontrib)
     saveButtonHandler(tracksInfo.id)
+    cancelButtonHandler(tracksInfo)
     document.getElementById('useroptions').innerHTML = `<li class="nav-item">
     <a class="nav-link" href="#" data-toggle="modal" data-target="#settingsModal">Settings</a>
   </li>
@@ -30,7 +32,6 @@ const changeOpenToContrib = (newstate) => {
         opentocontribcheckbox.disabled = false
     }
 }
-
 
 const privateRadioButtonHandler = () => {
 
@@ -49,6 +50,7 @@ const privateRadioButtonHandler = () => {
         })
     }
 }
+
 const setUIPrivacy = (privacyLevel) => {
     CURRENT_PRIVACY = privacyLevel
     const radiobtn = document.getElementById('settingsPrivacyRadios' + privacyLevel)
@@ -70,16 +72,24 @@ const setOpenToContrib = (status) => {
     checkbox.checked = status
 }
 
-const setUIContributors = (contributors, compositionId) => {
-
-    const button = document.getElementById('addContribButton')
-    const input = document.getElementById('contributorinput')
+const setUIContributors = (contributors) => {
+   
     const ul = document.getElementById('listOfContributors')
 
     if (contributors.length) {
         CURRENT_CONTRIBUTORS = contributors
         contributors.flatMap((elem) => addContributorToUI(ul, elem))
+    } else {        
+        document.getElementById('contributorinput').value = ''
+        ul.innerHTML = ''
     }
+}
+
+const addContributorButtonHandler = (compositionId) => {
+
+    const button = document.getElementById('addContribButton')
+    const input = document.getElementById('contributorinput')
+    const ul = document.getElementById('listOfContributors')
 
     button.addEventListener('click', function () {
         const roleInput = document.getElementById('inputGroupSelectRole')
@@ -189,6 +199,21 @@ const updateSettings = async (method, api, data) => {
     return response
 }
 
+const cancelButtonHandler = async (compInfo) => {
+    const cancelSettingsButton = document.getElementById('cancelsettingsbutton')
+    cancelSettingsButton && cancelSettingsButton.addEventListener('click', async (e) => {  
+        setUITitle(CURRENT_TITLE ||compInfo.title)        
+        setUIPrivacy(CURRENT_PRIVACY || compInfo.privacy)         
+        setOpenToContrib(CURRENT_OPENTOCONTRIB || compInfo.opentocontrib)
+        document.getElementById('contributorinput').value = ''
+        const ul = document.getElementById('listOfContributors')
+        ul.innerHTML = ''        
+        setUIContributors(CURRENT_CONTRIBUTORS.length ? CURRENT_CONTRIBUTORS : compInfo.contributors)        
+        NEW_CONTRIBUTORS = []
+        document.getElementById('deleteComposition').checked = false  
+    })       
+}
+
 const saveButtonHandler = async (compId) => {
     const confirmSettingsButton = document.getElementById('updatecompositionbutton')
     confirmSettingsButton && confirmSettingsButton.addEventListener('click', async (e) => {
@@ -219,8 +244,10 @@ const saveButtonHandler = async (compId) => {
                         copy_new_contribs[i] = null                       
                     }                       
                 }
-                const noEmptyValues = copy_new_contribs.filter((value) => value != null)
-                NEW_CONTRIBUTORS = noEmptyValues                        
+                const noEmptyValues = copy_new_contribs.filter((value) => value != null)                
+                CURRENT_CONTRIBUTORS = CURRENT_CONTRIBUTORS.concat(NEW_CONTRIBUTORS)
+                document.getElementById('contributorinput').value = ''
+                NEW_CONTRIBUTORS = noEmptyValues                                       
             }            
 
             //if no changes or updates are successfully => close modal dialog
@@ -252,7 +279,18 @@ const updateOpenToContrib = async (compId, newstatus) => {
     const data = { id: compId, opentocontrib: newstatus }
     const resultNewOpenToContrib = await updateSettings('PATCH', '/updatecomptocontrib', data)
     if (resultNewOpenToContrib.ok) {
-        CURRENT_OPENTOCONTRIB = newstatus
+        CURRENT_OPENTOCONTRIB = newstatus        
+        if(newstatus){
+            const nodeBadge = document.createElement('span')            
+            nodeBadge.innerHTML ='<br><span class="badge badge-info">OPEN TO CONTRIB</span>'            
+            document.getElementById('post-header').prepend(nodeBadge)            
+        } else {     
+            if(document.querySelector('.badge-info')){
+                const brs =document.getElementById('post-header').getElementsByTagName('br')
+                brs[0].parentNode.removeChild(brs[0])
+                document.querySelector('.badge-info').innerHTML ='' 
+            }                     
+        }        
     }
 }
 
