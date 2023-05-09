@@ -127,10 +127,12 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
         
         if(canAdd){
             // #TODO: replace with API call to new endpoint to validate contributor
-            const response = await fetch(ENDPOINT + '/user/' + contrib)            
+            const response = await fetch(ENDPOINT + '/checkuser/' + contrib)             
             if(response && response.ok){                             
                 NEW_CONTRIBUTORS.push(newcontrib)            
                 addContributorToUI(ul, newcontrib)        
+            } else {
+                alert(`User can't be added`)
             }
         }        
     }   
