@@ -5,6 +5,7 @@ let CURRENT_PRIVACY = null
 let CURRENT_OPENTOCONTRIB = null
 let CURRENT_CONTRIBUTORS = []
 let NEW_CONTRIBUTORS = []
+let TOREMOVE_CONTRIBUTORS = []
 
 export const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
 
@@ -85,6 +86,28 @@ const setUIContributors = (contributors) => {
     }
 }
 
+const removeContributorSwitchHandler = (contribId) => {
+    
+    document.getElementById('removeContSwitch'+contribId).addEventListener('change', function(event) {        
+        const chk = event.target        
+        if (chk.tagName === 'INPUT' && chk.type === 'checkbox') {        
+            if(chk.checked){                
+                if (confirm(`Do you want remove the contributor with ID ${contribId}?`) == true) {                    
+                    const indexContribInNew = NEW_CONTRIBUTORS.findIndex(x => x.user_id === contribId)                    
+                    if(indexContribInNew > -1){                        
+                        NEW_CONTRIBUTORS.splice(indexContribInNew,1)
+                        document.getElementById(contribId).remove()
+                    } else {                        
+                        TOREMOVE_CONTRIBUTORS.push(contribId)
+                    }                 
+                } else {                   
+                    event.target.checked = false
+                }
+            }
+        }
+    })
+}
+
 const addContributorButtonHandler = (compositionId) => {
 
     const button = document.getElementById('addContribButton')
@@ -105,8 +128,14 @@ const addContributorToUI = (ul, contrib) => {
     const li = document.createElement('li')
     li.className = 'list-group-item'
     li.id = contrib.user_id
-    li.textContent = contrib.user_id + ' (' + role + ')'
+    li.textContent = contrib.user_id + ' (' + role + ')'    
+    const deleteSwitch = `&nbsp;<div class='custom-control custom-switch custom-control-inline float-right'>
+    <input type='checkbox' class='custom-control-input is-invalid' id='removeContSwitch${contrib.user_id}'>
+    <label class='custom-control-label is-invalid' for='removeContSwitch${contrib.user_id}'>Remove</label>
+  </div>`
+    li.innerHTML += deleteSwitch
     ul.appendChild(li)
+    removeContributorSwitchHandler(contrib.user_id)
 }
 
 const addContributorToList = async (ul, contrib, compositionId, role) => {
@@ -212,6 +241,7 @@ const cancelButtonHandler = async (compInfo) => {
         ul.innerHTML = ''        
         setUIContributors(CURRENT_CONTRIBUTORS.length ? CURRENT_CONTRIBUTORS : compInfo.contributors)        
         NEW_CONTRIBUTORS = []
+        TOREMOVE_CONTRIBUTORS = []
         document.getElementById('deleteComposition').checked = false  
     })       
 }
@@ -223,39 +253,74 @@ const saveButtonHandler = async (compId) => {
         if (deleteComp === true) {
             await deleteComposition(compId)
         } else {
-            const newtitle = document.getElementById('newtitle').value
-            if (newtitle !== CURRENT_TITLE) {
-                await updateTitle(compId, newtitle)
-            }
-            const newPrivacyLevel = document.querySelector('input[name="settingsPrivacyRadios"]:checked').value
-            const privacy = parseInt(newPrivacyLevel)
-            if (privacy !== CURRENT_PRIVACY) {
-                await updatePrivacy(compId, privacy)
-            }
-            const newOpenToContrib = document.getElementById('opentocontribution').checked                        
-            if ( newOpenToContrib !== CURRENT_OPENTOCONTRIB) {                
-                await updateOpenToContrib(compId, newOpenToContrib)
-            }
-
-            if(NEW_CONTRIBUTORS.length > 0){
-                let copy_new_contribs = [...NEW_CONTRIBUTORS]
-                for (let i=0; i < NEW_CONTRIBUTORS.length; i++){                    
-                    const newcontrib = NEW_CONTRIBUTORS[i]
-                    const resultAddContrib = await updateSettings('POST', '/addcontributorbyid', newcontrib)                    
-                    if(resultAddContrib && resultAddContrib.ok){
-                        copy_new_contribs[i] = null                       
-                    }                       
-                }
-                const noEmptyValues = copy_new_contribs.filter((value) => value != null)                
-                CURRENT_CONTRIBUTORS = CURRENT_CONTRIBUTORS.concat(NEW_CONTRIBUTORS)
-                document.getElementById('contributorinput').value = ''
-                NEW_CONTRIBUTORS = noEmptyValues                                       
-            }            
-
-            //if no changes or updates are successfully => close modal dialog
+            await saveTitle(compId)
+            await savePrivacyLevel(compId)
+            await saveOpenToContrib(compId)
+            await saveNewContributors()     
+            await saveRemoveContributors()            
             $('#settingsModal').modal('hide')
         }
     })
+}
+
+const saveTitle = async (compId) => {
+    const newtitle = document.getElementById('newtitle').value
+    if (newtitle !== CURRENT_TITLE) {
+        await updateTitle(compId, newtitle)
+    }
+}
+
+const savePrivacyLevel = async (compId) => {
+    const newPrivacyLevel = document.querySelector('input[name="settingsPrivacyRadios"]:checked').value
+    const privacy = parseInt(newPrivacyLevel)
+    if (privacy !== CURRENT_PRIVACY) {
+        await updatePrivacy(compId, privacy)
+    }
+}
+
+const saveOpenToContrib = async (compId) => {
+    const newOpenToContrib = document.getElementById('opentocontribution').checked                        
+    if ( newOpenToContrib !== CURRENT_OPENTOCONTRIB) {                
+        await updateOpenToContrib(compId, newOpenToContrib)
+    }
+}
+
+const saveNewContributors = async () => {
+    if(NEW_CONTRIBUTORS.length > 0){
+        let copy_new_contribs = [...NEW_CONTRIBUTORS]
+        for (let i=0; i < NEW_CONTRIBUTORS.length; i++){                    
+            const newcontrib = NEW_CONTRIBUTORS[i]
+            const resultAddContrib = await updateSettings('POST', '/addcontributorbyid', newcontrib)                    
+            if(resultAddContrib && resultAddContrib.ok){                        
+                NEW_CONTRIBUTORS[i].id = resultAddContrib.contribid
+                copy_new_contribs[i] = null                       
+            }                       
+        }
+        const noEmptyNewValues = copy_new_contribs.filter((value) => value != null)                
+        CURRENT_CONTRIBUTORS = CURRENT_CONTRIBUTORS.concat(NEW_CONTRIBUTORS)
+        document.getElementById('contributorinput').value = ''
+        NEW_CONTRIBUTORS = noEmptyNewValues                                       
+    }   
+}
+
+const saveRemoveContributors = async () => {
+    if(TOREMOVE_CONTRIBUTORS.length > 0){
+        let copy_toremove_contribs = [...TOREMOVE_CONTRIBUTORS]
+        for (let j=0; j < TOREMOVE_CONTRIBUTORS.length; j++){ 
+            const indexContribInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.user_id === TOREMOVE_CONTRIBUTORS[j])                    
+            const contribToRemId = CURRENT_CONTRIBUTORS[indexContribInCurrent].id
+            const resultRemoveContrib = await updateSettings('DELETE', '/deletecontributor/'+contribToRemId, null)                    
+            if(resultRemoveContrib && resultRemoveContrib.ok){                        
+                copy_toremove_contribs[j] = null
+                CURRENT_CONTRIBUTORS.splice(indexContribInCurrent,1)
+                document.getElementById(TOREMOVE_CONTRIBUTORS[j]).remove()
+            } else {
+                document.getElementById('removeContSwitch'+TOREMOVE_CONTRIBUTORS[j]).checked = false
+            }                   
+        }
+        const noEmptyValuesRm = copy_toremove_contribs.filter((value) => value != null)
+        TOREMOVE_CONTRIBUTORS = noEmptyValuesRm                
+    }         
 }
 
 const updateTitle = async (compId, newtitle) => {
