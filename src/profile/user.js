@@ -12,7 +12,7 @@ const getUser = async (callback) => {
   let errorIs = null
   let userInfo = {}
 
-  await fetch(ENDPOINT + "/profile", {
+  await fetch(ENDPOINT + '/profile', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -50,9 +50,40 @@ const setUserInfo = (userinfo) => {
     document.getElementById('username').innerHTML = userinfo.name
     document.getElementById('userid').innerHTML = 'User Id: ' + userinfo.user_id
     document.getElementById('emailaddress').innerHTML = userinfo.email
+    deleteProfileHandler(userinfo.user_id)
   } else {
     document.getElementById('logincard').hidden = false
   }
 }
 
+const deleteProfileHandler = (userid) => {
+    document.getElementById('button-deleteprofile').addEventListener('click', async () => {await deleteUserProfile(userid)})
+}
+
+const deleteUserProfile = async (userid) => {
+  const api = '/deleteuser/'+userid
+  let userDelete = prompt('To confirm, please enter your User ID', '')  
+  if (userDelete === userid) {
+    let response = null
+    const request = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }
+    }
+    try {
+        const sendRqst = await fetch(ENDPOINT + api, request)
+        const respToJson = await sendRqst.json()
+        if (respToJson) {
+            response = respToJson
+            window.location.href = window.location.origin
+        }        
+    } catch (error) {        
+        alert(error)
+    }
+  } else if ((userDelete !== userid) && (userDelete !== null)){
+    alert('Sorry, the User ID does not match')
+  }
+}
 getUser(setUserInfo)
