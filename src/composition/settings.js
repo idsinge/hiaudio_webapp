@@ -364,8 +364,7 @@ const updateOpenToContrib = async (compId, newstatus) => {
 const deleteComposition = async (compId) => {
     const dialog = confirm('Delete ' + CURRENT_TITLE + '?')
     if (dialog) {
-        const data = { id: compId }
-        const resultDeleteComp = await updateSettings('DELETE', '/deletecomposition', data)        
+        const resultDeleteComp = await updateSettings('DELETE', '/deletecomposition/'+compId, null)        
         if (resultDeleteComp.ok) {
             window.location.href = window.location.origin
         }
