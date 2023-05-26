@@ -1,13 +1,15 @@
 ## How to run it locally:
 
 Requirement: Node.js v14
+**This project needs from the backend to be running in parallel.**
+Backend can be found at: https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt
 
 0. `nvm use 14` (https://github.com/nvm-sh/nvm)
 
-1. `git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp.git`
+1. **Inside backend folder repo clone**: `git clone https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp.git`
 2. `cd beatbytebot_webapp` (Rename folder to `webapp` if the repo is inside backend)
 3. `npm i`
-4. Rename `src/js/config_template.js` to `src/js/config.js`. See `Note 1`.
+4. Duplicate and rename `src/js/config_template.js` to `src/js/config.js`. See `Note 1`.
 5. Do the following asjustment: https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/wikis/SOURCE-CODE/Changes-at-waveform-playlist. See `Note 5`.
 6. `npm run dev`
 7. Open `https://localhost:80/index.html`. In Chrome it may require to apply rule at `Note 4`. For HTTP see `Notes 2 and 3`.
