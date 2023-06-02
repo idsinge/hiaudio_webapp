@@ -93,7 +93,7 @@ const removeContributorSwitchHandler = (contribId) => {
         if (chk.tagName === 'INPUT' && chk.type === 'checkbox') {        
             if(chk.checked){                
                 if (confirm(`Do you want remove the contributor with ID ${contribId}?`) == true) {                    
-                    const indexContribInNew = NEW_CONTRIBUTORS.findIndex(x => x.user_id === contribId)                    
+                    const indexContribInNew = NEW_CONTRIBUTORS.findIndex(x => x.user_uid === contribId)                    
                     if(indexContribInNew > -1){                        
                         NEW_CONTRIBUTORS.splice(indexContribInNew,1)
                         document.getElementById(contribId).remove()
@@ -127,24 +127,24 @@ const addContributorToUI = (ul, contrib) => {
     const role = ROLES[contrib.role]
     const li = document.createElement('li')
     li.className = 'list-group-item'
-    li.id = contrib.user_id
-    li.textContent = contrib.user_id + ' (' + role + ')'    
+    li.id = contrib.user_uid
+    li.textContent = contrib.user_uid + ' (' + role + ')'    
     const deleteSwitch = `&nbsp;<div class='custom-control custom-switch custom-control-inline float-right'>
-    <input type='checkbox' class='custom-control-input is-invalid' id='removeContSwitch${contrib.user_id}'>
-    <label class='custom-control-label is-invalid' for='removeContSwitch${contrib.user_id}'>Remove</label>
+    <input type='checkbox' class='custom-control-input is-invalid' id='removeContSwitch${contrib.user_uid}'>
+    <label class='custom-control-label is-invalid' for='removeContSwitch${contrib.user_uid}'>Remove</label>
   </div>`
     li.innerHTML += deleteSwitch
     ul.appendChild(li)
-    removeContributorSwitchHandler(contrib.user_id)
+    removeContributorSwitchHandler(contrib.user_uid)
 }
 
 const addContributorToList = async (ul, contrib, compositionId, role) => {
     const roleInput = document.getElementById('inputGroupSelectRole').value    
     if(parseInt(roleInput) !== 0){
         
-        const newcontrib = { user_id: contrib, composition_id: compositionId, role: parseInt(role) }        
-        const indexContribDuplicateInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.user_id === contrib)
-        const indexContribDuplicateInNew = NEW_CONTRIBUTORS.findIndex(x => x.user_id === contrib)
+        const newcontrib = { user_uid: contrib, composition_id: compositionId, role: parseInt(role) }        
+        const indexContribDuplicateInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.user_uid === contrib)
+        const indexContribDuplicateInNew = NEW_CONTRIBUTORS.findIndex(x => x.user_uid === contrib)
 
         let canAdd = false
 
@@ -170,7 +170,7 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
 const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) =>{
     
     let canAdd = false
-    const contribListElem = document.getElementById(newcontrib.user_id)
+    const contribListElem = document.getElementById(newcontrib.user_uid)
     
     if(contribListElem){
     
@@ -307,8 +307,8 @@ const saveRemoveContributors = async () => {
     if(TOREMOVE_CONTRIBUTORS.length > 0){
         let copy_toremove_contribs = [...TOREMOVE_CONTRIBUTORS]
         for (let j=0; j < TOREMOVE_CONTRIBUTORS.length; j++){ 
-            const indexContribInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.user_id === TOREMOVE_CONTRIBUTORS[j])                    
-            const contribToRemId = CURRENT_CONTRIBUTORS[indexContribInCurrent].id
+            const indexContribInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.user_uid === TOREMOVE_CONTRIBUTORS[j])                    
+            const contribToRemId = CURRENT_CONTRIBUTORS[indexContribInCurrent].user_uid            
             const resultRemoveContrib = await updateSettings('DELETE', '/deletecontributor/'+contribToRemId, null)                    
             if(resultRemoveContrib && resultRemoveContrib.ok){                        
                 copy_toremove_contribs[j] = null
