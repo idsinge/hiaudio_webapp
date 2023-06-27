@@ -11,11 +11,11 @@ export const ROLES = {1:'Owner', 2:'Admin', 3:'Member', 4:'Guest'}
 
 export const enableCompositionSettings = (tracksInfo) => {
     setUIContributors(tracksInfo.contributors)
-    addContributorButtonHandler(tracksInfo.id)
+    addContributorButtonHandler(tracksInfo.uuid)
     setUITitle(tracksInfo.title)
     setUIPrivacy(tracksInfo.privacy)    
     setOpenToContrib(tracksInfo.opentocontrib)
-    saveButtonHandler(tracksInfo.id)
+    saveButtonHandler(tracksInfo.uuid)
     cancelButtonHandler(tracksInfo)
     document.getElementById('useroptions').innerHTML = `<li class="nav-item">
     <a class="nav-link" href="#" data-toggle="modal" data-target="#settingsModal">Settings</a>
@@ -257,7 +257,7 @@ const saveButtonHandler = async (compId) => {
             await savePrivacyLevel(compId)
             await saveOpenToContrib(compId)
             await saveNewContributors()     
-            await saveRemoveContributors()            
+            await saveRemoveContributors(compId)            
             $('#settingsModal').modal('hide')
         }
     })
@@ -303,13 +303,14 @@ const saveNewContributors = async () => {
     }   
 }
 
-const saveRemoveContributors = async () => {
+const saveRemoveContributors = async (compId) => {
     if(TOREMOVE_CONTRIBUTORS.length > 0){
         let copy_toremove_contribs = [...TOREMOVE_CONTRIBUTORS]
         for (let j=0; j < TOREMOVE_CONTRIBUTORS.length; j++){ 
             const indexContribInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.user_uid === TOREMOVE_CONTRIBUTORS[j])                    
-            const contribToRemId = CURRENT_CONTRIBUTORS[indexContribInCurrent].user_uid            
-            const resultRemoveContrib = await updateSettings('DELETE', '/deletecontributor/'+contribToRemId, null)                    
+            const contribToRemId = CURRENT_CONTRIBUTORS[indexContribInCurrent].user_uid 
+            const contribToRem = {contrib_uuid:contribToRemId, comp_uuid:compId}
+            const resultRemoveContrib = await updateSettings('DELETE', '/deletecontributor', contribToRem)                    
             if(resultRemoveContrib && resultRemoveContrib.ok){                        
                 copy_toremove_contribs[j] = null
                 CURRENT_CONTRIBUTORS.splice(indexContribInCurrent,1)
@@ -325,7 +326,7 @@ const saveRemoveContributors = async () => {
 
 const updateTitle = async (compId, newtitle) => {
 
-    const data = { id: compId, title: newtitle }
+    const data = { uuid: compId, title: newtitle }
     const resultNewTitle = await updateSettings('PATCH', '/updatecomptitle', data)
     if (resultNewTitle.ok) {
         CURRENT_TITLE = newtitle
@@ -334,7 +335,7 @@ const updateTitle = async (compId, newtitle) => {
 }
 const updatePrivacy = async (compId, privacy) => {
 
-    const data = { id: compId, privacy: privacy }
+    const data = { uuid: compId, privacy: privacy }
     const resultNewPrivacy = await updateSettings('PATCH', '/updateprivacy', data)
     if (resultNewPrivacy.ok) {
         CURRENT_PRIVACY = privacy
@@ -343,7 +344,7 @@ const updatePrivacy = async (compId, privacy) => {
 
 const updateOpenToContrib = async (compId, newstatus) => {
 
-    const data = { id: compId, opentocontrib: newstatus }
+    const data = { uuid: compId, opentocontrib: newstatus }
     const resultNewOpenToContrib = await updateSettings('PATCH', '/updatecomptocontrib', data)
     if (resultNewOpenToContrib.ok) {
         CURRENT_OPENTOCONTRIB = newstatus        

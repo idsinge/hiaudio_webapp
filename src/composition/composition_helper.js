@@ -125,8 +125,8 @@ const createArrayOfTracks = (tracksInfo) => {
                 // arrayLoad.push(newTrack)
 
                 const title = element.title
-                const customClass = { name: title, track_id: element.id, user_id: element.user_id}
-                const newTrack = new Track(element.id, title, element.path , customClass)
+                const customClass = { name: title, track_id: element.uuid, user_id: element.user_id}
+                const newTrack = new Track(element.uuid, title, element.path , customClass)
                 arrayLoad.push(newTrack)
             }
         })
