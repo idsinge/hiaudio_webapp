@@ -72,11 +72,11 @@ const paintListOfCompositions = (compositionsList) => {
         <div class="grid-div">
           <div class="card">
             ${element.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}
-            <a href="${uriCompositionPage + element.id}">
+            <a href="${uriCompositionPage + element.uuid}">
               <img src="${element.photo_url || COMPOSITION_COVER}" alt="Card image cap" class="card-img">
             </a>
             <div class="card-container">
-              <a href="${uriCompositionPage + element.id}" class="card-link blue">${element.title}</a>
+              <a href="${uriCompositionPage + element.uuid}" class="card-link blue">${element.title}</a>
               <p>${collection}</p>
             </div>
           </div>
@@ -119,7 +119,7 @@ newProjectButton && newProjectButton.addEventListener("click", (e) => {
     })
     .then(data => {
       if (data.composition) {
-        window.location.href = uriCompositionPage + data.composition.id
+        window.location.href = uriCompositionPage + data.composition.uuid
       } else {
         throw new Error(data)
       }
