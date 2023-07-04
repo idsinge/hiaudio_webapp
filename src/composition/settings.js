@@ -274,7 +274,7 @@ const savePrivacyLevel = async (compId) => {
     const newPrivacyLevel = document.querySelector('input[name="settingsPrivacyRadios"]:checked').value
     const privacy = parseInt(newPrivacyLevel)
     if (privacy !== CURRENT_PRIVACY) {
-        await updatePrivacy(compId, privacy)
+        await updateCompPrivacy(compId, privacy)
     }
 }
 
@@ -333,10 +333,10 @@ const updateTitle = async (compId, newtitle) => {
         document.getElementById('comp-title').innerHTML = newtitle
     }
 }
-const updatePrivacy = async (compId, privacy) => {
+const updateCompPrivacy = async (compId, privacy) => {
 
     const data = { uuid: compId, privacy: privacy }
-    const resultNewPrivacy = await updateSettings('PATCH', '/updateprivacy', data)
+    const resultNewPrivacy = await updateSettings('PATCH', '/updatecompprivacy', data)
     if (resultNewPrivacy.ok) {
         CURRENT_PRIVACY = privacy
     }
