@@ -157,7 +157,7 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
         if(canAdd){
             // #TODO: replace with API call to new endpoint to validate contributor
             const response = await fetch(ENDPOINT + '/checkuser/' + contrib)             
-            if(response && response.ok){                             
+            if(response?.ok){                             
                 NEW_CONTRIBUTORS.push(newcontrib)            
                 addContributorToUI(ul, newcontrib)        
             } else {
@@ -232,7 +232,7 @@ const updateSettings = async (method, api, data) => {
 
 const cancelButtonHandler = async (compInfo) => {
     const cancelSettingsButton = document.getElementById('cancelsettingsbutton')
-    cancelSettingsButton && cancelSettingsButton.addEventListener('click', async (e) => {  
+    cancelSettingsButton?.addEventListener('click', async (e) => {  
         setUITitle(CURRENT_TITLE ||compInfo.title)        
         setUIPrivacy(CURRENT_PRIVACY || compInfo.privacy)         
         setOpenToContrib(CURRENT_OPENTOCONTRIB || compInfo.opentocontrib)
@@ -248,7 +248,7 @@ const cancelButtonHandler = async (compInfo) => {
 
 const saveButtonHandler = async (compId) => {
     const confirmSettingsButton = document.getElementById('updatecompositionbutton')
-    confirmSettingsButton && confirmSettingsButton.addEventListener('click', async (e) => {
+    confirmSettingsButton?.addEventListener('click', async (e) => {
         const deleteComp = document.getElementById('deleteComposition').checked
         if (deleteComp === true) {
             await deleteComposition(compId)
@@ -291,7 +291,7 @@ const saveNewContributors = async () => {
         for (let i=0; i < NEW_CONTRIBUTORS.length; i++){                    
             const newcontrib = NEW_CONTRIBUTORS[i]
             const resultAddContrib = await updateSettings('POST', '/addcontributorbyid', newcontrib)                    
-            if(resultAddContrib && resultAddContrib.ok){                        
+            if(resultAddContrib?.ok){                        
                 NEW_CONTRIBUTORS[i].id = resultAddContrib.contribid
                 copy_new_contribs[i] = null                       
             }                       
@@ -311,7 +311,7 @@ const saveRemoveContributors = async (compId) => {
             const contribToRemId = CURRENT_CONTRIBUTORS[indexContribInCurrent].user_uid 
             const contribToRem = {contrib_uuid:contribToRemId, comp_uuid:compId}
             const resultRemoveContrib = await updateSettings('DELETE', '/deletecontributor', contribToRem)                    
-            if(resultRemoveContrib && resultRemoveContrib.ok){                        
+            if(resultRemoveContrib?.ok){                        
                 copy_toremove_contribs[j] = null
                 CURRENT_CONTRIBUTORS.splice(indexContribInCurrent,1)
                 document.getElementById(TOREMOVE_CONTRIBUTORS[j]).remove()

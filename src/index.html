@@ -78,7 +78,68 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>    
+    <div class="modal fade" id="newCollectionModal" tabindex="-1" aria-labelledby="newCollectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newCollectionModalLabel">New Collection</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label id="" for="newcolltitle">Title:</label> 
+                        <div class="container">
+                            <div class="row justify-center">
+                                <div class="input-group mb-3">                            
+                                    <input type="text" class="newtitle" id="newcolltitle" placeholder="new collection title" title="newtitle">                           
+                                </div>
+                            </div>                            
+                        </div>                        
+                    </div>
+                    <div class="form-group">
+                        <label id="" for="listContributorsFormControl">Select parent collection:</label>                            
+                        <div class="container">
+                            <div class="row justify-center">
+                              <div class="">                                  
+                                <div id="listCollContainer" class="input-group mb-3">                                  
+                                                               
+                                </div>                            
+                              </div>                         
+                            </div>
+                          </div>                            
+                    </div>                    
+                    <div class="form-group">
+                        <label for="newCollectionFormControl">Level of Privacy:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newCollectionPrivacyRadios" id="newCollectionPrivacyRadios1" value="1" checked>
+                            <label class="form-check-label" for="newCollectionPrivacyRadios1">
+                              Public
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newCollectionPrivacyRadios" id="newCollectionPrivacyRadios2" value="2">
+                            <label class="form-check-label" for="newCollectionPrivacyRadios2">
+                              Only registered users
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newCollectionPrivacyRadios" id="newCollectionPrivacyRadios3" value="3">
+                            <label class="form-check-label" for="newCollectionPrivacyRadios3">
+                              Private
+                            </label>
+                          </div>
+                    </div>                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="newcollection" type="button" class="btn btn-primary" disabled>Save</button>
+                </div>
+            </div>
+        </div>
+    </div>  
     <div id="grid" class="grid">
         <div id="loader" class="loader"></div>
     </div>
@@ -100,7 +161,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         crossorigin="anonymous"></script>
-    <script src="index/search.js"></script>
     <script src="index/index.js"></script>
+    <script src="index/search.js"></script>
+    <script src="index/newcomposition.js"></script>
+    <script src="index/newcollection.js"></script>    
 </body>
 </html>
