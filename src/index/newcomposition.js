@@ -14,7 +14,6 @@ createNewCompButton?.addEventListener('click', async () => {
 const getCompCollSuccess = (list) => {
   document.getElementById('listCollContainerNewComp').replaceChildren()                                   
   createListCollections(list, 'listCollContainerNewComp')
-  saveCompositionButton.disabled = false
 }
 
 saveCompositionButton?.addEventListener('click', (e) => {

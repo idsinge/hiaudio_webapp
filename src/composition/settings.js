@@ -1,4 +1,5 @@
 import { ENDPOINT } from '../js/config'
+import {getCollections, getCollectionsError, createListCollections } from '../index/newcollection.js'
 
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null
@@ -18,10 +19,23 @@ export const enableCompositionSettings = (tracksInfo) => {
     saveButtonHandler(tracksInfo.uuid)
     cancelButtonHandler(tracksInfo)
     document.getElementById('useroptions').innerHTML = `<li class="nav-item">
-    <a class="nav-link" href="#" data-toggle="modal" data-target="#settingsModal">Settings</a>
+    <a class="nav-link" href="#" id="openSettingsButton" data-toggle="modal" data-target="#settingsModal">Settings</a>
   </li>
    `
     privateRadioButtonHandler()
+    openSettingsButtonHandler()
+    
+}
+
+const openSettingsButtonHandler = () => {
+    const openSettingsButton  = document.getElementById('openSettingsButton')
+    openSettingsButton?.addEventListener('click', async () => {       
+        await getCollections(getCompCollSuccess, getCollectionsError)
+    }, false)
+}
+const getCompCollSuccess = (list) => {
+    document.getElementById('listCollContainerNewColl').replaceChildren()                                   
+    createListCollections(list, 'listCollContainerNewColl')    
 }
 
 const changeOpenToContrib = (newstate) => {
