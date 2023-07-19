@@ -4,24 +4,32 @@ import { ENDPOINT } from '../js/config'
 const createNewCollButton  = document.getElementById('createNewCollButton')
 const saveCollectionButton = document.getElementById('newcollection')
 
-const getCollections = async () => {
-    document.getElementById('newcolltitle').value = ''
+export const getCollections = async (successFunc, errorFunc) => {
+   
     const response = await fetch(ENDPOINT + '/mycollections') 
     let result = null            
     if(response?.ok){ 
-        const respJson = await response.json() 
-        document.getElementById('listCollContainer').replaceChildren()                                   
-        createListCollections(respJson)
-        saveCollectionButton.disabled = false
+        const respJson = await response.json()
+        successFunc(respJson)
     } else {
-        alert(`Problem getting collections`)
+        errorFunc()
     }
     return result
 }
 
-const createListCollections = (collections) => {
+const getCollectionsSuccess = (list) => {
+    document.getElementById('listCollContainerNewColl').replaceChildren()                                   
+    createListCollections(list, 'listCollContainerNewColl')
+    saveCollectionButton.disabled = false
+}
+
+export const getCollectionsError = () => {
+    alert(`Problem getting collections`)
+}
+
+export const createListCollections = (collections,listId) => {
     const theList = collections.all_collections
-    const listCollContainer  = document.getElementById('listCollContainer')
+    const listCollContainer  = document.getElementById(listId)
     let listOptions = `<option value='0' selected>...</option>`
     theList.forEach((element) => {
         if (element) {
@@ -34,9 +42,9 @@ const createListCollections = (collections) => {
 }
 
 const saveNewCollReqst = async() => {
-    let newtitle = document.getElementById('newcolltitle').value
+    let newcolltitle = document.getElementById('newcolltitle').value
     const privacyLevel = document.querySelector('input[name="newCollectionPrivacyRadios"]:checked').value
-    if (!newtitle) {
+    if (!newcolltitle) {
         alert('Introduce a valid title, please')
         return
     }
@@ -48,7 +56,7 @@ const saveNewCollReqst = async() => {
     }
 
     let body = JSON.stringify({
-        title: newtitle,
+        title: newcolltitle,
         privacy_level: privacyLevel,
         parent_uuid: parentCollection
     })
@@ -65,8 +73,10 @@ const saveNewCollReqst = async() => {
     try {
         const sendRqst = await fetch(ENDPOINT + '/newcollection', request)
         const respToJson = await sendRqst.json()
-        if (respToJson) {
+        if (respToJson && !respToJson.error) {
             response = respToJson
+        } else {
+            alert(respToJson?.error || 'An error occurred')
         }
     } catch (error) {
         alert(error)
@@ -75,6 +85,9 @@ const saveNewCollReqst = async() => {
     return response
 }
 
-createNewCollButton?.addEventListener('click', getCollections, false)
+createNewCollButton?.addEventListener('click', async () => {
+    document.getElementById('newcolltitle').value = ''
+    await getCollections(getCollectionsSuccess, getCollectionsError)
+}, false)
 
 saveCollectionButton?.addEventListener('click', saveNewCollReqst, false)
