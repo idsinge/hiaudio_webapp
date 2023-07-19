@@ -9,7 +9,7 @@ const queryString = window.location.search
 const isAuthenticated = queryString.split('auth=')[1]
 
 const domainIs = window.location.host
-let uriCompositionPage = '/composition.html?compositionId='
+export let uriCompositionPage = '/composition.html?compositionId='
 let uriProfilePage = window.location.origin
 if (domainIs !== 'localhost:80' && window.location.origin !== 'http://localhost') {
   uriCompositionPage = '/public' + uriCompositionPage
@@ -17,17 +17,17 @@ if (domainIs !== 'localhost:80' && window.location.origin !== 'http://localhost'
 }
 
 if (isAuthenticated) {
-  document.getElementById('useroptions').innerHTML = `<li class="nav-item">
-    <a class="nav-link" href="${uriProfilePage + '/profile.html'}">Profile</a>
+  document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
+    <a class='nav-link' href='${uriProfilePage + '/profile.html'}'>Profile</a>
   </li>
-  <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="modal" data-target="#newMusicModal">/ New Music</a>
+  <li class='nav-item'>
+        <a class='nav-link' href='#' id='createNewCompButton' data-toggle='modal' data-target='#newMusicModal'>/ New Music</a>
   </li>
-  <li class="nav-item">
-      <a class="nav-link" href="#" id="createNewCollButton" data-toggle="modal" data-target="#newCollectionModal">/ New Collection</a>
+  <li class='nav-item'>
+      <a class='nav-link' href='#' id='createNewCollButton' data-toggle='modal' data-target='#newCollectionModal'>/ New Collection</a>
   </li>`
 } else {
-  document.getElementById('useroptions').innerHTML = `<a class="dropdown-item" href="${window.location.origin}/login">Google Login</a>`
+  document.getElementById('useroptions').innerHTML = `<a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>`
 }
 
 fetch(ENDPOINT + '/compositions', {
@@ -69,17 +69,17 @@ const paintListOfCompositions = (compositionsList) => {
     if (element) {
       let collection = ''
       if (element.collection) {
-        collection = `<a href="./index.html?collection=${element.collection}" class="card-link green">${element.collection}</a>`
+        collection = `<a href='./index.html?collection=${element.collection}' class='card-link green'>${element.collection}</a>`
       }
       const template = `
-        <div class="grid-div">
-          <div class="card">
+        <div class='grid-div'>
+          <div class='card'>
             ${element.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}
-            <a href="${uriCompositionPage + element.uuid}">
-              <img src="${element.photo_url || COMPOSITION_COVER}" alt="Card image cap" class="card-img">
+            <a href='${uriCompositionPage + element.uuid}'>
+              <img src='${element.photo_url || COMPOSITION_COVER}' alt='Card image cap' class='card-img'>
             </a>
-            <div class="card-container">
-              <a href="${uriCompositionPage + element.uuid}" class="card-link blue">${element.title}</a>
+            <div class='card-container'>
+              <a href='${uriCompositionPage + element.uuid}' class='card-link blue'>${element.title}</a>
               <p>${collection}</p>
             </div>
           </div>

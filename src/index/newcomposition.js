@@ -1,21 +1,43 @@
 
 import { ENDPOINT } from '../js/config'
+import {uriCompositionPage} from './index.js'
+import {getCollections, getCollectionsError, createListCollections } from './newcollection.js'
 
-let errorIs = null
+const createNewCompButton  = document.getElementById('createNewCompButton')
+const saveCompositionButton = document.getElementById('newcomposition')
 
-const newProjectButton = document.getElementById('newcomposition')
-newProjectButton?.addEventListener('click', (e) => {
-  let newtitle = document.getElementById('newtitle').value
+createNewCompButton?.addEventListener('click', async () => {
+  document.getElementById('newcomptitle').value = ''
+  await getCollections(getCompCollSuccess, getCollectionsError)
+}, false)
+
+const getCompCollSuccess = (list) => {
+  document.getElementById('listCollContainerNewComp').replaceChildren()                                   
+  createListCollections(list, 'listCollContainerNewComp')
+  saveCompositionButton.disabled = false
+}
+
+saveCompositionButton?.addEventListener('click', (e) => {
+  let newcomptitle = document.getElementById('newcomptitle').value
   const privacyLevel = document.querySelector('input[name="newMusicPrivacyRadios"]:checked').value
-  if (!newtitle) {
+  if (!newcomptitle) {
     alert('Introduce a valid title, please')
     return
   }
+
+  const collectInput = document.getElementById('inputGroupSelectCollect')
+  let parentCollection = collectInput?.value || null
+  if(parentCollection === '0'){
+      parentCollection = null
+  }
+
   let body = JSON.stringify({
-    title: newtitle,
-    privacy_level: privacyLevel
+    title: newcomptitle,
+    privacy_level: privacyLevel,
+    parent_uuid: parentCollection
   })
 
+  let errorIs = null
 
   fetch(ENDPOINT + '/newcomposition', {
     method: 'POST',
