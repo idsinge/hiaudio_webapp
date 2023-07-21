@@ -27,11 +27,18 @@ export const enableCompositionSettings = (tracksInfo) => {
     
 }
 
+const clickSettingsButtonHandler = () => {    
+    getCollections().then( result => {
+        if(result){
+            getCompCollSuccess(result)
+        } else {
+            getCollectionsError()
+        }        
+    })
+}
 const openSettingsButtonHandler = () => {
     const openSettingsButton  = document.getElementById('openSettingsButton')
-    openSettingsButton?.addEventListener('click', async () => {       
-        await getCollections(getCompCollSuccess, getCollectionsError)
-    }, false)
+    openSettingsButton?.addEventListener('click', clickSettingsButtonHandler, false)
 }
 const getCompCollSuccess = (list) => {
     document.getElementById('listCollContainerNewColl').replaceChildren()                                   

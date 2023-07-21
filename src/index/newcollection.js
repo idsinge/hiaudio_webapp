@@ -4,15 +4,13 @@ import { ENDPOINT } from '../js/config'
 const createNewCollButton  = document.getElementById('createNewCollButton')
 const saveCollectionButton = document.getElementById('newcollection')
 
-export const getCollections = async (successFunc, errorFunc) => {
+export const getCollections = async () => {
    
     const response = await fetch(ENDPOINT + '/mycollections') 
     let result = null            
     if(response?.ok){ 
         const respJson = await response.json()
-        successFunc(respJson)
-    } else {
-        errorFunc()
+        result = respJson
     }
     return result
 }
@@ -85,9 +83,16 @@ const saveNewCollReqst = async() => {
     return response
 }
 
-createNewCollButton?.addEventListener('click', async () => {
+const clickNewCollButtonHandler = () => {
     document.getElementById('newcolltitle').value = ''
-    await getCollections(getCollectionsSuccess, getCollectionsError)
-}, false)
+    getCollections().then( result => {
+        if(result){
+            getCollectionsSuccess(result)
+        } else {
+            getCollectionsError()
+        }
+    })
+}
+createNewCollButton?.addEventListener('click', clickNewCollButtonHandler, false)
 
 saveCollectionButton?.addEventListener('click', saveNewCollReqst, false)
