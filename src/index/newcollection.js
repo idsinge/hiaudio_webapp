@@ -25,13 +25,17 @@ export const getCollectionsError = () => {
     alert(`Problem getting collections`)
 }
 
-export const createListCollections = (collections,listId) => {
+export const createListCollections = (collections,listId, coll_id) => {
     const theList = collections.all_collections
     const listCollContainer  = document.getElementById(listId)
-    let listOptions = `<option value='0' selected>...</option>`
+    let listOptions = `<option value='0'>...</option>`
+    let selected = null
     theList.forEach((element) => {
         if (element) {
-            const template = `<option value='${element.uuid}'>${element.title}</option>`
+            if(element.uuid == coll_id){
+                selected = 'selected>'
+            }
+            const template = `<option value='${element.uuid}' ${selected?selected:'>'}${element.title}</option>`
             listOptions += template
         }
     })

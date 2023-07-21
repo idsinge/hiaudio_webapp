@@ -1,5 +1,5 @@
 import { ENDPOINT } from '../../js/config'
-import {getCollections, getCollectionsError, createListCollections } from '../../index/newcollection.js'
+import {openSettingsButtonHandler, saveParentCollection} from './setcollection'
 
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null
@@ -23,26 +23,8 @@ export const enableCompositionSettings = (tracksInfo) => {
   </li>
    `
     privateRadioButtonHandler()
-    openSettingsButtonHandler()
+    openSettingsButtonHandler(tracksInfo?.collection_id)
     
-}
-
-const clickSettingsButtonHandler = () => {    
-    getCollections().then( result => {
-        if(result){
-            getCompCollSuccess(result)
-        } else {
-            getCollectionsError()
-        }        
-    })
-}
-const openSettingsButtonHandler = () => {
-    const openSettingsButton  = document.getElementById('openSettingsButton')
-    openSettingsButton?.addEventListener('click', clickSettingsButtonHandler, false)
-}
-const getCompCollSuccess = (list) => {
-    document.getElementById('listCollContainerNewColl').replaceChildren()                                   
-    createListCollections(list, 'listCollContainerNewColl')    
 }
 
 const changeOpenToContrib = (newstate) => {
@@ -227,7 +209,7 @@ const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) 
     return canAdd
 }
 
-const updateSettings = async (method, api, data) => {
+export const updateSettings = async (method, api, data) => {
 
     let body = JSON.stringify(data)    
     let response = null
@@ -278,7 +260,8 @@ const saveButtonHandler = async (compId) => {
             await savePrivacyLevel(compId)
             await saveOpenToContrib(compId)
             await saveNewContributors()     
-            await saveRemoveContributors(compId)            
+            await saveRemoveContributors(compId)
+            await saveParentCollection(compId)
             $('#settingsModal').modal('hide')
         }
     })
