@@ -1,4 +1,5 @@
-import { ENDPOINT } from '../js/config'
+import { ENDPOINT } from '../../js/config'
+import {openSettingsButtonHandler, saveParentCollection} from './setcollection'
 
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null
@@ -18,10 +19,12 @@ export const enableCompositionSettings = (tracksInfo) => {
     saveButtonHandler(tracksInfo.uuid)
     cancelButtonHandler(tracksInfo)
     document.getElementById('useroptions').innerHTML = `<li class="nav-item">
-    <a class="nav-link" href="#" data-toggle="modal" data-target="#settingsModal">Settings</a>
+    <a class="nav-link" href="#" id="openSettingsButton" data-toggle="modal" data-target="#settingsModal">Settings</a>
   </li>
    `
     privateRadioButtonHandler()
+    openSettingsButtonHandler(tracksInfo?.collection_id)
+    
 }
 
 const changeOpenToContrib = (newstate) => {
@@ -206,7 +209,7 @@ const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) 
     return canAdd
 }
 
-const updateSettings = async (method, api, data) => {
+export const updateSettings = async (method, api, data) => {
 
     let body = JSON.stringify(data)    
     let response = null
@@ -257,7 +260,8 @@ const saveButtonHandler = async (compId) => {
             await savePrivacyLevel(compId)
             await saveOpenToContrib(compId)
             await saveNewContributors()     
-            await saveRemoveContributors(compId)            
+            await saveRemoveContributors(compId)
+            await saveParentCollection(compId)
             $('#settingsModal').modal('hide')
         }
     })

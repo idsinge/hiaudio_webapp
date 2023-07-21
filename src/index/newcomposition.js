@@ -6,15 +6,22 @@ import {getCollections, getCollectionsError, createListCollections } from './new
 const createNewCompButton  = document.getElementById('createNewCompButton')
 const saveCompositionButton = document.getElementById('newcomposition')
 
-createNewCompButton?.addEventListener('click', async () => {
+const clickNewCompButtonHandler = () => {
   document.getElementById('newcomptitle').value = ''
-  await getCollections(getCompCollSuccess, getCollectionsError)
-}, false)
+  getCollections().then( result => {
+      if(result){
+          getCompCollSuccess(result)
+      } else {
+          getCollectionsError()
+      }
+  })
+}
+
+createNewCompButton?.addEventListener('click', clickNewCompButtonHandler, false)
 
 const getCompCollSuccess = (list) => {
   document.getElementById('listCollContainerNewComp').replaceChildren()                                   
   createListCollections(list, 'listCollContainerNewComp')
-  saveCompositionButton.disabled = false
 }
 
 saveCompositionButton?.addEventListener('click', (e) => {

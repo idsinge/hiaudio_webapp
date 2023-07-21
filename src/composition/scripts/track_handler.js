@@ -1,4 +1,4 @@
-import { ENDPOINT } from '../js/config'
+import { ENDPOINT } from '../../js/config'
 import { startLoader, cancelLoader, CURRENT_USER_ID } from './composition_helper'
 import { COMPOSITION_ID, LOADER_ELEM_ID, playlist } from './composition'
 

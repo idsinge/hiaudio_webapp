@@ -1,7 +1,7 @@
 /* https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript : Dealing with binary data */
 /* https://stackoverflow.com/a/38968948 */
 
-import { UPLOAD_ENDPOINT } from '../js/config'
+import { UPLOAD_ENDPOINT } from '../../js/config'
 import { USER_INFO, LOADER_ELEM_ID, trackHandler } from './composition'
 import { startLoader, cancelLoader } from './composition_helper'
 
