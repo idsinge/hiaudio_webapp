@@ -1,5 +1,5 @@
-import { ENDPOINT } from '../js/config'
-import {getCollections, getCollectionsError, createListCollections } from '../index/newcollection.js'
+import { ENDPOINT } from '../../js/config'
+import {getCollections, getCollectionsError, createListCollections } from '../../index/newcollection.js'
 
 let CURRENT_TITLE = null
 let CURRENT_PRIVACY = null

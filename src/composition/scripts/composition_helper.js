@@ -1,4 +1,4 @@
-import { ENDPOINT } from '../js/config'
+import { ENDPOINT } from '../../js/config'
 import { LOADER_ELEM_ID, COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings, ROLES} from './settings'
 
