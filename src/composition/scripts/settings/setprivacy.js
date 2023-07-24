@@ -1,4 +1,4 @@
-import {updateSettings} from './settings'
+import {updateSettings} from '../settings'
 import {changeOpenToContrib} from './setopentocontrib'
 
 let CURRENT_PRIVACY = null

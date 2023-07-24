@@ -1,5 +1,5 @@
-import {updateSettings} from './settings'
-import {getCollections, getCollectionsError, createListCollections } from '../../index/newcollection.js'
+import {updateSettings} from '../settings'
+import {getCollections, getCollectionsError, createListCollections } from '../../../index/newcollection.js'
 
 let CURRENT_PARENT_COLLECTION = null
 

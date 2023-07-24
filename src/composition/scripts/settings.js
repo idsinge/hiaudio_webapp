@@ -1,8 +1,8 @@
 import { ENDPOINT } from '../../js/config'
-import {openSettingsButtonHandler, saveParentCollection} from './setcollection'
-import {setUITitle, getCurrentTitle, saveTitle} from './settitle'
-import {setOpenToContrib, getOpenToContrib, saveOpenToContrib} from './setopentocontrib'
-import {getPrivacyLevel, setUIPrivacy, savePrivacyLevel, privateRadioButtonHandler} from './setprivacy'
+import {openSettingsButtonHandler, saveParentCollection} from './settings/setcollection'
+import {setUITitle, getCurrentTitle, saveTitle} from './settings/settitle'
+import {setOpenToContrib, getOpenToContrib, saveOpenToContrib} from './settings/setopentocontrib'
+import {getPrivacyLevel, setUIPrivacy, savePrivacyLevel, privateRadioButtonHandler} from './settings/setprivacy'
 import {setUIContributors,
     clearUIContributors,
     clearAuxContribArrays, 
@@ -10,7 +10,7 @@ import {setUIContributors,
     addContributorButtonHandler, 
     saveNewContributors, 
     saveRemoveContributors
-} from './setcontributors'
+} from './settings/setcontributors'
 
 export const enableCompositionSettings = (tracksInfo) => {
     setUIContributors(tracksInfo.contributors)

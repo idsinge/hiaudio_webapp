@@ -1,4 +1,4 @@
-import {updateSettings} from './settings'
+import {updateSettings} from '../settings'
 
 let CURRENT_TITLE = null
 
