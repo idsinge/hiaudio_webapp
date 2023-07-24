@@ -56,17 +56,19 @@ export const updateSettings = async (method, api, data) => {
     return response
 }
 
-const cancelButtonHandler = async (compInfo) => {
+const clickCancelButtonHandler = (compInfo) => {     
+    setUITitle(getCurrentTitle()||compInfo.title)        
+    setUIPrivacy(getPrivacyLevel() || compInfo.privacy)         
+    setOpenToContrib(getOpenToContrib() || compInfo.opentocontrib)
+    clearUIContributors()     
+    setUIContributors(getCurrentContributors().length ? getCurrentContributors() : compInfo.contributors)        
+    clearAuxContribArrays()
+    document.getElementById('deleteComposition').checked = false  
+}
+
+const cancelButtonHandler = (compInfo) => {
     const cancelSettingsButton = document.getElementById('cancelsettingsbutton')
-    cancelSettingsButton?.addEventListener('click', async (e) => {  
-        setUITitle(getCurrentTitle()||compInfo.title)        
-        setUIPrivacy(getPrivacyLevel() || compInfo.privacy)         
-        setOpenToContrib(getOpenToContrib() || compInfo.opentocontrib)
-        clearUIContributors()     
-        setUIContributors(getCurrentContributors().length ? getCurrentContributors() : compInfo.contributors)        
-        clearAuxContribArrays()
-        document.getElementById('deleteComposition').checked = false  
-    })       
+    cancelSettingsButton?.addEventListener('click', () => { clickCancelButtonHandler(compInfo)})       
 }
 
 const saveButtonHandler = async (compId) => {
