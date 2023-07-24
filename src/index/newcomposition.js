@@ -2,11 +2,14 @@
 import { ENDPOINT } from '../js/config'
 import {uriCompositionPage} from './index.js'
 import {getCollections, getCollectionsError, createListCollections } from './newcollection.js'
+import {newCompositionModal} from './newcompositionmodal'
 
 const createNewCompButton  = document.getElementById('createNewCompButton')
 const saveCompositionButton = document.getElementById('newcomposition')
 
 const clickNewCompButtonHandler = () => {
+  const gridView = document.getElementById('grid')
+  gridView.insertAdjacentHTML('afterbegin', newCompositionModal)
   document.getElementById('newcomptitle').value = ''
   getCollections().then( result => {
       if(result){
