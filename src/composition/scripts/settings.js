@@ -1,9 +1,9 @@
 import { ENDPOINT } from '../../js/config'
 import {openSettingsButtonHandler, saveParentCollection} from './setcollection'
+import {setUITitle, getCurrentTitle, saveTitle} from './settitle'
+import {setOpenToContrib, getOpenToContrib, saveOpenToContrib} from './setopentocontrib'
+import {getPrivacyLevel, setUIPrivacy, savePrivacyLevel, privateRadioButtonHandler} from './setprivacy'
 
-let CURRENT_TITLE = null
-let CURRENT_PRIVACY = null
-let CURRENT_OPENTOCONTRIB = null
 let CURRENT_CONTRIBUTORS = []
 let NEW_CONTRIBUTORS = []
 let TOREMOVE_CONTRIBUTORS = []
@@ -14,66 +14,20 @@ export const enableCompositionSettings = (tracksInfo) => {
     setUIContributors(tracksInfo.contributors)
     addContributorButtonHandler(tracksInfo.uuid)
     setUITitle(tracksInfo.title)
-    setUIPrivacy(tracksInfo.privacy)    
+    setUIPrivacy(tracksInfo.privacy)
     setOpenToContrib(tracksInfo.opentocontrib)
     saveButtonHandler(tracksInfo.uuid)
     cancelButtonHandler(tracksInfo)
+    createSettingsButton()
+    privateRadioButtonHandler()
+    openSettingsButtonHandler(tracksInfo?.collection_id)    
+}
+
+const createSettingsButton = () => {
     document.getElementById('useroptions').innerHTML = `<li class="nav-item">
     <a class="nav-link" href="#" id="openSettingsButton" data-toggle="modal" data-target="#settingsModal">Settings</a>
   </li>
    `
-    privateRadioButtonHandler()
-    openSettingsButtonHandler(tracksInfo?.collection_id)
-    
-}
-
-const changeOpenToContrib = (newstate) => {
-    const opentocontribcheckbox = document.getElementById('opentocontribution')    
-    if(newstate === 0){
-        opentocontribcheckbox.checked = false
-        opentocontribcheckbox.disabled = true
-    } else {
-        opentocontribcheckbox.disabled = false
-    }
-}
-
-const privateRadioButtonHandler = () => {
-
-    const radioButtons = document.getElementsByName('settingsPrivacyRadios')
-   
-    for (let radiobutton of radioButtons) {
-
-        radiobutton.addEventListener('change', function () {
-            if (this.checked) {
-                if(parseInt(this.value) === 3) {
-                    changeOpenToContrib(0)
-                } else {
-                    changeOpenToContrib(1)
-                }                
-            } 
-        })
-    }
-}
-
-const setUIPrivacy = (privacyLevel) => {
-    CURRENT_PRIVACY = privacyLevel
-    const radiobtn = document.getElementById('settingsPrivacyRadios' + privacyLevel)
-    radiobtn.checked = true
-    if(privacyLevel === 3){
-        changeOpenToContrib(0)
-    }
-}
-
-const setUITitle = (title) => {
-    CURRENT_TITLE = title
-    const textfield = document.getElementById('newtitle')
-    textfield.value = title
-}
-
-const setOpenToContrib = (status) => {     
-    CURRENT_OPENTOCONTRIB = status   
-    const checkbox = document.getElementById('opentocontribution')
-    checkbox.checked = status
 }
 
 const setUIContributors = (contributors) => {
@@ -236,9 +190,9 @@ export const updateSettings = async (method, api, data) => {
 const cancelButtonHandler = async (compInfo) => {
     const cancelSettingsButton = document.getElementById('cancelsettingsbutton')
     cancelSettingsButton?.addEventListener('click', async (e) => {  
-        setUITitle(CURRENT_TITLE ||compInfo.title)        
-        setUIPrivacy(CURRENT_PRIVACY || compInfo.privacy)         
-        setOpenToContrib(CURRENT_OPENTOCONTRIB || compInfo.opentocontrib)
+        setUITitle(getCurrentTitle()||compInfo.title)        
+        setUIPrivacy(getPrivacyLevel() || compInfo.privacy)         
+        setOpenToContrib(getOpenToContrib() || compInfo.opentocontrib)
         document.getElementById('contributorinput').value = ''
         const ul = document.getElementById('listOfContributors')
         ul.innerHTML = ''        
@@ -265,28 +219,6 @@ const saveButtonHandler = async (compId) => {
             $('#settingsModal').modal('hide')
         }
     })
-}
-
-const saveTitle = async (compId) => {
-    const newtitle = document.getElementById('newtitle').value
-    if (newtitle !== CURRENT_TITLE) {
-        await updateTitle(compId, newtitle)
-    }
-}
-
-const savePrivacyLevel = async (compId) => {
-    const newPrivacyLevel = document.querySelector('input[name="settingsPrivacyRadios"]:checked').value
-    const privacy = parseInt(newPrivacyLevel)
-    if (privacy !== CURRENT_PRIVACY) {
-        await updateCompPrivacy(compId, privacy)
-    }
-}
-
-const saveOpenToContrib = async (compId) => {
-    const newOpenToContrib = document.getElementById('opentocontribution').checked                        
-    if ( newOpenToContrib !== CURRENT_OPENTOCONTRIB) {                
-        await updateOpenToContrib(compId, newOpenToContrib)
-    }
 }
 
 const saveNewContributors = async () => {
@@ -328,46 +260,8 @@ const saveRemoveContributors = async (compId) => {
     }         
 }
 
-const updateTitle = async (compId, newtitle) => {
-
-    const data = { uuid: compId, title: newtitle }
-    const resultNewTitle = await updateSettings('PATCH', '/updatecomptitle', data)
-    if (resultNewTitle.ok) {
-        CURRENT_TITLE = newtitle
-        document.getElementById('comp-title').innerHTML = newtitle
-    }
-}
-const updateCompPrivacy = async (compId, privacy) => {
-
-    const data = { uuid: compId, privacy: privacy }
-    const resultNewPrivacy = await updateSettings('PATCH', '/updatecompprivacy', data)
-    if (resultNewPrivacy.ok) {
-        CURRENT_PRIVACY = privacy
-    }
-}
-
-const updateOpenToContrib = async (compId, newstatus) => {
-
-    const data = { uuid: compId, opentocontrib: newstatus }
-    const resultNewOpenToContrib = await updateSettings('PATCH', '/updatecomptocontrib', data)
-    if (resultNewOpenToContrib.ok) {
-        CURRENT_OPENTOCONTRIB = newstatus        
-        if(newstatus){
-            const nodeBadge = document.createElement('span')            
-            nodeBadge.innerHTML ='<br><span class="badge badge-info">OPEN TO CONTRIB</span>'            
-            document.getElementById('post-header').prepend(nodeBadge)            
-        } else {     
-            if(document.querySelector('.badge-info')){
-                const brs =document.getElementById('post-header').getElementsByTagName('br')
-                brs[0].parentNode.removeChild(brs[0])
-                document.querySelector('.badge-info').innerHTML ='' 
-            }                     
-        }        
-    }
-}
-
 const deleteComposition = async (compId) => {
-    const dialog = confirm('Delete ' + CURRENT_TITLE + '?')
+    const dialog = confirm('Delete ' + getCurrentTitle() + '?')
     if (dialog) {
         const resultDeleteComp = await updateSettings('DELETE', '/deletecomposition/'+compId, null)        
         if (resultDeleteComp.ok) {
