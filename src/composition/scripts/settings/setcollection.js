@@ -1,5 +1,5 @@
-import {updateSettings} from './settings'
-import {getCollections, getCollectionsError, createListCollections } from '../../index/newcollection.js'
+import {updateSettings} from '../settings'
+import {getCollections, getCollectionsError, createListCollections } from '../../../index/newcollection.js'
 
 let CURRENT_PARENT_COLLECTION = null
 
@@ -12,12 +12,14 @@ const clickSettingsButtonHandler = (collection_id) => {
         }        
     })
 }
+
 export const openSettingsButtonHandler = (collection_id) => {
     const openSettingsButton  = document.getElementById('openSettingsButton')
     openSettingsButton?.addEventListener('click', () => {
         clickSettingsButtonHandler(collection_id)
     }, false)
 }
+
 const getCompCollSuccess = (list, selected_coll) => {
     document.getElementById('listCollContainerNewColl').replaceChildren()
     createListCollections(list, 'listCollContainerNewColl', CURRENT_PARENT_COLLECTION || selected_coll)
