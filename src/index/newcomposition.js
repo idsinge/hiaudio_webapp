@@ -3,14 +3,16 @@ import { ENDPOINT } from '../js/config'
 import {uriCompositionPage} from './index.js'
 import {getCollections, getCollectionsError, createListCollections } from './newcollection.js'
 import {newCompositionModal} from './newcompositionmodal'
+import './editcollections'
 
 const createNewCompButton  = document.getElementById('createNewCompButton')
-const saveCompositionButton = document.getElementById('newcomposition')
 
 const clickNewCompButtonHandler = () => {
   const gridView = document.getElementById('grid')
   gridView.insertAdjacentHTML('afterbegin', newCompositionModal)
   document.getElementById('newcomptitle').value = ''
+  const saveCompositionButton = document.getElementById('newcomposition')
+  saveEventListener(saveCompositionButton)
   getCollections().then( result => {
       if(result){
           getCompCollSuccess(result)
@@ -27,7 +29,11 @@ const getCompCollSuccess = (list) => {
   createListCollections(list, 'listCollContainerNewComp')
 }
 
-saveCompositionButton?.addEventListener('click', (e) => {
+const saveEventListener = (saveCompositionButton) =>{
+  saveCompositionButton?.addEventListener('click', saveEventListenerHandler)
+}
+
+const saveEventListenerHandler = (e) => {
   let newcomptitle = document.getElementById('newcomptitle').value
   const privacyLevel = document.querySelector('input[name="newMusicPrivacyRadios"]:checked').value
   if (!newcomptitle) {
@@ -72,5 +78,4 @@ saveCompositionButton?.addEventListener('click', (e) => {
     }).catch((error) => {
       errorIs = error
     })
-
-})
+}

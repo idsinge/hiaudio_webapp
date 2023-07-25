@@ -20,7 +20,7 @@ export const newCompositionModal = `
                     </div>
                 </div>
                 <div class="form-group">
-                    <label id="" for="listContributorsFormControl">Select parent collection:</label>
+                    <label id="" for="listCompCollsFormControl">Select parent collection:</label>
                     <div class="container">
                         <div class="row justify-center">
                           <div class="">
