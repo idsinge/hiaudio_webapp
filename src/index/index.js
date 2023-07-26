@@ -27,7 +27,7 @@ if (isAuthenticated) {
       <a class='nav-link' href='#' id='createNewCollButton' data-toggle='modal' data-target='#newCollectionModal'>/ New Collection</a>
   </li>
   <li class='nav-item'>
-      <a class='nav-link' href='#' id='editCollectionsButton' data-toggle='modal' data-target='#editCollectionsModal'>/ My Collections</a>
+      <a class='nav-link' href='#' id='openMyCollectionsButton' data-toggle='modal' data-target='#editCollectionsModal'>/ My Collections</a>
   </li>`
 } else {
   document.getElementById('useroptions').innerHTML = `<a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>`
