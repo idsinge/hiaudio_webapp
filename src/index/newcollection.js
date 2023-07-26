@@ -32,8 +32,10 @@ export const createListCollections = (collections,listId, coll_id) => {
     let selected = null
     theList.forEach((element) => {
         if (element) {
-            if(element.uuid == coll_id){
+            if(element.uuid === coll_id){
                 selected = 'selected>'
+            } else {
+                selected = null
             }
             const template = `<option value='${element.uuid}' ${selected?selected:'>'}${element.title}</option>`
             listOptions += template
