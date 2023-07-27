@@ -109,7 +109,11 @@ const confirmDeleteCollectionModal = async (event, collectionId, collectionTitle
             const response = await fetch(ENDPOINT + '/deletecollection/' + collectionId, { method: 'DELETE' })
             if (response?.ok) {
                 document.getElementById('removeCollIcon'+collectionId).remove()
-                document.getElementById(collectionId).remove()
+                const listElemToDelete = document.getElementById(collectionId)
+                if(listElemToDelete?.nextSibling?.tagName === 'UL'){
+                    listElemToDelete.nextSibling.remove()
+                }
+                listElemToDelete.remove()
             }
 
         } else {
