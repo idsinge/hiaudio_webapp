@@ -1,7 +1,10 @@
 import { ENDPOINT } from '../js/config'
 import {uriCompositionPage} from './index'
 
-const showAllCollButton = document.getElementById('editCollectionsButton')
+let EDIT_STATUS = false
+
+const showAllCollButton = document.getElementById('openMyCollectionsButton')
+const editButton = document.getElementById('editmycollectionsbutton')
 
 const fetchCollectionsTree = async () => {
     const response = await fetch('/mycollectionsastree')
@@ -11,14 +14,16 @@ const fetchCollectionsTree = async () => {
 
 const createTreeHTML = (item) => {
     let html = `
-        <li class="list-group-item border-bottom-0 border-right-0 border-top-0 border-warning">
-            <b>${item.title}</b>
+        <span id='removeCollIcon${item.uuid}' data-uuid='${item.uuid}' data-title='${item.title}' role='button' class='badge badge-pill badge-danger' hidden>-</span>
+        <li id='${item.uuid}' class='list-group-item border-bottom-0 border-right-0 border-top-0 border-warning'>
+            <input type='text' class='form-control border-secondary' id='treecolltitleinput${item.uuid}' data-uuid='${item.uuid}' placeholder='Type a new title'
+            title='collectiontitle' value='${item.title}' disabled>
         </li>`
     
     if (item.compositions.length > 0 || item.collections.length > 0) {
         html += '<ul>'
         for (const composition of item.compositions) {
-            html += `<li class="list-group-item border-bottom-0 border-right-0 border-left-0 border-top-0"><a href='${uriCompositionPage + composition.uuid}'><u>${composition.title}</u></a></li>`
+            html += `<li class='list-group-item border-0'><a href='${uriCompositionPage + composition.uuid}'><u>${composition.title}</u></a></li>`
         }
         for (const collection of item.collections) {
             html += createTreeHTML(collection)
@@ -39,57 +44,123 @@ const renderTree = async () => {
     treeContainer.innerHTML = html
 }
 
+const clickEditButtonHandler = () => {
+    
+    if(EDIT_STATUS){
+        EDIT_STATUS = false        
+        editButton.innerText =  'Edit'
+        disableEdition()
+    } else {
+        EDIT_STATUS = true
+        editButton.innerText =  'Done'
+        enableEdition()
+    }   
+}
+
+const enableEdition = () => {
+    
+    const elementsWithHiddenAttribute = document.querySelectorAll(`[id*='removeCollIcon']`)
+
+    elementsWithHiddenAttribute.forEach(element => {
+        element.removeAttribute('hidden')        
+        removeCollectionClickhHandler(element.getAttribute('data-uuid'), element.getAttribute('data-title'))
+    })   
+    
+    const elementsWithDisabledAttribute = document.querySelectorAll(`[id*='treecolltitleinput']`)
+
+    elementsWithDisabledAttribute.forEach(element => {
+        element.removeAttribute('disabled')
+        updateInputTextEventHandler(element.getAttribute('data-uuid'), element.value)
+    })
+}
+
+const disableEdition = () => {
+
+    const elementsWithHiddenAttribute = document.querySelectorAll(`[id*='removeCollIcon']`)
+
+    elementsWithHiddenAttribute.forEach(element => {
+        element.setAttribute('hidden', 'true')
+    })
+
+    const elementsWithDisabledAttribute = document.querySelectorAll(`[id*='treecolltitleinput']`)    
+
+    elementsWithDisabledAttribute.forEach(element => {
+        element.setAttribute('disabled', 'true')
+    })
+}
+
 const clickAllCollButtonHandler = async () => {
+    EDIT_STATUS = false
+    editButton.innerText =  'Edit'
     await renderTree()
+    editButton.addEventListener('click', clickEditButtonHandler, false)
 }
 
 showAllCollButton?.addEventListener('click', clickAllCollButtonHandler, false)
 
-const addCollectionToList = (collection, ulelem) => {
-    const li = document.createElement('li')
-    li.className = 'list-group-item'
-    li.id = collection.uuid
-    const inputText1 = `
-    <div class="form-row">
-        <div class="form-group col-sm-8">
-            <input type="text" class="form-control" id="collectiontitle" placeholder="Type a new title"
-            title="collectiontitle" value="${collection.title}">
-        </div>
-        <div class="form-group col-sm-4">
-            <div class="form-check">
-                <div class='custom-control custom-switch custom-control-inline float-right'>
-                    <input type='checkbox' class='custom-control-input is-invalid' id='removeCollSwitch${collection.uuid}'>
-                    <label class='custom-control-label is-invalid' for='removeCollSwitch${collection.uuid}'>Remove</label>
-                </div>
-            </div>
-            <div class="form-check" hidden>
-                <button id="editsavecollbttn" type="button" class="btn btn-primary">Save</button>
-            </div>
-        </div>
-    </div>`
+const confirmDeleteCollectionModal = async (event, collectionId, collectionTitle) => {
 
-    li.innerHTML += inputText1
-    ulelem.appendChild(li)
-    removeCollectionSwitchHandler(collection.uuid, collection.title)
+    const chk = event.target
+
+    if (chk.tagName === 'SPAN') {
+
+        if (confirm(`Are you sure you want remove the collection ${collectionTitle} and all of its content?`) == true) {
+
+            const response = await fetch(ENDPOINT + '/deletecollection/' + collectionId, { method: 'DELETE' })
+            if (response?.ok) {
+                document.getElementById('removeCollIcon'+collectionId).remove()
+                const listElemToDelete = document.getElementById(collectionId)
+                if(listElemToDelete?.nextSibling?.tagName === 'UL'){
+                    listElemToDelete.nextSibling.remove()
+                }
+                listElemToDelete.remove()
+            }
+
+        } else {
+            event.target.checked = false
+        }
+    }
 }
 
-const removeCollectionSwitchHandler = (collectionId, collectionTitle) => {
+const removeCollectionClickhHandler = (collectionId, collectionTitle) => {
+    document.getElementById('removeCollIcon' + collectionId).onclick= async (event) => {
+        await confirmDeleteCollectionModal(event, collectionId, collectionTitle)
+    }
+}
 
-    document.getElementById('removeCollSwitch' + collectionId).addEventListener('change', async function (event) {
-        const chk = event.target
-        if (chk.tagName === 'INPUT' && chk.type === 'checkbox') {
-            if (chk.checked) {
-                if (confirm(`Do you want remove the collection: ${collectionTitle}?`) == true) {
+const updateInputTextEventHandler = (collectionId, currentTitle) => {    
+    document.getElementById('treecolltitleinput'+collectionId).onblur = (event) => {
+        handleInputBlur(event, collectionId, currentTitle)
+    }    
+}
 
-                    const response = await fetch(ENDPOINT + '/deletecollection/' + collectionId, { method: 'DELETE' })
-                    if (response?.ok) {
-                        document.getElementById(collectionId).remove()
-                    }
-
-                } else {
-                    event.target.checked = false
-                }
-            }
-        }
+const updateCollectionTitleRqst = (value, uuid) => {
+   
+    const updateTitleApi = ENDPOINT + '/updatecolltitle'
+    const data = { title: value, uuid: uuid }
+    
+    fetch(updateTitleApi, {
+        method: 'PATCH', 
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
     })
+    .then()
+    .catch(error => {
+        console.error('Error updating value:', error)
+    })
+}
+
+const handleInputBlur = (event, collId, currTitle) => {    
+    const newValue = event.target.value
+    if(currTitle !== newValue){
+        if (!newValue || newValue === '') {
+            event.target.value = currTitle
+            alert('Introduce a valid title, please')
+            return
+        } else {
+            updateCollectionTitleRqst(newValue, collId)
+        }
+    }
 }
