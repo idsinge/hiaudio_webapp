@@ -155,6 +155,12 @@ const updateCollectionTitleRqst = (value, uuid) => {
 const handleInputBlur = (event, collId, currTitle) => {    
     const newValue = event.target.value
     if(currTitle !== newValue){
-        updateCollectionTitleRqst(newValue, collId)
-    }    
+        if (!newValue || newValue === '') {
+            event.target.value = currTitle
+            alert('Introduce a valid title, please')
+            return
+        } else {
+            updateCollectionTitleRqst(newValue, collId)
+        }
+    }
 }
