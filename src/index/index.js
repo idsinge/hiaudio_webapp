@@ -7,13 +7,9 @@ export let uriCompositionPage = '/composition.html?compositionId='
 let uriProfilePage = window.location.origin
 
 
-getJsonApi("/profile", (r) => {
-
-  const isAuthenticated = ("ok" in r && r['ok'] == true);
-
-  if (isAuthenticated) {
-    document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
-      <a class='nav-link' href='${uriProfilePage + '/profile.html'}'>Profile <i>[${r.name}]</i></a>
+document.getElementById('userlogin').innerHTML = `<a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>`
+document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
+      <a class='nav-link' href='${uriProfilePage + '/profile.html'}'>Profile <i id='display_profile_name'></i></a>
     </li>
     <li class='nav-item'>
           <a class='nav-link' href='#' id='createNewCompButton' data-toggle='modal' data-target='#newMusicModal'>/ New Music</a>
@@ -24,8 +20,16 @@ getJsonApi("/profile", (r) => {
     <li class='nav-item'>
         <a class='nav-link' href='#' id='openMyCollectionsButton' data-toggle='modal' data-target='#editCollectionsModal'>/ My Collections</a>
     </li>`
-  } else {
-    document.getElementById('useroptions').innerHTML = `<a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>`
+
+
+getJsonApi("/profile", (r) => {
+
+  const isAuthenticated = ("ok" in r && r['ok'] == true);
+
+  if (isAuthenticated) {
+    document.getElementById('userlogin').style.display = "none";
+    document.getElementById('useroptions').style.display = "";
+    document.getElementById('display_profile_name').innerText = `[${r.name}]`;
   }
 
 });
@@ -38,7 +42,7 @@ getJsonApi("/compositions", (data) => {
 
   alert("invalid return value for compisitions list");
 
-}, (error) => { alert(error) })
+}, (error) => {alert(error)})
 
 
 const renderHomePage = (compositionsList, error) => {

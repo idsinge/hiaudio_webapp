@@ -18,21 +18,23 @@
     <header class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="">
             <img id="mainLogo" alt="" height="36" src="https://hi-audio.imt.fr/wp-content/themes/tpt-hiaudio/assets/images/hi_audio.svg">
-        </a>     
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul id="useroptions" class="navbar-nav mr-auto">
+            <ul id="userlogin" class="navbar-nav mr-auto">
+            </ul>
+            <ul id="useroptions" class="navbar-nav mr-auto" style="display:none;">
                 <li class="nav-item active">
                     <a id="menuRight" class="nav-link" href="">himusic <span class="sr-only">(current)</span></a>
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input id="searchInput" class="form-control mr-sm-2" type="search" placeholder="Search"
-                    aria-label="Search">           
+                    aria-label="Search">
             </form>
         </div>
     </header>
@@ -47,10 +49,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label id="" for="newcomptitle">Title:</label> 
+                        <label id="" for="newcomptitle">Title:</label>
                         <div class="container">
                             <div class="row justify-center">
-                                <div class="input-group mb-3">  
+                                <div class="input-group mb-3">
                                     <input type="text" class="newtitle" id="newcomptitle" placeholder="new music title" title="newcomptitle">
                                 </div>
                             </div>
@@ -106,25 +108,25 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label id="" for="newcolltitle">Title:</label> 
+                        <label id="" for="newcolltitle">Title:</label>
                         <div class="container">
                             <div class="row justify-center">
-                                <div class="input-group mb-3">                            
-                                    <input type="text" class="newtitle" id="newcolltitle" placeholder="new collection title" title="newcolltitle">                           
+                                <div class="input-group mb-3">
+                                    <input type="text" class="newtitle" id="newcolltitle" placeholder="new collection title" title="newcolltitle">
                                 </div>
-                            </div>                            
-                        </div>                        
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label id="" for="listCollectionsFormControl">Select parent collection:</label>                            
+                        <label id="" for="listCollectionsFormControl">Select parent collection:</label>
                         <div class="container">
                             <div class="row justify-center">
-                              <div class="">                                  
-                                <div id="listCollContainerNewColl" class="input-group mb-3"></div>                                                         
-                              </div>                         
+                              <div class="">
+                                <div id="listCollContainerNewColl" class="input-group mb-3"></div>
+                              </div>
                             </div>
-                        </div>                            
-                    </div>                    
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="newCollectionFormControl">Level of Privacy:</label>
                         <div class="form-check">
@@ -145,7 +147,7 @@
                               Private
                             </label>
                           </div>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -168,7 +170,7 @@
                     <ul id="listCollContainerAllColl" class="list-group"></ul>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>                    
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -179,14 +181,14 @@
     <footer>
 		<div class="footerMenu">
 			<hr>
-			<ul>				
+			<ul>
 				<li><a href="./static/about.html">About</a></li>
 				<li><a href="./static/terms.html">Terms of use</a></li>
 				<li><a href="./static/privacy.html">Privacy</a></li>
 				<li><a href="./static/cookies.html">Cookies</a></li>
 			</ul>
             <span id="companyName">&copy; Hi-Audio</span>
-	    </div>		
+	    </div>
 	</footer>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
