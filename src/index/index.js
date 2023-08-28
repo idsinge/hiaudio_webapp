@@ -1,59 +1,45 @@
 import COMPOSITION_COVER from '../img/agp.png'
-import { ENDPOINT } from '../js/config'
+import { getJsonApi } from '../js/utils'
 
 let listElelemts = ''
-let errorIs = null
-let compositions = []
 
-const queryString = window.location.search
-const isAuthenticated = queryString.split('auth=')[1]
-
-const domainIs = window.location.host
 export let uriCompositionPage = '/composition.html?compositionId='
 let uriProfilePage = window.location.origin
-if (domainIs !== 'localhost:80' && window.location.origin !== 'http://localhost') {
-  uriCompositionPage = '/public' + uriCompositionPage
-  uriProfilePage += '/public'
-}
 
-if (isAuthenticated) {
-  document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
-    <a class='nav-link' href='${uriProfilePage + '/profile.html'}'>Profile</a>
-  </li>
-  <li class='nav-item'>
-        <a class='nav-link' href='#' id='createNewCompButton' data-toggle='modal' data-target='#newMusicModal'>/ New Music</a>
-  </li>
-  <li class='nav-item'>
-      <a class='nav-link' href='#' id='createNewCollButton' data-toggle='modal' data-target='#newCollectionModal'>/ New Collection</a>
-  </li>
-  <li class='nav-item'>
-      <a class='nav-link' href='#' id='openMyCollectionsButton' data-toggle='modal' data-target='#editCollectionsModal'>/ My Collections</a>
-  </li>`
-} else {
-  document.getElementById('useroptions').innerHTML = `<a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>`
-}
 
-fetch(ENDPOINT + '/compositions', {
-  method: 'GET',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+getJsonApi("/profile", (r) => {
+
+  const isAuthenticated = ("ok" in r && r['ok'] == true);
+
+  if (isAuthenticated) {
+    document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
+      <a class='nav-link' href='${uriProfilePage + '/profile.html'}'>Profile <i>[${r.name}]</i></a>
+    </li>
+    <li class='nav-item'>
+          <a class='nav-link' href='#' id='createNewCompButton' data-toggle='modal' data-target='#newMusicModal'>/ New Music</a>
+    </li>
+    <li class='nav-item'>
+        <a class='nav-link' href='#' id='createNewCollButton' data-toggle='modal' data-target='#newCollectionModal'>/ New Collection</a>
+    </li>
+    <li class='nav-item'>
+        <a class='nav-link' href='#' id='openMyCollectionsButton' data-toggle='modal' data-target='#editCollectionsModal'>/ My Collections</a>
+    </li>`
+  } else {
+    document.getElementById('useroptions').innerHTML = `<a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>`
   }
-}).then((r) => {
-  if (!r.ok) {
-    errorIs = r.statusText
-  }
-  return r.json()
-})
-  .then(data => {
-    if (data.compositions) {
-      compositions = data.compositions
-    }
-  }).catch((error) => {
-    errorIs = error
-  }).then(() => {
-    renderHomePage(compositions, errorIs)
-  })
+
+});
+
+
+getJsonApi("/compositions", (data) => {
+
+  if ("compositions" in data)
+    return renderHomePage(data.compositions)
+
+  alert("invalid return value for compisitions list");
+
+}, (error) => { alert(error) })
+
 
 const renderHomePage = (compositionsList, error) => {
 
