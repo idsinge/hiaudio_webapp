@@ -1,0 +1,69 @@
+--- waveform-playlist.umd.js.bak	2023-08-04 13:00:39.570041100 +0200
++++ waveform-playlist.umd.js	2023-08-04 13:05:36.278321800 +0200
+@@ -9036,8 +9036,8 @@
+       }
+     });
+ 
+-    ee.on("startaudiorendering", (type) => {
+-      this.startOfflineRender(type);
++    ee.on("startaudiorendering", (type, trackPos) => {
++      this.startOfflineRender(type, trackPos);
+     });
+ 
+     ee.on("statechange", (state) => {
+@@ -9323,7 +9323,7 @@
+     this.cursor = start;
+   }
+ 
+-  async startOfflineRender(type) {
++  async startOfflineRender(type, trackPos) {
+     if (this.isRendering) {
+       return;
+     }
+@@ -9346,14 +9346,18 @@
+     const currentTime = this.offlineAudioContext.currentTime;
+     const mg = this.offlineAudioContext.createGain();
+ 
+-    this.tracks.forEach((track) => {
++    this.tracks.forEach((track, pos) => {
++      let shouldPlay = this.shouldTrackPlay(track)
++      if(trackPos >= 0){
++        shouldPlay = pos === trackPos
++      }
+       const playout = new Playout(this.offlineAudioContext, track.buffer, mg);
+       playout.setEffects(track.effectsGraph);
+       playout.setMasterEffects(this.effectsGraph);
+       track.setOfflinePlayout(playout);
+ 
+       track.schedulePlay(currentTime, 0, 0, {
+-        shouldPlay: this.shouldTrackPlay(track),
++        shouldPlay: shouldPlay,
+         masterGain: 1,
+         isOffline: true,
+       });
+@@ -9378,7 +9382,7 @@
+ 
+       // callback for `exportWAV`
+       this.exportWorker.onmessage = (e) => {
+-        this.ee.emit("audiorenderingfinished", type, e.data);
++        this.ee.emit("audiorenderingfinished", type, e.data, trackPos);
+         this.isRendering = false;
+ 
+         // clear out the buffer for next renderings.
+@@ -9647,9 +9651,14 @@
+     });
+   }
+ 
+-  clear() {
++  clear(trackPos) {
+     return this.stop().then(() => {
+-      this.tracks = [];
++      var newArray = []
++      if(trackPos || trackPos === 0){
++        this.tracks.splice(trackPos, 1)
++        newArray = this.tracks
++      }
++      this.tracks = newArray;
+       this.soloedTracks = [];
+       this.mutedTracks = [];
+       this.playoutPromises = [];
