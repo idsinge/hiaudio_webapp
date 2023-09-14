@@ -3,6 +3,7 @@
  * This enables projects to create/control the useability of the project.
 */
 import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
+import { TestLatency } from './latencymeasure/testlatency'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
 var ee = playlist.getEventEmitter();
@@ -166,8 +167,10 @@ $container.on("click", ".btn-clear", function() {
 
 $container.on("click", ".btn-record", function() {
   if(!isRecording){
-    isRecording = true
-    ee.emit("record");
+    isRecording = true;
+    const latency = TestLatency.getCurrentLatency();
+    const latencyInSeconds = latency/1000;
+    ee.emit("record", latencyInSeconds);
   }  
 });
 

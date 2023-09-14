@@ -3,6 +3,7 @@ import { FileUploader } from './fileuploader'
 import WaveformPlaylist from 'waveform-playlist'
 import { doFetch, getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
+import { TestLatency } from './latencymeasure/testlatency'
 
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
@@ -54,5 +55,14 @@ export const fileUploader = new FileUploader(COMPOSITION_ID, trackHandler, LOADE
 export const recorder = new Recorder()
 
 const compositionId = COMPOSITION_ID
+const createTestLatencyButton = () => {
+  document.getElementById('useroptions').innerHTML = `<li class="nav-item">
+  <a class="nav-link" href="#" id="testlatency" data-toggle="modal">Test Latency</a>
+</li>
+ `
+}
+
+createTestLatencyButton()
+TestLatency.initialize()
 
 getComposition(compositionId, doAfterCompositionFetched)
