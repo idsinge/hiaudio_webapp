@@ -48,8 +48,7 @@ export class TestLatency {
         TestLatency.startbutton = document.createElement('a')
         TestLatency.startbutton.innerText = 'TEST LATENCY'
         TestLatency.startbutton.classList.add('btn-outline-success')
-        TestLatency.startbutton.removeEventListener('click', TestLatency.displayStart)        
-        TestLatency.startbutton.addEventListener('click', TestLatency.start)
+        TestLatency.startbutton.onclick = TestLatency.start
         TestLatency.content.appendChild(TestLatency.startbutton)
     }
 
@@ -83,8 +82,7 @@ export class TestLatency {
         TestLatency.startbutton.innerText = 'CANCEL'
         TestLatency.startbutton.classList.remove('btn-outline-success')
         TestLatency.startbutton.classList.add('btn-outline-danger')
-        TestLatency.startbutton.removeEventListener('click', TestLatency.start)
-        TestLatency.startbutton.addEventListener('click', TestLatency.displayStart)
+        TestLatency.startbutton.onclick = TestLatency.displayStart
     }
 
     static displayResult(message) {
@@ -93,7 +91,7 @@ export class TestLatency {
         TestLatency.startbutton.innerText = 'TEST AGAIN'        
         TestLatency.startbutton.classList.remove('btn-outline-danger')
         TestLatency.startbutton.classList.add('btn-outline-primary')
-        TestLatency.startbutton.addEventListener('click', TestLatency.displayStart)    
+        TestLatency.startbutton.onclick = TestLatency.displayStart    
         alert(message)       
     }
 
