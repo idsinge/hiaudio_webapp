@@ -29,10 +29,6 @@ export class TestLatency {
         
         let audioWorklet = (typeof AudioWorkletNode === 'function') ? 1 : 0
         TestLatency.data = {
-            device: '?',
-            os: '?',
-            browser: '?',
-            browserVersion: '?',
             buffersize: audioWorklet ? 128 : 512,
             samplerate: '?',
             audioWorklet: audioWorklet
