@@ -1,6 +1,77 @@
---- waveform-playlist.umd.js.bak	2023-08-04 13:00:39.570041100 +0200
-+++ waveform-playlist.umd.js	2023-08-04 13:05:36.278321800 +0200
-@@ -9036,8 +9036,8 @@
+diff --git a/waveform-playlist.umd.js b/waveform-playlist.umd.js
+index 8fe0bb6..373c1a0 100644
+--- a/waveform-playlist.umd.js
++++ b/waveform-playlist.umd.js
+@@ -5076,11 +5076,11 @@ function renderThunk(thunk, previous) {
+ /***/ 6741:
+ /***/ ((module) => {
+ 
+-module.exports = isThunk
+-
+-function isThunk(t) {
+-    return t && t.type === "Thunk"
+-}
++module.exports = isThunk
++
++function isThunk(t) {
++    return t && t.type === "Thunk"
++}
+ 
+ 
+ /***/ }),
+@@ -8863,6 +8863,31 @@ class AnnotationList {
+     this.exportWorker = new (inline_worker_default())(exportWavWorker);
+   }
+ 
++  trimAudioBuffer (audioBuffer, trimDurationInSeconds) {    
++    const sampleRate = audioBuffer.sampleRate;   
++    const startSample = Math.floor(trimDurationInSeconds * sampleRate);
++    if (startSample >= audioBuffer.length) {
++      // If the trim duration is longer than the audio, return an empty buffer.
++      return this.ac.createBuffer(1, 1, sampleRate);
++    }
++
++    const trimmedBuffer = this.ac.createBuffer(
++      audioBuffer.numberOfChannels,
++      audioBuffer.length - startSample,
++      sampleRate
++    );
++
++    // Copy data from the original buffer to the trimmed buffer, excluding the trimmed part.
++    for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
++      const sourceData = audioBuffer.getChannelData(channel);
++      const destinationData = trimmedBuffer.getChannelData(channel);
++      for (let i = 0; i < trimmedBuffer.length; i++) {
++        destinationData[i] = sourceData[i + startSample];
++      }
++    }
++    return trimmedBuffer;
++  }
++
+   // TODO extract into a plugin
+   initRecorder(stream) {
+     this.mediaRecorder = new MediaRecorder(stream);
+@@ -8892,6 +8917,10 @@ class AnnotationList {
+         loader
+           .load()
+           .then((audioBuffer) => {
++            
++            // THIS AFFECTS TO ALL (RECORDED AND PLAYOUT) BUT IT'S CALCULATED EVERY 300 ms                        
++            audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)            
++         
+             // ask web worker for peaks.
+             this.recorderWorker.postMessage({
+               samples: audioBuffer.getChannelData(0),
+@@ -8899,6 +8928,8 @@ class AnnotationList {
+             });
+             this.recordingTrack.setCues(0, audioBuffer.duration);
+             this.recordingTrack.setBuffer(audioBuffer);
++            // THIS AFFECTS ONLY TO PLAYOUT IT'S CALCULATED EVERY 300 ms
++            //audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency) // Chrome Mac            
+             this.recordingTrack.setPlayout(
+               new Playout(this.ac, audioBuffer, this.masterGainNode)
+             );
+@@ -9036,8 +9067,8 @@ class AnnotationList {
        }
      });
  
@@ -11,7 +82,17 @@
      });
  
      ee.on("statechange", (state) => {
-@@ -9323,7 +9323,7 @@
+@@ -9051,7 +9082,8 @@ class AnnotationList {
+       this.drawRequest();
+     });
+ 
+-    ee.on("record", () => {
++    ee.on("record", (latency) => {
++      this.latency = latency
+       this.record();
+     });
+ 
+@@ -9323,7 +9355,7 @@ class AnnotationList {
      this.cursor = start;
    }
  
@@ -20,7 +101,7 @@
      if (this.isRendering) {
        return;
      }
-@@ -9346,14 +9346,18 @@
+@@ -9346,14 +9378,18 @@ class AnnotationList {
      const currentTime = this.offlineAudioContext.currentTime;
      const mg = this.offlineAudioContext.createGain();
  
@@ -41,7 +122,21 @@
          masterGain: 1,
          isOffline: true,
        });
-@@ -9378,7 +9382,7 @@
+@@ -9363,8 +9399,12 @@ class AnnotationList {
+       TODO cleanup of different audio playouts handling.
+     */
+     await Promise.all(setUpChain);
+-    const audioBuffer = await this.offlineAudioContext.startRendering();
++    let audioBuffer = await this.offlineAudioContext.startRendering();
+ 
++    /*if(trackPos && this.latency) {
++      // TO LISTEN THE FIX MUST REFRESH BROWSER        
++      audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)
++    } */
+     if (type === "buffer") {
+       this.ee.emit("audiorenderingfinished", type, audioBuffer);
+       this.isRendering = false;
+@@ -9378,7 +9418,7 @@ class AnnotationList {
  
        // callback for `exportWAV`
        this.exportWorker.onmessage = (e) => {
@@ -50,7 +145,7 @@
          this.isRendering = false;
  
          // clear out the buffer for next renderings.
-@@ -9647,9 +9651,14 @@
+@@ -9647,9 +9687,14 @@ class AnnotationList {
      });
    }
  

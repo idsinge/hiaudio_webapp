@@ -26,10 +26,13 @@ export const enableCompositionSettings = (tracksInfo) => {
 }
 
 const createSettingsButton = () => {
-    document.getElementById('useroptions').innerHTML = `<li class="nav-item">
+    const ulElem = document.getElementById('useroptions')
+    const liElem = document.createElement('li')
+    liElem.innerHTML = `<li class="nav-item">
     <a class="nav-link" href="#" id="openSettingsButton" data-toggle="modal" data-target="#settingsModal">Settings</a>
   </li>
    `
+   ulElem.appendChild(liElem)
 }
 
 export const updateSettings = async (method, api, data) => {
