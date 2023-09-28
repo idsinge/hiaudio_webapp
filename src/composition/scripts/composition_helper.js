@@ -122,9 +122,9 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
         }
     })
 }
-export const drawCompositionDetailInfo = (tracksInfo) => {
+const drawCompositionDetailInfo = (tracksInfo) => {
     let lyricsHtml = null
-    let compositionNameHtml = '<h1 class="post-title">No name</h1>'
+    let compositionNameHtml = '<h1 class="post-title">Test DAW</h1>'
     const compositionInfo = tracksInfo.compositionInfoById
     if (compositionInfo && compositionInfo.doc_url) {
         lyricsHtml = `<a href="#" onclick="window.open('${compositionInfo.doc_url}', 'lyrics_popup', 'fullscreen=yes',false); return false">Lyrics</a>`
