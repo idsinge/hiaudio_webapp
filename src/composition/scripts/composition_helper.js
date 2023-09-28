@@ -48,42 +48,6 @@ export const getComposition = (compositionId, callback, extraParams) => {
 
 }
 
-export const doFetch = (body, callback, extraParams) => {
-
-    let errorIs = null
-    let tracksInfo = {}
-
-    fetch(ENDPOINT, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: body
-    })
-    .then((r) => {
-        if (!r.ok) {
-            errorIs = r.statusText
-        }
-        return r.json()
-    })
-    .then((data) => {
-        if (data.data) {
-            tracksInfo = data.data
-        }
-    })
-    .catch((error) => {
-        errorIs = error
-    })
-    .then(() => {
-        if (errorIs) {
-            alert(errorIs)
-        }
-        callback(tracksInfo, extraParams)
-    })
-
-}
-
 export const doAfterCompositionFetched = (tracksInfo) => {
     createArrayOfTracks(tracksInfo)
     drawCompositionDetailInfo(tracksInfo)
@@ -158,7 +122,7 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
         }
     })
 }
-const drawCompositionDetailInfo = (tracksInfo) => {
+export const drawCompositionDetailInfo = (tracksInfo) => {
     let lyricsHtml = null
     let compositionNameHtml = '<h1 class="post-title">No name</h1>'
     const compositionInfo = tracksInfo.compositionInfoById

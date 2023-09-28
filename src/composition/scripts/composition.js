@@ -1,7 +1,7 @@
 import { TrackHandler } from './track_handler'
 import { FileUploader } from './fileuploader'
 import WaveformPlaylist from 'waveform-playlist'
-import { doFetch, getComposition, doAfterCompositionFetched } from './composition_helper'
+import { getComposition, doAfterCompositionFetched, drawCompositionDetailInfo, cancelLoader } from './composition_helper'
 import { Recorder } from './record'
 import { TestLatency } from './latencymeasure/testlatency'
 
@@ -64,5 +64,11 @@ const createTestLatencyButton = () => {
 
 createTestLatencyButton()
 TestLatency.initialize()
-
-getComposition(compositionId, doAfterCompositionFetched)
+if(compositionId === 'demopage'){
+  const tracksInfo = {compositionInfoById:'', title:'Test DAW'}
+  cancelLoader(LOADER_ELEM_ID)
+  drawCompositionDetailInfo(tracksInfo)
+  alert(`WARNING: Be careful, the music you record or upload won't be saved!`)  
+} else {
+  getComposition(compositionId, doAfterCompositionFetched)
+}

@@ -7,7 +7,12 @@ export let uriCompositionPage = '/composition.html?compositionId='
 let uriProfilePage = window.location.origin
 
 
-document.getElementById('userlogin').innerHTML = `<a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>`
+document.getElementById('userlogin').innerHTML = `<li class='nav-item'>
+  <a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>
+  </li>
+  <li class='nav-item'>
+    <a class='dropdown-item' href='${uriCompositionPage}demopage'>Test DAW</a>
+  </li>`
 document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
       <a class='nav-link' href='${uriProfilePage + '/profile.html'}'>Profile <i id='display_profile_name'></i></a>
     </li>
