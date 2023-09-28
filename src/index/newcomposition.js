@@ -5,6 +5,7 @@ import {getCollections, getCollectionsError, createListCollections } from './new
 import './editcollections'
 
 const createNewCompButton  = document.getElementById('createNewCompButton')
+const createNewCompButtonAtHome  = document.getElementById('createNewCompButtonAtHome')
 
 const clickNewCompButtonHandler = () => {
   document.getElementById('newcomptitle').value = ''
@@ -20,6 +21,7 @@ const clickNewCompButtonHandler = () => {
 }
 
 createNewCompButton?.addEventListener('click', clickNewCompButtonHandler, false)
+createNewCompButtonAtHome?.addEventListener('click', clickNewCompButtonHandler, false)
 
 const getCompCollSuccess = (list) => {
   document.getElementById('listCollContainerNewComp').replaceChildren()                                   
