@@ -64,11 +64,9 @@ const createTestLatencyButton = () => {
 
 createTestLatencyButton()
 TestLatency.initialize()
-if(compositionId === 'demopage'){
-  const tracksInfo = {compositionInfoById:'', title:'Test DAW'}
-  cancelLoader(LOADER_ELEM_ID)
-  drawCompositionDetailInfo(tracksInfo)
+
+if(compositionId === 'demopage'){ 
   alert(`WARNING: Be careful, the music you record or upload won't be saved!`)  
-} else {
-  getComposition(compositionId, doAfterCompositionFetched)
 }
+getComposition(compositionId, doAfterCompositionFetched)
+
