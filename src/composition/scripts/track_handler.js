@@ -66,6 +66,8 @@ export class TrackHandler {
         listOptionsItem.appendChild(document.createTextNode('Delete'))
         listOptions.appendChild(listOptionsItem)
         document.getElementById(menuBtnId).appendChild(listOptions)
+        const spanTitle = controlsList[pos].getElementsByClassName('track-header')[0].getElementsByTagName('span')[0]        
+        spanTitle.style['margin-left'] = '3em'        
     }
     deleteTrackConfirmDialog(event, callback, afterCallback) {       
         const dialog = confirm('Delete ' + event.target.dataset.name + '?')
