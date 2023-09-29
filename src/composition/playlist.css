@@ -173,7 +173,7 @@
 .playlist .controls .track-header {
   overflow: hidden;
   height: 26px;
-  /* display: flex; */
+  display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 0.2rem;
@@ -185,6 +185,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.playlist .controls .track-header span {   
+  width: 200px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .playlist .controls label {
   width: 100%;

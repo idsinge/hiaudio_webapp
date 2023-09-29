@@ -42,15 +42,15 @@ export class TrackHandler {
     createMenuOptButton(controlsList, pos, message_id, name, track_id, chatId){
         const menuBtnId = 'menuoptbtn-' + pos
         const menuDrpDownId = 'menuDropdown' + pos
-        const span = document.createElement('span')
+        const buttonMenu = document.createElement('button')
         const txt = document.createTextNode('...')
-        span.className = 'menuoptbtn'
-        span.onclick = () => {
+        buttonMenu.className = 'menuoptbtn'
+        buttonMenu.onclick = () => {
             document.getElementById(menuDrpDownId).classList.toggle('show')
         }
-        span.id = menuBtnId
-        span.appendChild(txt)
-        controlsList[pos].appendChild(span)
+        buttonMenu.id = menuBtnId
+        buttonMenu.appendChild(txt)
+        controlsList[pos].appendChild(buttonMenu)
         const listOptions = document.createElement('ul')
         listOptions.id = menuDrpDownId
         listOptions.className = 'dropdown-content'
@@ -66,6 +66,8 @@ export class TrackHandler {
         listOptionsItem.appendChild(document.createTextNode('Delete'))
         listOptions.appendChild(listOptionsItem)
         document.getElementById(menuBtnId).appendChild(listOptions)
+        const spanTitle = controlsList[pos].getElementsByClassName('track-header')[0].getElementsByTagName('span')[0]        
+        spanTitle.style['margin-left'] = '3em'        
     }
     deleteTrackConfirmDialog(event, callback, afterCallback) {       
         const dialog = confirm('Delete ' + event.target.dataset.name + '?')
