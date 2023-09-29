@@ -42,7 +42,8 @@ export const playlist = WaveformPlaylist({
     widgets: {
       stereoPan: false,
       collapse:false,      
-      remove: false,
+      remove: true,
+      stereoPan: true,
     },
   },
   zoomLevels: [500, 1000, 3000, 5000],

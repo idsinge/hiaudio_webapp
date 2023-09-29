@@ -71,6 +71,7 @@ const createArrayOfTracks = (tracksInfo) => {
     const userRole = tracksInfo.role
     CURRENT_USER_ID = tracksInfo.viewer_id
     if (canUpload) {
+        playlist.controls.widgets.remove = false
         setUserPermission(true)
         fileUploader.enableUpload()
         if (userRole === 1) {
