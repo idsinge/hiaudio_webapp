@@ -1,7 +1,7 @@
 /* https://codepen.io/blasco9/pen/KKpzQWR?editors=1100&ref=hackernoon.com */
 .grid {
     width: 85%;
-    margin: 7em auto;
+    margin: 2em auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
