@@ -76,7 +76,7 @@ export class TrackHandler {
         }
     }
     sendDeleteRequest(pos,  track_id, doAfterDeleted) {
-        startLoader(LOADER_ELEM_ID)
+        startLoader(LOADER_ELEM_ID, 'Deleting track...')
         fetch(ENDPOINT+'/deletetrack/' + track_id, {
             method: 'DELETE',
         }).then(res => res.json()).then(res => {
