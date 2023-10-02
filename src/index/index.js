@@ -77,6 +77,7 @@ const paintListOfCompositions = (compositionsList, renderOpt, isAuth) => {
   
   if(!compositionsList.length && isAuth){
     document.getElementById('initialmessage').hidden = false
+    document.getElementById('initialmessage').classList.add('d-flex')
   } else {
 
     compositionsList.forEach((element) => {
