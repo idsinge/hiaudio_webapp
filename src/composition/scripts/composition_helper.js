@@ -54,7 +54,8 @@ export const doAfterCompositionFetched = (tracksInfo) => {
 }
 
 
-export const startLoader = (loaderId) => {
+export const startLoader = (loaderId, loadingMessage) => {
+    document.getElementById('loadertext').textContent = loadingMessage
     const loaderElement = document.getElementById(loaderId)
     loaderElement.classList.add(loaderId)
 }
@@ -62,6 +63,7 @@ export const startLoader = (loaderId) => {
 export const cancelLoader = (loaderId) => {
     const loaderElement = document.getElementById(loaderId)
     loaderElement.classList.remove(loaderId)
+    document.getElementById('loadertext').textContent = ''
 }
 
 

@@ -101,6 +101,6 @@ export class FileUploader {
 
         XHR.open('POST', UPLOAD_ENDPOINT)
         XHR.send(formData)
-        startLoader(LOADER_ELEM_ID)
+        startLoader(LOADER_ELEM_ID, "Uploading track...")
     }
 }

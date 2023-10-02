@@ -68,6 +68,7 @@ const renderHomePage = (compositionsList, renderOpt, isAuth) => {
 
   const loaderElement = document.getElementById('loader')
   loaderElement.classList.remove('loader')
+  document.getElementById('loadertext').textContent = ''
 
   paintListOfCompositions(compositionsList, renderOpt, isAuth)
 
