@@ -1,7 +1,7 @@
 
 import { ENDPOINT } from '../js/config'
 import {uriCompositionPage} from './index.js'
-import {getCollections, getCollectionsError, createListCollections } from './newcollection.js'
+import {getCollections, getCollectionsError, createListCollections } from './collectionshandler.js'
 import './editcollections'
 
 const createNewButton  = document.getElementById('createNewButton')
