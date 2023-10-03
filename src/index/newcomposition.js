@@ -4,12 +4,12 @@ import {uriCompositionPage} from './index.js'
 import {getCollections, getCollectionsError, createListCollections } from './newcollection.js'
 import './editcollections'
 
-const createNewCompButton  = document.getElementById('createNewCompButton')
-const createNewCompButtonAtHome  = document.getElementById('createNewCompButtonAtHome')
+const createNewButton  = document.getElementById('createNewButton')
+const createNewButtonAtHome  = document.getElementById('createNewButtonAtHome')
 
-const clickNewCompButtonHandler = () => {
-  document.getElementById('newcomptitle').value = ''
-  const saveCompositionButton = document.getElementById('newcomposition')
+const clickNewButtonHandler = () => {
+  document.getElementById('newtitle').value = ''
+  const saveCompositionButton = document.getElementById('newcreation')
   saveEventListener(saveCompositionButton)
   getCollections().then( result => {
       if(result){
@@ -20,12 +20,12 @@ const clickNewCompButtonHandler = () => {
   })
 }
 
-createNewCompButton?.addEventListener('click', clickNewCompButtonHandler, false)
-createNewCompButtonAtHome?.addEventListener('click', clickNewCompButtonHandler, false)
+createNewButton?.addEventListener('click', clickNewButtonHandler, false)
+createNewButtonAtHome?.addEventListener('click', clickNewButtonHandler, false)
 
 const getCompCollSuccess = (list) => {
-  document.getElementById('listCollContainerNewComp').replaceChildren()                                   
-  createListCollections(list, 'listCollContainerNewComp')
+  document.getElementById('listCollContainer').replaceChildren()                                   
+  createListCollections(list, 'listCollContainer')
 }
 
 const saveEventListener = (saveCompositionButton) =>{
@@ -33,9 +33,14 @@ const saveEventListener = (saveCompositionButton) =>{
 }
 
 const saveEventListenerHandler = (e) => {
-  let newcomptitle = document.getElementById('newcomptitle').value
+  const newCreation = document.getElementById('typeOfNewCreation').value
+  let apiMethod = '/newcomposition'
+  if(newCreation === 'coll'){
+    apiMethod = '/newcollection'
+  }
+  let newtitle = document.getElementById('newtitle').value
   const privacyLevel = document.querySelector('input[name="newMusicPrivacyRadios"]:checked').value
-  if (!newcomptitle) {
+  if (!newtitle) {
     alert('Introduce a valid title, please')
     return
   }
@@ -47,14 +52,14 @@ const saveEventListenerHandler = (e) => {
   }
 
   let body = JSON.stringify({
-    title: newcomptitle,
+    title: newtitle,
     privacy_level: privacyLevel,
     parent_uuid: parentCollection
   })
 
   let errorIs = null
 
-  fetch(ENDPOINT + '/newcomposition', {
+  fetch(ENDPOINT + apiMethod, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -69,12 +74,21 @@ const saveEventListenerHandler = (e) => {
       return r.json()
     })
     .then(data => {
-      if (data.composition) {
-        window.location.href = uriCompositionPage + data.composition.uuid
+      if (data) {
+        verifyResponse(data)
       } else {
         throw new Error(data)
       }
     }).catch((error) => {
       errorIs = error
     })
+}
+
+const verifyResponse = (response)=> {  
+  if(response.composition){
+    window.location.href = uriCompositionPage + response.composition.uuid  
+  } else {
+    $('#newMusicModal').modal('hide')
+    //document.getElementById('openMyCollectionsButton').click()    
+  }
 }

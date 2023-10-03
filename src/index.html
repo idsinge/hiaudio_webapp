@@ -42,18 +42,33 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newMusicModalLabel">New Music</h5>
+                    <h5 class="modal-title" id="newMusicModalLabel">Create new</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label id="" for="newcomptitle">Title:</label>
+                        <label for="listCompCollsFormControl">Type:</label>
+                        <div class="container">
+                            <div class="row justify-center">
+                              <div class="">
+                                <div id="" class="input-group mb-3">
+                                    <select class="custom-select" id="typeOfNewCreation">
+                                        <option value="comp">Composition</option>
+                                        <option value="coll">Collection</option>
+                                    </select>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="" for="newtitle">Title:</label>
                         <div class="container">
                             <div class="row justify-center">
                                 <div class="input-group mb-3">
-                                    <input type="text" class="newtitle" id="newcomptitle" placeholder="new music title" title="newcomptitle">
+                                    <input type="text" id="newtitle" placeholder="new title" title="newtitle">
                                 </div>
                             </div>
                         </div>
@@ -63,10 +78,10 @@
                         <div class="container">
                             <div class="row justify-center">
                               <div class="">
-                                <div id="listCollContainerNewComp" class="input-group mb-3"></div>
+                                <div id="listCollContainer" class="input-group mb-3"></div>
                               </div>
                             </div>
-                          </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="newMusicFormControl">Level of Privacy:</label>
@@ -92,66 +107,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button id="newcomposition" type="button" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="newCollectionModal" tabindex="-1" aria-labelledby="newCollectionModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="newCollectionModalLabel">New Collection</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label id="" for="newcolltitle">Title:</label>
-                        <div class="container">
-                            <div class="row justify-center">
-                                <div class="input-group mb-3">
-                                    <input type="text" class="newtitle" id="newcolltitle" placeholder="new collection title" title="newcolltitle">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label id="" for="listCollectionsFormControl">Select parent collection:</label>
-                        <div class="container">
-                            <div class="row justify-center">
-                              <div class="">
-                                <div id="listCollContainerNewColl" class="input-group mb-3"></div>
-                              </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="newCollectionFormControl">Level of Privacy:</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="newCollectionPrivacyRadios" id="newCollectionPrivacyRadios1" value="1" checked>
-                            <label class="form-check-label" for="newCollectionPrivacyRadios1">
-                              Public
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="radio" name="newCollectionPrivacyRadios" id="newCollectionPrivacyRadios2" value="2">
-                            <label class="form-check-label" for="newCollectionPrivacyRadios2">
-                              Only registered users
-                            </label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="radio" name="newCollectionPrivacyRadios" id="newCollectionPrivacyRadios3" value="3">
-                            <label class="form-check-label" for="newCollectionPrivacyRadios3">
-                              Private
-                            </label>
-                          </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button id="newcollection" type="button" class="btn btn-primary" disabled>Save</button>
+                    <button id="newcreation" type="button" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </div>
@@ -191,7 +147,7 @@
             <hr class="my-4">
             <p class="lead">This space looks quite silent, why don't we make it &#127927; &#127911; &#127929; &#127925; &#127908; ... sound!</p>
             <p>Click on the button and let the magic happens.</p>
-        <a class="btn btn-info btn-lg" id="createNewCompButtonAtHome" href="#" role="button" data-toggle="modal" data-target="#newMusicModal">New Music</a>
+        <a class="btn btn-info btn-lg" id="createNewButtonAtHome" href="#" role="button" data-toggle="modal" data-target="#newMusicModal">New Music</a>
         </div>
     </div>
     <div id="grid" class="grid">

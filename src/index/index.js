@@ -17,10 +17,7 @@ document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
       <a class='nav-link' href='${uriProfilePage + '/profile.html'}'>Profile <i id='display_profile_name'></i></a>
     </li>
     <li class='nav-item'>
-          <a class='nav-link' href='#' id='createNewCompButton' data-toggle='modal' data-target='#newMusicModal'>/ New Music</a>
-    </li>
-    <li class='nav-item'>
-        <a class='nav-link' href='#' id='createNewCollButton' data-toggle='modal' data-target='#newCollectionModal'>/ New Collection</a>
+          <a class='nav-link' href='#' id='createNewButton' data-toggle='modal' data-target='#newMusicModal'>/ Create new</a>
     </li>
     <li class='nav-item'>
         <a class='nav-link' href='#' id='openMyCollectionsButton' data-toggle='modal' data-target='#editCollectionsModal'>/ My Collections</a>
