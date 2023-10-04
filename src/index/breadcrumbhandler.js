@@ -20,7 +20,7 @@ const createBreadCrumbNavBar = (isauth) => {
         userOptions = `<li class='breadcrumb-item active-breadcrumb' aria-current='page'><a href='#' data-section='my-comp'>My Music</a></li>
         <li class='breadcrumb-item'><a href='#' data-section='all-comp'>All</a></li>`
     } else {
-        userOptions = `<li class='breadcrumb-item' aria-current='page'><a href='#' data-section='recent-comp'>Recent</a></li>
+        userOptions = `<li class='breadcrumb-item active-breadcrumb' aria-current='page'><a href='#' data-section='recent-comp'>Recent</a></li>
         <li class='breadcrumb-item'><a href='#' data-section='all-comp'>All</a></li>`
     }
     navBar.innerHTML = userOptions    
