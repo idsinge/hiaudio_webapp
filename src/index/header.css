@@ -27,3 +27,8 @@ body {
     float: none;
   }
 }
+.active-breadcrumb {
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+  font-weight: bold;
+}

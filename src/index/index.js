@@ -1,7 +1,6 @@
 import COMPOSITION_COVER from '../img/agp.png'
 import { getJsonApi } from '../js/utils'
-
-let listElelemts = ''
+import {breadcrumbHandler} from './breadcrumbhandler'
 
 export let uriCompositionPage = '/composition.html?compositionId='
 let uriProfilePage = window.location.origin
@@ -24,60 +23,60 @@ document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
     </li>`
 
 const getMyProfile = async (doAfterIfLogged, doAfterIfNotLogged) => {
-  await getJsonApi("/profile", async (r) => {
-
-    const isAuthenticated = ('ok' in r && r['ok'] == true);
   
-    if (isAuthenticated) {
-      document.getElementById('userlogin').style.display = "none";
-      document.getElementById('useroptions').style.display = "";
-      document.getElementById('display_profile_name').innerText = `[${r.name}]`;
-      await doAfterIfLogged(isAuthenticated)
-    } else {
-      await doAfterIfNotLogged(isAuthenticated)
-    }
-  
-  });
+  const isAuthenticated = await getJsonApi('/profile')
+  if (isAuthenticated.ok) {
+    document.getElementById('userlogin').style.display = 'none'
+    document.getElementById('useroptions').style.display = ''
+    document.getElementById('display_profile_name').innerText = `[${isAuthenticated.name}]`
+    await doAfterIfLogged(isAuthenticated)
+  } else {
+    await doAfterIfNotLogged(isAuthenticated)
+  }
+  return isAuthenticated
 }
 
-const getMyCompositions = async (isAuth) => {
-  await getJsonApi("/mycompositions", (data) => {
-
-    if ("compositions" in data)
-      return renderHomePage(data.compositions, "My Compositions", isAuth)
-
-    alert("invalid return value for compisitions list");
-
-  }, (error) => { alert(error) })
+export const getMyCompositions = async () => {
+  const data = await getJsonApi('/mycompositions')
+  if(data.compositions){
+    return renderHomePage(data.compositions)
+  } else {
+    alert('invalid return value for compisitions list')
+  }  
 }
-const getRecentCompositions = async (isAuth) => {
-  getJsonApi("/recentcompositions", (data) => {
-
-    if ("compositions" in data)
-      return renderHomePage(data.compositions, "Last recent compositions", isAuth)
-
-    alert("invalid return value for compisitions list");
-
-  }, (error) => { alert(error) })
+export const getRecentCompositions = async () => {
+  const data = await getJsonApi('/recentcompositions')
+  if(data.compositions){
+    return renderHomePage(data.compositions)
+  } else {
+    alert('invalid return value for compisitions list')
+  }
 }
 
-const renderHomePage = (compositionsList, renderOpt, isAuth) => {
+export const getAllCompositions = async () => {
+  const data = await getJsonApi('/compositions')
+  if(data.compositions){
+    return renderHomePage(data.compositions)
+  } else {
+    alert('invalid return value for compisitions list')
+  }
+}
 
-  const loaderElement = document.getElementById('loader')
-  loaderElement.classList.remove('loader')
+const renderHomePage = (compositionsList) => {
+
   document.getElementById('loadertext').textContent = ''
-
-  paintListOfCompositions(compositionsList, renderOpt, isAuth)
+  document.getElementById('grid').innerHTML = ''
+  paintListOfCompositions(compositionsList)
 
 }
 
-const paintListOfCompositions = (compositionsList, renderOpt, isAuth) => {
+const paintListOfCompositions = (compositionsList) => {
   
-  if(!compositionsList.length && isAuth){
+  if(!compositionsList.length){
     document.getElementById('initialmessage').hidden = false
     document.getElementById('initialmessage').classList.add('d-flex')
   } else {
-
+    let listElelemts = ''
     compositionsList.forEach((element) => {
       if (element) {
         let collection = ''
@@ -101,14 +100,15 @@ const paintListOfCompositions = (compositionsList, renderOpt, isAuth) => {
         listElelemts += template
       }
     })
+    document.getElementById('grid').innerHTML = ''
     document.getElementById('grid').insertAdjacentHTML('afterbegin', listElelemts)
     document.getElementById('searchInput').removeAttribute('disabled')
-    document.getElementById('homepageview').innerHTML = renderOpt
   }  
 }
 
 const initHomPage = async () => {
-  await getMyProfile(getMyCompositions,getRecentCompositions)  
+  const isAuth  = await getMyProfile(getMyCompositions,getRecentCompositions)  
+  breadcrumbHandler(isAuth)
 }
 
 initHomPage()
