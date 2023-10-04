@@ -1,33 +1,24 @@
 import { ENDPOINT } from './config'
 
 
-function getJsonApi(enpoint, on_ok, on_ko) {
-
-    fetch(ENDPOINT + enpoint, {
+export const getJsonApi = async (apimethod) => {
+    const request = {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
-    }).then((r) => {
-
-        if (!r.ok) {
-            return on_ko ? on_ko(r.statusText) : null ;
+    }
+    let response = null
+    try {
+        const sendRqst = await fetch(ENDPOINT + apimethod, request)
+        const respToJson = await sendRqst.json()
+        if (respToJson && !respToJson.error) {
+            return response = respToJson
+        } else {
+            return (respToJson?.error || 'An error occurred')
         }
-        return r.json();
-
-    }).then(data => {
-
-        return on_ok ? on_ok(data) : null ;
-
-    }).catch((error) => {
-
-        return on_ko ? on_ko(error) : null ;
-    })
-
-}
-
-
-module.exports = {
-    getJsonApi: getJsonApi,
+    } catch (error) {
+        return(error)
+    }
 }
