@@ -36,6 +36,8 @@ function navigate(section) {
             getMyCompositions()
             break
         case 'all-comp':
+            document.getElementById('initialmessage').classList.remove('d-flex')
+            document.getElementById('initialmessage').hidden = true
             getAllCompositions()
             break
         default:
