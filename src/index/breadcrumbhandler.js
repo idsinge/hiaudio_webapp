@@ -5,6 +5,8 @@ export const breadcrumbHandler = (isauth) => {
     document.querySelectorAll('.breadcrumb-item a').forEach(function (element) {
         element.addEventListener('click', function (event) {
             event.preventDefault()
+            document.querySelector('.active-breadcrumb')?.classList.remove('active-breadcrumb')            
+            event.currentTarget.classList.add('active-breadcrumb')
             let section = event.currentTarget.getAttribute('data-section')
             navigate(section)
         })
@@ -15,11 +17,11 @@ const createBreadCrumbNavBar = (isauth) => {
     const navBar = document.getElementById('breadcrumbnavbar')
     let userOptions = ''
     if(isauth.ok){
-        userOptions = `<li class="breadcrumb-item active" aria-current="page"><a href="#" data-section="my-comp">My Music</a></li>
-        <li class="breadcrumb-item"><a href="#" data-section="all-comp">All</a></li>`
+        userOptions = `<li class='breadcrumb-item active-breadcrumb' aria-current='page'><a href='#' data-section='my-comp'>My Music</a></li>
+        <li class='breadcrumb-item'><a href='#' data-section='all-comp'>All</a></li>`
     } else {
-        userOptions = `<li class="breadcrumb-item active" aria-current="page"><a href="#" data-section="recent-comp">Recent</a></li>
-        <li class="breadcrumb-item"><a href="#" data-section="all-comp">All</a></li>`
+        userOptions = `<li class='breadcrumb-item' aria-current='page'><a href='#' data-section='recent-comp'>Recent</a></li>
+        <li class='breadcrumb-item'><a href='#' data-section='all-comp'>All</a></li>`
     }
     navBar.innerHTML = userOptions    
 }
