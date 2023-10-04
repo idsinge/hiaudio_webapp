@@ -1,5 +1,6 @@
 import { ENDPOINT } from '../../js/config'
-import { LOADER_ELEM_ID, COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
+import { LOADER_ELEM_ID, cancelLoader } from '../../js/utils'
+import { COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
 
@@ -52,21 +53,6 @@ export const doAfterCompositionFetched = (tracksInfo) => {
     createArrayOfTracks(tracksInfo)
     drawCompositionDetailInfo(tracksInfo)
 }
-
-
-export const startLoader = (loaderId, loadingMessage) => {
-    document.getElementById('loadertext').textContent = loadingMessage
-    const loaderElement = document.getElementById(loaderId)
-    loaderElement.classList.add(loaderId)
-}
-
-export const cancelLoader = (loaderId) => {
-    const loaderElement = document.getElementById(loaderId)
-    loaderElement.classList.remove(loaderId)
-    document.getElementById('loadertext').textContent = ''
-}
-
-
 
 const createArrayOfTracks = (tracksInfo) => {
     const canUpload = tracksInfo.owner || (1<=tracksInfo.role && tracksInfo.role <= 3) || false

@@ -15,7 +15,6 @@ if(window.location.host === 'localhost:80' || window.location.origin === 'http:/
   goHomeLink.href = window.location.origin
 }
   
-export const LOADER_ELEM_ID = 'loader'
 export let USER_INFO = null
 export let USER_PERMISSION = false
 
@@ -51,7 +50,7 @@ export const playlist = WaveformPlaylist({
 })
 
 export const trackHandler = new TrackHandler()
-export const fileUploader = new FileUploader(COMPOSITION_ID, trackHandler, LOADER_ELEM_ID)
+export const fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
 export const recorder = new Recorder()
 
 const compositionId = COMPOSITION_ID

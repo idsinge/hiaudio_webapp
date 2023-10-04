@@ -64,8 +64,6 @@ export const getAllCompositions = async () => {
 
 const renderHomePage = (compositionsList) => {
 
-  const loaderElement = document.getElementById('loader')
-  loaderElement.classList.remove('loader')
   document.getElementById('loadertext').textContent = ''
   document.getElementById('grid').innerHTML = ''
   paintListOfCompositions(compositionsList)

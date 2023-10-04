@@ -2,14 +2,13 @@
 /* https://stackoverflow.com/a/38968948 */
 
 import { UPLOAD_ENDPOINT } from '../../js/config'
-import { USER_INFO, LOADER_ELEM_ID, trackHandler } from './composition'
-import { startLoader, cancelLoader } from './composition_helper'
+import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../js/utils'
+import { USER_INFO, trackHandler } from './composition'
 
 export class FileUploader {
-    constructor(compositionId, trackhandler, loaderElementId) {
+    constructor(compositionId, trackhandler) {
         this.compositionId = compositionId
         this.trackhandler = trackhandler
-        this.loaderElementId = loaderElementId
         this.lastupload = null
     }
     enableUpload(){
