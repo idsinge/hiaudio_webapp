@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../../js/config'
 import { LOADER_ELEM_ID, cancelLoader } from '../../js/utils'
-import { COMPOSITION_ID, setUser, setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
+import { setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
 
@@ -70,13 +70,6 @@ const createArrayOfTracks = (tracksInfo) => {
         const arrayLoad = []
         tracksInfo.tracks.forEach((element) => {
             if(element){
-                //console.log("foreach: ", element);
-                // const audio = element?.message?.audio || element?.message?.voice
-                // const title = audio.title || element.message.date
-                // const track_id = audio.file_unique_id + '_' + element.message.date
-                // const customClass = { chatId: COMPOSITION_ID, message_id: element.message.message_id, name: title, track_id: track_id }
-                // const newTrack = new Track(title, element.file_path , customClass)
-                // arrayLoad.push(newTrack)
 
                 const title = element.title
                 const customClass = { name: title, track_id: element.uuid, user_id: element.user_id}
