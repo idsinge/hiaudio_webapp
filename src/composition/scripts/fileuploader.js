@@ -3,13 +3,12 @@
 
 import { UPLOAD_ENDPOINT } from '../../js/config'
 import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../js/utils'
-import { USER_INFO, trackHandler } from './composition'
+import { playlist, USER_INFO, trackHandler } from './composition'
 
 export class FileUploader {
     constructor(compositionId, trackhandler) {
         this.compositionId = compositionId
         this.trackhandler = trackhandler
-        this.lastupload = null
     }
     enableUpload(){
         const me = this
@@ -49,12 +48,6 @@ export class FileUploader {
             reader.readAsBinaryString(thefile)
         }
 
-        file.dom.addEventListener('change', () => {
-            // if (reader.readyState === FileReader.LOADING) {
-            //     reader.abort()
-            // }
-            // reader.readAsBinaryString(file.dom.files[0])
-        })
     }
     sendData(file, type) {
 
@@ -66,25 +59,23 @@ export class FileUploader {
         const XHR = new XMLHttpRequest()
 
         const formData = new FormData()
-        const dataFormName = type ? file.name : file.dom.name
         const dataFormValue = type ? file : file.dom.files[0]
         const dataFormFileName = type ? file.fileName : file.dom.files[0].name
         formData.append('composition_id', this.compositionId)
-        //formData.append(dataFormName, dataFormValue, dataFormFileName) 
         formData.append('audio', dataFormValue, dataFormFileName)
         formData.append('user_info', USER_INFO)
 
         XHR.addEventListener('load', (event) => {
             cancelLoader(LOADER_ELEM_ID)
             if(event.srcElement && event.srcElement.response){
-                //console.log('upload response ', event.srcElement.response)
                 const respJson = JSON.parse(event.srcElement.response)
                 if(respJson.ok){
                     fileInput.value =''
-                    this.lastupload = respJson
                     if(type === 'blob'){
                         trackHandler.displayOptMenuForNewTrack(respJson)
-                    }                    
+                    } else {
+                        playlist.getEventEmitter().emit("audiosourcesrendered", respJson)
+                    }                
                 } else {
                     alert('Oops! Something went wrong.')
                 }

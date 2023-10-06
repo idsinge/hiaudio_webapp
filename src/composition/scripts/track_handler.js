@@ -1,22 +1,20 @@
 import { ENDPOINT } from '../../js/config'
 import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../js/utils'
 import { CURRENT_USER_ID } from './composition_helper'
-import { COMPOSITION_ID, playlist } from './composition'
+import { playlist } from './composition'
 
 export class TrackHandler {
     displayOptMenuForNewTrack(newTrack){        
         const element = newTrack.result
         const audio = element?.message?.audio || element?.message?.voice
         const title = audio.title || element.message.date
-        // const track_id = audio.file_unique_id + '_' + element.message.date
         const track_id = audio.file_unique_id 
         const controlsList = document.getElementsByClassName('controls')
-        const message_id = element.message.message_id
         let pos = controlsList.length - 1 
         if(pos>=0){
             const customClass = { name: title, track_id: track_id, user_id:audio.user_id}
             playlist.tracks[pos].customClass = customClass            
-            this.createMenuOptButton(controlsList, pos, message_id, title, track_id, COMPOSITION_ID)
+            this.createMenuOptButton(controlsList, pos, title, track_id)
         }
         
     }
@@ -31,16 +29,14 @@ export class TrackHandler {
         for (let i = 0; i < arrayTracks.length; i++) {
             if(arrayTracks && arrayTracks[i].customClass){                
                 if ((role === 1 || role === 2)||(role === 3 && arrayTracks[i].customClass.user_id === CURRENT_USER_ID)){                   
-                    const message_id = arrayTracks[i].customClass.message_id
                     const name = arrayTracks[i].customClass.name
                     const track_id = arrayTracks[i].customClass.track_id
-                    const chatId = arrayTracks[i].customClass.chatId
-                    this.createMenuOptButton(controlsList, i, message_id, name, track_id, chatId)
+                    this.createMenuOptButton(controlsList, i, name, track_id)
                 }                
             }            
         }
     }
-    createMenuOptButton(controlsList, pos, message_id, name, track_id, chatId){
+    createMenuOptButton(controlsList, pos, name, track_id){
         const menuBtnId = 'menuoptbtn-' + pos
         const menuDrpDownId = 'menuDropdown' + pos
         const buttonMenu = document.createElement('button')
@@ -56,11 +52,9 @@ export class TrackHandler {
         listOptions.id = menuDrpDownId
         listOptions.className = 'dropdown-content'
         const listOptionsItem = document.createElement('li')
-        listOptionsItem.id = message_id
         listOptionsItem.dataset.pos = pos
         listOptionsItem.dataset.name = name
         listOptionsItem.dataset.trackId = track_id
-        listOptionsItem.dataset.chatId = chatId
         listOptionsItem.onclick = (event) => {
             this.deleteTrackConfirmDialog(event, this.sendDeleteRequest, this.doAfterDeleted)
         }

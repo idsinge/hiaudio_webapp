@@ -18,9 +18,6 @@ if(window.location.host === 'localhost:80' || window.location.origin === 'http:/
 export let USER_INFO = null
 export let USER_PERMISSION = false
 
-export const setUser = (userIs) => {
-    USER_INFO = userIs
-}
 export const setUserPermission = (permission) => {
   USER_PERMISSION = permission
 }
