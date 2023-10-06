@@ -51,6 +51,10 @@ const setUserInfo = (userinfo) => {
     document.getElementById('userid').innerHTML = 'User Id: ' + userinfo.user_uid
     document.getElementById('emailaddress').innerHTML = userinfo.email
     deleteProfileHandler(userinfo.user_uid)
+
+    document.getElementById('apicard').hidden = false
+    document.getElementById('apitoken').innerHTML = userinfo.token
+    document.getElementById('curlcode').innerHTML = `$ export JWT="${userinfo.token}"  <br /><br />$ curl ${window.location.protocol}//${window.location.host}/profile   -H "Authorization: Bearer $JWT"`;
   } else {
     document.getElementById('logincard').hidden = false
   }
@@ -62,7 +66,7 @@ const deleteProfileHandler = (userid) => {
 
 const deleteUserProfile = async (userid) => {
   const api = '/deleteuser/'+userid
-  let userDelete = prompt('To confirm, please enter your User ID', '')  
+  let userDelete = prompt('To confirm, please enter your User ID', '')
   if (userDelete === userid) {
     let response = null
     const request = {
@@ -78,8 +82,8 @@ const deleteUserProfile = async (userid) => {
         if (respToJson) {
             response = respToJson
             window.location.href = window.location.origin
-        }        
-    } catch (error) {        
+        }
+    } catch (error) {
         alert(error)
     }
   } else if ((userDelete !== userid) && (userDelete !== null)){
