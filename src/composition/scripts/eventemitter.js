@@ -386,12 +386,12 @@ ee.on("audiosourcesloaded", function() {
   displayLoadingData("Tracks have all finished decoding.");
 });
 
-ee.on("audiosourcesrendered", function() {  
+ee.on("audiosourcesrendered", function(lastUpdate) {  
   if(USER_PERMISSION){   
     const lastPosTrack = playlist.tracks.length - 1
     const lasttrack = playlist.tracks[lastPosTrack]    
-    if(!lasttrack.customClass){         
-      trackHandler.displayOptMenuForNewTrack(fileUploader.lastupload)     
+    if(!lasttrack.customClass && lastUpdate){         
+      trackHandler.displayOptMenuForNewTrack(lastUpdate)     
     }    
   }
   displayLoadingData("Tracks have been rendered");

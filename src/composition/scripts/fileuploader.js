@@ -9,7 +9,6 @@ export class FileUploader {
     constructor(compositionId, trackhandler) {
         this.compositionId = compositionId
         this.trackhandler = trackhandler
-        this.lastupload = null
     }
     enableUpload(){
         const me = this
@@ -72,10 +71,11 @@ export class FileUploader {
                 const respJson = JSON.parse(event.srcElement.response)
                 if(respJson.ok){
                     fileInput.value =''
-                    this.lastupload = respJson
                     if(type === 'blob'){
                         trackHandler.displayOptMenuForNewTrack(respJson)
-                    }                    
+                    } else {
+                        playlist.getEventEmitter().emit("audiosourcesrendered", respJson)
+                    }                
                 } else {
                     alert('Oops! Something went wrong.')
                 }
