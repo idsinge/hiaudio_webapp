@@ -388,9 +388,7 @@ ee.on("audiosourcesloaded", function() {
 
 ee.on("audiosourcesrendered", function(lastUpdate) {  
   if(USER_PERMISSION){   
-    const lastPosTrack = playlist.tracks.length - 1
-    const lasttrack = playlist.tracks[lastPosTrack]    
-    if(!lasttrack.customClass && lastUpdate){         
+    if(lastUpdate){         
       trackHandler.displayOptMenuForNewTrack(lastUpdate)     
     }    
   }
