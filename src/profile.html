@@ -27,7 +27,7 @@
     <main>
         <div id="profilecard" class="profile-card" hidden>
             <img id="profilepicture" src="" alt="User Picture">
-            <p><h2 id="username"></h2></p>            
+            <p><h2 id="username"></h2></p>
             <h5 id="userid"></h5>
             <p id="emailaddress" class="user-title"></p>
             <p>
@@ -37,6 +37,26 @@
             </p>
             <button type="button" id="button-deleteprofile" class="btn btn-outline-danger btn-lg">DELETE PROFILE</button>
         </div>
+        <details id="apicard" class="apicard" hidden >
+            <summary>API Usage</summary>
+            <br />
+            <p>
+            To use the plaftorm via the web interface, the authentifiaction is done using cookies.<br />
+            To use the API via scripts or command line tools, you must include your token as a bearer token in the <code>Authorization</code> http header. For more information about the type of token used, see <a href="https://jwt.io/introduction/" target="_blank">https://jwt.io/introduction</a>
+            </p>
+            <p>
+                Your access token is:
+                <code id='apitoken'>{{token}}</code>
+                <p>
+                    <button id="copytokenbutton" class="btn btn btn-outline-primary btn-sm">Copy to clipboard</button>
+                </p>
+            </p>
+            <h5><b>curl</b></h5>
+            Here is an example of an API call using curl to retreive your use profile: <br />
+            <div><code id="curlcode" class="curlcode"></code></div>
+
+
+        </details>
         <div id="logincard" class="profile-card" hidden>
             <form action="/login">
                 <button type="submit" class="btn btn-info">Login</button>
@@ -46,14 +66,14 @@
     <footer>
 		<div class="footerMenu">
 			<hr>
-			<ul>				
+			<ul>
 				<li><a href="./static/about.html">About</a></li>
 				<li><a href="./static/terms.html">Terms of use</a></li>
 				<li><a href="./static/privacy.html">Privacy</a></li>
 				<li><a href="./static/cookies.html">Cookies</a></li>
 			</ul>
             <span id="companyName">&copy; Hi-Audio</span>
-	    </div>		
+	    </div>
 	</footer>
     <script src="profile/user.js"></script>
 </body>
