@@ -37,7 +37,7 @@
             </p>
             <button type="button" id="button-deleteprofile" class="btn btn-outline-danger btn-lg">DELETE PROFILE</button>
         </div>
-        <details id="apicard" hidden >
+        <details id="apicard" class="apicard" hidden >
             <summary>API Usage</summary>
             <br />
             <p>
@@ -46,12 +46,14 @@
             </p>
             <p>
                 Your access token is:
-                <code id='apitoken'>{{token}}</code><br />
-                <button class="btn btn btn-outline-primary btn-sm" onclick="window.prompt('Copy to clipboard: Ctrl+C, Enter', document.getElementById('apitoken').innerHTML)">Copy to clipboard</button>
+                <code id='apitoken'>{{token}}</code>
+                <p>
+                    <button id="copytokenbutton" class="btn btn btn-outline-primary btn-sm">Copy to clipboard</button>
+                </p>
             </p>
             <h5><b>curl</b></h5>
             Here is an example of an API call using curl to retreive your use profile: <br />
-            <div><code id="curlcode"></code></div>
+            <div><code id="curlcode" class="curlcode"></code></div>
 
 
         </details>

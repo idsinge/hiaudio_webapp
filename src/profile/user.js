@@ -55,6 +55,7 @@ const setUserInfo = (userinfo) => {
     document.getElementById('apicard').hidden = false
     document.getElementById('apitoken').innerHTML = userinfo.token
     document.getElementById('curlcode').innerHTML = `$ export JWT="${userinfo.token}"  <br /><br />$ curl ${window.location.protocol}//${window.location.host}/profile   -H "Authorization: Bearer $JWT"`;
+    copyPasteTokenValue()
   } else {
     document.getElementById('logincard').hidden = false
   }
@@ -64,6 +65,11 @@ const deleteProfileHandler = (userid) => {
     document.getElementById('button-deleteprofile').addEventListener('click', async () => {await deleteUserProfile(userid)})
 }
 
+const copyPasteTokenValue = () => {
+  document.getElementById('copytokenbutton').onclick = () => {
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', document.getElementById('apitoken').innerHTML)
+  }
+}
 const deleteUserProfile = async (userid) => {
   const api = '/deleteuser/'+userid
   let userDelete = prompt('To confirm, please enter your User ID', '')

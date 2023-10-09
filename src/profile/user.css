@@ -7,14 +7,15 @@
     font-family: arial;
 }
 
-#apicard {
+.apicard {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    max-width: 50%;
+    max-width: 500px;
+    padding: 2em;
     margin: auto;
     margin-top: 50px;
 }
 
-#curlcode {
+.curlcode {
     display:block;
     padding: 30px;
     background-color: #eee;
