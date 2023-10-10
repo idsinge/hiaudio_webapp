@@ -385,12 +385,24 @@ ee.on("loadprogress", function(percent, src) {
 ee.on("audiosourcesloaded", function() {
   displayLoadingData("Tracks have all finished decoding.");
 });
-
+// TODO: this workaround  for displaying the menu opt (issue-70)
+// needs to be reworked when bulk uploads are possible
+let waitForRender = null
 ee.on("audiosourcesrendered", function(lastUpdate) {  
   if(USER_PERMISSION){   
-    if(lastUpdate){         
-      trackHandler.displayOptMenuForNewTrack(lastUpdate)     
-    }    
+    if(lastUpdate){
+      waitForRender = lastUpdate
+      const lastPosTrack = playlist.tracks.length - 1
+      const lasttrack = playlist.tracks[lastPosTrack]
+      if(lasttrack && !lasttrack?.customClass){  
+        waitForRender = null
+        trackHandler.displayOptMenuForNewTrack(lastUpdate)
+      }   
+    } else if(waitForRender){
+        const toUpdate = waitForRender
+        waitForRender = null
+        trackHandler.displayOptMenuForNewTrack(toUpdate)
+    }   
   }
   displayLoadingData("Tracks have been rendered");
 });
