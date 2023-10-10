@@ -385,6 +385,8 @@ ee.on("loadprogress", function(percent, src) {
 ee.on("audiosourcesloaded", function() {
   displayLoadingData("Tracks have all finished decoding.");
 });
+// TODO: this workaround  for displaying the menu opt (issue-70)
+// needs to be reworked when bulk uploads are possible
 let waitForRender = null
 ee.on("audiosourcesrendered", function(lastUpdate) {  
   if(USER_PERMISSION){   
