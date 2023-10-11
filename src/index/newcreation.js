@@ -45,6 +45,7 @@ const saveEventListenerHandler = (e) => {
     return
   }
 
+  const newdescription = document.getElementById('newdescription').value  
   const collectInput = document.getElementById('inputGroupSelectCollect')
   let parentCollection = collectInput?.value || null
   if(parentCollection === '0'){
@@ -54,7 +55,8 @@ const saveEventListenerHandler = (e) => {
   let body = JSON.stringify({
     title: newtitle,
     privacy_level: privacyLevel,
-    parent_uuid: parentCollection
+    parent_uuid: parentCollection,
+    description: newdescription
   })
 
   let errorIs = null
