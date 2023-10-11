@@ -114,9 +114,20 @@ const drawCompositionDetailInfo = (tracksInfo) => {
     }
     if (tracksInfo.title) {
         const compositionName = tracksInfo.title
+        const compositionDesc = tracksInfo.description || ''
         compositionNameHtml = `${tracksInfo.opentocontrib ? '<br><span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}`
         compositionNameHtml += `${tracksInfo.role ? '<br><span class="badge badge-success">'+ ROLES[tracksInfo.role] +'</span>' : ''}`
-        compositionNameHtml += `<p><h1 id="comp-title" class="post-title">${compositionName}</h1></p>`
+        compositionNameHtml += `<p><h1 id="comp-title" class="post-title">${compositionName}</h1></p>`       
+        compositionNameHtml += `<p>
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseDescription" aria-expanded="false">
+                                    Description
+                                    </button>
+                                </p>
+                                <div class="collapse" id="collapseDescription">
+                                    <div class="card card-body" id="comp-description">
+                                    ${compositionDesc}
+                                    </div>
+                                </div>`
     }
     document.getElementById('post-header').insertAdjacentHTML('afterbegin', compositionNameHtml)
 }
