@@ -1,14 +1,19 @@
 import { ENDPOINT } from '../../js/config'
+import { DB, openDB, getTracksByCompId } from '../../js/indexedDB'
 import { LOADER_ELEM_ID, cancelLoader } from '../../js/utils'
 import { setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
 
 export let CURRENT_USER_ID = null
-function Track(id, title, link, customClass) {
-    this.id = id;
-    this.name = title;
+function Track(id, title, muted, soloed, gain, stereoPan, customClass) {
+    this.id = id
+    this.name = title
     this.src = ENDPOINT + "/trackfile/" + id
+    this.muted = muted
+    this.soloed = soloed
+    this.gain = gain
+    this.stereoPan = stereoPan
     this.customClass = customClass
 }
 
@@ -50,14 +55,57 @@ export const getComposition = (compositionId, callback, extraParams) => {
 }
 
 export const doAfterCompositionFetched = (tracksInfo) => {
-    createArrayOfTracks(tracksInfo)
-    drawCompositionDetailInfo(tracksInfo)
+    if(!DB){
+        openDB(tracksInfo.viewer_id || 'null').then((db) =>{
+            continueAfterGetIndexDb(db, tracksInfo)
+        })      
+    } else {        
+        continueAfterGetIndexDb(DB, tracksInfo)     
+    }   
 }
 
-const createArrayOfTracks = (tracksInfo) => {
+const continueAfterGetIndexDb = (db, tracksInfo) => {
+    let storedtracks = null
+    getTracksByCompId(db, tracksInfo?.uuid).then((stored_tracks) => {
+        storedtracks = stored_tracks
+    }).catch((error) =>{
+        console.log(error)
+    } ).finally(()=>{
+        createArrayOfTracks(tracksInfo, storedtracks)
+        drawCompositionDetailInfo(tracksInfo)
+    })}
+
+const convertArrayStoredCompToObj = (stored_tracks) => {
+    const object = {}
+    stored_tracks.forEach(item => {
+        object[item.track_id] = item
+    })
+    return object
+}
+
+const createNewTrack = (element, tracksInfo, tracksAsObj) => {
+    const muted = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].muted : false
+    const soloed = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].soloed : false
+    const gain = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].gain : 1
+    const stereoPan = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].stereoPan : 0
+    const title = element.title
+    const customClass = { name: title, 
+        track_id: element.uuid, 
+        user_id: element.user_id, 
+        composition_id: tracksInfo.uuid,
+        viewer_id: tracksInfo.viewer_id || 'null'
+    }
+    return new Track(element.uuid, title, muted, soloed, gain, stereoPan, customClass)    
+}
+
+const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     const canUpload = tracksInfo.owner || (1<=tracksInfo.role && tracksInfo.role <= 3) || false
     const userRole = tracksInfo.role
     CURRENT_USER_ID = tracksInfo.viewer_id
+    let tracksAsObj = null
+    if(stored_tracks?.length){       
+        tracksAsObj = convertArrayStoredCompToObj(stored_tracks)        
+    }
     if (canUpload) {
         playlist.controls.widgets.remove = false
         setUserPermission(true)
@@ -70,10 +118,7 @@ const createArrayOfTracks = (tracksInfo) => {
         const arrayLoad = []
         tracksInfo.tracks.forEach((element) => {
             if(element){
-
-                const title = element.title
-                const customClass = { name: title, track_id: element.uuid, user_id: element.user_id}
-                const newTrack = new Track(element.uuid, title, element.path , customClass)
+                const newTrack = createNewTrack(element, tracksInfo, tracksAsObj)
                 arrayLoad.push(newTrack)
             }
         })
@@ -105,13 +150,7 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
     })
 }
 const drawCompositionDetailInfo = (tracksInfo) => {
-    let lyricsHtml = null
     let compositionNameHtml = '<h1 class="post-title">Test DAW</h1>'
-    const compositionInfo = tracksInfo.compositionInfoById
-    if (compositionInfo && compositionInfo.doc_url) {
-        lyricsHtml = `<a href="#" onclick="window.open('${compositionInfo.doc_url}', 'lyrics_popup', 'fullscreen=yes',false); return false">Lyrics</a>`
-        document.getElementById('post-header').insertAdjacentHTML('afterbegin', lyricsHtml)
-    }
     if (tracksInfo.title) {
         const compositionName = tracksInfo.title
         const compositionDesc = tracksInfo.description || ''
