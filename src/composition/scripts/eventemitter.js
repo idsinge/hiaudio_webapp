@@ -2,6 +2,7 @@
  * This script is provided to give an example how the playlist can be controlled using the event emitter.
  * This enables projects to create/control the useability of the project.
 */
+import { DB, openDB, updateTable } from '../../js/indexedDB'
 import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
 import { warningMessageBeforeRecord, TestLatency } from './latencymeasure/testlatency'
 
@@ -313,7 +314,19 @@ $container.on("change", ".automatic-scroll", function(e){
   ee.emit("automaticscroll", $(e.target).is(':checked'));
 });
 
-function displaySoundStatus(status) {
+function displaySoundStatus(status, trackObject) {
+  if(trackObject?.customClass){    
+    let trackSettings = (({ muted, gain, soloed, stereoPan }) => ({ muted, gain, soloed, stereoPan}))(trackObject)    
+    trackSettings['track_id'] = trackObject.customClass.track_id
+    trackSettings['composition_id'] = trackObject.customClass.composition_id    
+    if(!DB){      
+      openDB().then((db) =>{
+        updateTable(db, trackSettings) 
+      })      
+    } else {      
+      updateTable(DB, trackSettings)      
+    }       
+  }
   $(".sound-status").html(status);
 }
 
@@ -344,15 +357,19 @@ ee.on("select", updateSelect);
 ee.on("timeupdate", updateTime);
 
 ee.on("mute", function(track) {
-  displaySoundStatus("Mute button pressed for " + track.name);
+  displaySoundStatus("Mute button pressed for " + track.name, track);
 });
 
 ee.on("solo", function(track) {
-  displaySoundStatus("Solo button pressed for " + track.name);
+  displaySoundStatus("Solo button pressed for " + track.name, track);
 });
 
 ee.on("volumechange", function(volume, track) {
   displaySoundStatus(track.name + " now has volume " + volume + ".");
+});
+
+ee.on("stereopan", function(value, track) {
+  displaySoundStatus(track.name + " now has stereo pan " + value + ".");
 });
 
 ee.on("mastervolumechange", function(volume) {

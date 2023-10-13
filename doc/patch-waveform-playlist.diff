@@ -1,25 +1,26 @@
 diff --git a/waveform-playlist.umd.js b/waveform-playlist.umd.js
-index 8fe0bb6..373c1a0 100644
+index 8fe0bb6..3af833f 100644
 --- a/waveform-playlist.umd.js
 +++ b/waveform-playlist.umd.js
-@@ -5076,11 +5076,11 @@ function renderThunk(thunk, previous) {
- /***/ 6741:
- /***/ ((module) => {
- 
--module.exports = isThunk
--
--function isThunk(t) {
--    return t && t.type === "Thunk"
--}
-+module.exports = isThunk
-+
-+function isThunk(t) {
-+    return t && t.type === "Thunk"
-+}
- 
- 
- /***/ }),
-@@ -8863,6 +8863,31 @@ class AnnotationList {
+@@ -7168,6 +7168,8 @@ const MAX_CANVAS_WIDTH = 1000;
+     this.customClass = undefined;
+     this.waveOutlineColor = undefined;
+     this.gain = 1;
++    this.muted = false
++    this.soloed = false
+     this.fades = {};
+     this.peakData = {
+       type: "WebAudio",
+@@ -7890,6 +7892,8 @@ const MAX_CANVAS_WIDTH = 1000;
+       start: this.startTime,
+       end: this.endTime,
+       name: this.name,
++      muted: this.muted,
++      soloed: this.soloed,
+       customClass: this.customClass,
+       cuein: this.cueIn,
+       cueout: this.cueOut,
+@@ -8863,8 +8867,34 @@ class AnnotationList {
      this.exportWorker = new (inline_worker_default())(exportWavWorker);
    }
  
@@ -50,8 +51,26 @@ index 8fe0bb6..373c1a0 100644
 +
    // TODO extract into a plugin
    initRecorder(stream) {
++
      this.mediaRecorder = new MediaRecorder(stream);
-@@ -8892,6 +8917,10 @@ class AnnotationList {
+ 
+     this.mediaRecorder.onstart = () => {
+@@ -8875,14 +8905,12 @@ class AnnotationList {
+ 
+       this.recordingTrack = track;
+       this.tracks.push(track);
+-
+       this.chunks = [];
+       this.working = false;
+     };
+ 
+     this.mediaRecorder.ondataavailable = (e) => {
+       this.chunks.push(e.data);
+-
+       // throttle peaks calculation
+       if (!this.working) {
+         const recording = new Blob(this.chunks, {
+@@ -8892,6 +8920,10 @@ class AnnotationList {
          loader
            .load()
            .then((audioBuffer) => {
@@ -62,7 +81,7 @@ index 8fe0bb6..373c1a0 100644
              // ask web worker for peaks.
              this.recorderWorker.postMessage({
                samples: audioBuffer.getChannelData(0),
-@@ -8899,6 +8928,8 @@ class AnnotationList {
+@@ -8899,6 +8931,8 @@ class AnnotationList {
              });
              this.recordingTrack.setCues(0, audioBuffer.duration);
              this.recordingTrack.setBuffer(audioBuffer);
@@ -71,7 +90,7 @@ index 8fe0bb6..373c1a0 100644
              this.recordingTrack.setPlayout(
                new Playout(this.ac, audioBuffer, this.masterGainNode)
              );
-@@ -9036,8 +9067,8 @@ class AnnotationList {
+@@ -9036,8 +9070,8 @@ class AnnotationList {
        }
      });
  
@@ -82,7 +101,7 @@ index 8fe0bb6..373c1a0 100644
      });
  
      ee.on("statechange", (state) => {
-@@ -9051,7 +9082,8 @@ class AnnotationList {
+@@ -9051,7 +9085,8 @@ class AnnotationList {
        this.drawRequest();
      });
  
@@ -92,7 +111,7 @@ index 8fe0bb6..373c1a0 100644
        this.record();
      });
  
-@@ -9323,7 +9355,7 @@ class AnnotationList {
+@@ -9323,7 +9358,7 @@ class AnnotationList {
      this.cursor = start;
    }
  
@@ -101,7 +120,7 @@ index 8fe0bb6..373c1a0 100644
      if (this.isRendering) {
        return;
      }
-@@ -9346,14 +9378,18 @@ class AnnotationList {
+@@ -9346,14 +9381,18 @@ class AnnotationList {
      const currentTime = this.offlineAudioContext.currentTime;
      const mg = this.offlineAudioContext.createGain();
  
@@ -122,7 +141,7 @@ index 8fe0bb6..373c1a0 100644
          masterGain: 1,
          isOffline: true,
        });
-@@ -9363,8 +9399,12 @@ class AnnotationList {
+@@ -9363,8 +9402,12 @@ class AnnotationList {
        TODO cleanup of different audio playouts handling.
      */
      await Promise.all(setUpChain);
@@ -136,7 +155,7 @@ index 8fe0bb6..373c1a0 100644
      if (type === "buffer") {
        this.ee.emit("audiorenderingfinished", type, audioBuffer);
        this.isRendering = false;
-@@ -9378,7 +9418,7 @@ class AnnotationList {
+@@ -9378,7 +9421,7 @@ class AnnotationList {
  
        // callback for `exportWAV`
        this.exportWorker.onmessage = (e) => {
@@ -145,7 +164,32 @@ index 8fe0bb6..373c1a0 100644
          this.isRendering = false;
  
          // clear out the buffer for next renderings.
-@@ -9647,9 +9687,14 @@ class AnnotationList {
+@@ -9437,8 +9480,10 @@ class AnnotationList {
+     const index = this.mutedTracks.indexOf(track);
+ 
+     if (index > -1) {
++      track.muted = false
+       this.mutedTracks.splice(index, 1);
+     } else {
++      track.muted = true
+       this.mutedTracks.push(track);
+     }
+   }
+@@ -9447,10 +9492,13 @@ class AnnotationList {
+     const index = this.soloedTracks.indexOf(track);
+ 
+     if (index > -1) {
++      track.soloed = false
+       this.soloedTracks.splice(index, 1);
+     } else if (this.exclSolo) {
++      track.soloed = true
+       this.soloedTracks = [track];
+     } else {
++      track.soloed = true
+       this.soloedTracks.push(track);
+     }
+   }
+@@ -9647,9 +9695,14 @@ class AnnotationList {
      });
    }
  

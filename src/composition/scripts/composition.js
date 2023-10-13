@@ -1,7 +1,7 @@
 import { TrackHandler } from './track_handler'
 import { FileUploader } from './fileuploader'
 import WaveformPlaylist from 'waveform-playlist'
-import { getComposition, doAfterCompositionFetched, drawCompositionDetailInfo, cancelLoader } from './composition_helper'
+import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
 import { TestLatency } from './latencymeasure/testlatency'
 
