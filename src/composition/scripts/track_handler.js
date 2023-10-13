@@ -27,7 +27,7 @@ export class TrackHandler {
         const arrayTracks = playlist.getInfo().tracks
 
         for (let i = 0; i < arrayTracks.length; i++) {
-            if(arrayTracks && arrayTracks[i].customClass){                
+            if(arrayTracks[i]?.customClass){                
                 if ((role === 1 || role === 2)||(role === 3 && arrayTracks[i].customClass.user_id === CURRENT_USER_ID)){                   
                     const name = arrayTracks[i].customClass.name
                     const track_id = arrayTracks[i].customClass.track_id

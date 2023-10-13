@@ -318,9 +318,10 @@ function storeTrackSettings(trackObject){
   if(trackObject?.customClass){    
     let trackSettings = (({ muted, gain, soloed, stereoPan }) => ({ muted, gain, soloed, stereoPan}))(trackObject)    
     trackSettings['track_id'] = trackObject.customClass.track_id
-    trackSettings['composition_id'] = trackObject.customClass.composition_id    
+    trackSettings['composition_id'] = trackObject.customClass.composition_id
+    const viewer_id = trackObject.customClass.viewer_id   
     if(!DB){      
-      openDB().then((db) =>{
+      openDB(viewer_id).then((db) =>{
         updateTable(db, trackSettings) 
       })      
     } else {      

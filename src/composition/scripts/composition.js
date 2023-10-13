@@ -15,7 +15,6 @@ if(window.location.host === 'localhost:80' || window.location.origin === 'http:/
   goHomeLink.href = window.location.origin
 }
   
-export let USER_INFO = null
 export let USER_PERMISSION = false
 
 export const setUserPermission = (permission) => {

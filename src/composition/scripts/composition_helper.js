@@ -55,8 +55,8 @@ export const getComposition = (compositionId, callback, extraParams) => {
 }
 
 export const doAfterCompositionFetched = (tracksInfo) => {
-    if(!DB){      
-        openDB().then((db) =>{
+    if(!DB){
+        openDB(tracksInfo.viewer_id || 'null').then((db) =>{
             continueAfterGetIndexDb(db, tracksInfo)
         })      
     } else {        
@@ -92,7 +92,8 @@ const createNewTrack = (element, tracksInfo, tracksAsObj) => {
     const customClass = { name: title, 
         track_id: element.uuid, 
         user_id: element.user_id, 
-        composition_id: tracksInfo.uuid
+        composition_id: tracksInfo.uuid,
+        viewer_id: tracksInfo.viewer_id || 'null'
     }
     return new Track(element.uuid, title, muted, soloed, gain, stereoPan, customClass)    
 }

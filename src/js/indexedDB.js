@@ -4,13 +4,11 @@
 // going to use 'track_id' as our key path because it's guaranteed to be
 // unique
 
-const dbName = 'TracksDB'
 export let DB = null
 
-export const openDB = () => {
-
+export const openDB = (user_id) => {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(dbName, 2)
+        const request = indexedDB.open(user_id, 2)
 
         request.onerror = (event) => {
             console.log(event)

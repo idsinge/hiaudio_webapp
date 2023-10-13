@@ -3,7 +3,7 @@
 
 import { UPLOAD_ENDPOINT } from '../../js/config'
 import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../js/utils'
-import { playlist, USER_INFO, trackHandler } from './composition'
+import { playlist, trackHandler } from './composition'
 
 export class FileUploader {
     constructor(compositionId, trackhandler) {
@@ -63,7 +63,6 @@ export class FileUploader {
         const dataFormFileName = type ? file.fileName : file.dom.files[0].name
         formData.append('composition_id', this.compositionId)
         formData.append('audio', dataFormValue, dataFormFileName)
-        formData.append('user_info', USER_INFO)
 
         XHR.addEventListener('load', (event) => {
             cancelLoader(LOADER_ELEM_ID)
