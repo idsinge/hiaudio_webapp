@@ -52,8 +52,8 @@ export const updateTable = (db, info) => {
 }
 
 export const getTracksByCompId = (db, compId) => {
-    if (!db) return
     return new Promise((resolve, reject) => {
+        if (!db || !compId) reject(new Error('No DB or Comp ID'))
         let listTracks = []
         const index = db.transaction('tracks').objectStore('tracks').index('composition_id')
         const singleKeyRange = IDBKeyRange.only(compId)

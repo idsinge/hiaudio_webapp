@@ -65,13 +65,15 @@ export const doAfterCompositionFetched = (tracksInfo) => {
 }
 
 const continueAfterGetIndexDb = (db, tracksInfo) => {
-    getTracksByCompId(db, tracksInfo.uuid).then(
-        (stored_tracks) => {            
-            createArrayOfTracks(tracksInfo, stored_tracks)
-            drawCompositionDetailInfo(tracksInfo)
-        }
-    ) 
-}
+    let storedtracks = null
+    getTracksByCompId(db, tracksInfo?.uuid).then((stored_tracks) => {
+        storedtracks = stored_tracks
+    }).catch((error) =>{
+        console.log(error)
+    } ).finally(()=>{
+        createArrayOfTracks(tracksInfo, storedtracks)
+        drawCompositionDetailInfo(tracksInfo)
+    })}
 
 const convertArrayStoredCompToObj = (stored_tracks) => {
     const object = {}
@@ -98,7 +100,7 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     const userRole = tracksInfo.role
     CURRENT_USER_ID = tracksInfo.viewer_id
     let tracksAsObj = null
-    if(stored_tracks.length){       
+    if(stored_tracks?.length){       
         tracksAsObj = convertArrayStoredCompToObj(stored_tracks)        
     }
     if (canUpload) {
