@@ -82,8 +82,8 @@ const convertArrayStoredCompToObj = (stored_tracks) => {
 }
 
 const createNewTrack = (element, tracksInfo, tracksAsObj) => {
-    const muted = tracksAsObj ? tracksAsObj[element.uuid].muted : false
-    const soloed = tracksAsObj ? tracksAsObj[element.uuid].soloed : false
+    const muted = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].muted : false
+    const soloed = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].soloed : false
     const title = element.title
     const customClass = { name: title, 
         track_id: element.uuid, 
