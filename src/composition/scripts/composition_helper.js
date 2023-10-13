@@ -6,14 +6,14 @@ import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
 
 export let CURRENT_USER_ID = null
-function Track(id, title, muted, soloed, customClass) {
+function Track(id, title, muted, soloed, gain, stereoPan, customClass) {
     this.id = id
     this.name = title
     this.src = ENDPOINT + "/trackfile/" + id
     this.muted = muted
     this.soloed = soloed
-    this.gain = 1
-    this.stereoPan = 0
+    this.gain = gain
+    this.stereoPan = stereoPan
     this.customClass = customClass
 }
 
@@ -86,13 +86,15 @@ const convertArrayStoredCompToObj = (stored_tracks) => {
 const createNewTrack = (element, tracksInfo, tracksAsObj) => {
     const muted = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].muted : false
     const soloed = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].soloed : false
+    const gain = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].gain : 1
+    const stereoPan = tracksAsObj && tracksAsObj[element?.uuid] ? tracksAsObj[element.uuid].stereoPan : 0
     const title = element.title
     const customClass = { name: title, 
         track_id: element.uuid, 
         user_id: element.user_id, 
         composition_id: tracksInfo.uuid
     }
-    return new Track(element.uuid, title, muted, soloed, customClass)    
+    return new Track(element.uuid, title, muted, soloed, gain, stereoPan, customClass)    
 }
 
 const createArrayOfTracks = (tracksInfo, stored_tracks) => {

@@ -314,7 +314,7 @@ $container.on("change", ".automatic-scroll", function(e){
   ee.emit("automaticscroll", $(e.target).is(':checked'));
 });
 
-function displaySoundStatus(status, trackObject) {
+function storeTrackSettings(trackObject){
   if(trackObject?.customClass){    
     let trackSettings = (({ muted, gain, soloed, stereoPan }) => ({ muted, gain, soloed, stereoPan}))(trackObject)    
     trackSettings['track_id'] = trackObject.customClass.track_id
@@ -327,6 +327,10 @@ function displaySoundStatus(status, trackObject) {
       updateTable(DB, trackSettings)      
     }       
   }
+}
+
+function displaySoundStatus(status, trackObject) {
+  storeTrackSettings(trackObject)
   $(".sound-status").html(status);
 }
 
@@ -364,12 +368,22 @@ ee.on("solo", function(track) {
   displaySoundStatus("Solo button pressed for " + track.name, track);
 });
 
+let volumetimeout = null
 ee.on("volumechange", function(volume, track) {
   displaySoundStatus(track.name + " now has volume " + volume + ".");
+  clearTimeout(volumetimeout)
+  volumetimeout = setTimeout(() => {   
+    storeTrackSettings(track)   
+  }, 500)  
 });
 
+let stereopantimeout = null
 ee.on("stereopan", function(value, track) {
   displaySoundStatus(track.name + " now has stereo pan " + value + ".");
+  clearTimeout(stereopantimeout)
+  stereopantimeout = setTimeout(() => {   
+    storeTrackSettings(track)
+  }, 500) 
 });
 
 ee.on("mastervolumechange", function(volume) {
