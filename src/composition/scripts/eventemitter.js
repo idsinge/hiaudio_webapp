@@ -4,6 +4,7 @@
 */
 import { DB, openDB, updateTable } from '../../js/indexedDB'
 import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
+import { CURRENT_USER_ID } from './composition_helper'
 import { warningMessageBeforeRecord, TestLatency } from './latencymeasure/testlatency'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
@@ -319,8 +320,8 @@ function storeTrackSettings(trackObject){
     let trackSettings = (({ muted, gain, soloed, stereoPan }) => ({ muted, gain, soloed, stereoPan}))(trackObject)    
     trackSettings['track_id'] = trackObject.customClass.track_id
     trackSettings['composition_id'] = trackObject.customClass.composition_id
-    const viewer_id = trackObject.customClass.viewer_id   
-    if(!DB){      
+    const viewer_id = trackObject.customClass.viewer_id || CURRENT_USER_ID   
+    if(!DB){
       openDB(viewer_id).then((db) =>{
         updateTable(db, trackSettings) 
       })      

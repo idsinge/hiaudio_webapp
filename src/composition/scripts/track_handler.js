@@ -12,7 +12,7 @@ export class TrackHandler {
         const controlsList = document.getElementsByClassName('controls')
         let pos = controlsList.length - 1 
         if(pos>=0){
-            const customClass = { name: title, track_id: track_id, user_id:audio.user_id}
+            const customClass = { name: title, track_id: track_id, user_id:audio.user_id, user_uid:audio.user_uid, composition_id: audio.composition_id }
             playlist.tracks[pos].customClass = customClass            
             this.createMenuOptButton(controlsList, pos, title, track_id)
         }
@@ -28,7 +28,7 @@ export class TrackHandler {
 
         for (let i = 0; i < arrayTracks.length; i++) {
             if(arrayTracks[i]?.customClass){                
-                if ((role === 1 || role === 2)||(role === 3 && arrayTracks[i].customClass.user_id === CURRENT_USER_ID)){                   
+                if ((role === 1 || role === 2)||(role === 3 && arrayTracks[i].customClass.user_uid === CURRENT_USER_ID)){                   
                     const name = arrayTracks[i].customClass.name
                     const track_id = arrayTracks[i].customClass.track_id
                     this.createMenuOptButton(controlsList, i, name, track_id)
