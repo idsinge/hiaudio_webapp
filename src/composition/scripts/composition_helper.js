@@ -91,7 +91,8 @@ const createNewTrack = (element, tracksInfo, tracksAsObj) => {
     const title = element.title
     const customClass = { name: title, 
         track_id: element.uuid, 
-        user_id: element.user_id, 
+        user_id: element.user_id,
+        user_uid: element.user_uid,
         composition_id: tracksInfo.uuid,
         viewer_id: tracksInfo.viewer_id || 'null'
     }
