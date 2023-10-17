@@ -26,21 +26,20 @@
     font-size: 18px;
 }
 
-h1 {
-    margin: 22pt;
-}
-
-button {
+.button-profile {
     border: none;
     outline: 0;
     display: inline-block;
     padding: 8px;
-    color: white;
-    background-color: #000;
+    color: white;    
     text-align: center;
     cursor: pointer;
     width: 100%;
     font-size: 18px;
+}
+
+.logout {   
+    background-color: #000;    
 }
 
 .social-link {
@@ -49,7 +48,7 @@ button {
     color: black;
 }
 
-button:hover,
+.button-profile:hover,
 .social-link:hover {
     opacity: 0.7;
 }

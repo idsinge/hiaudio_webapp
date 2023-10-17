@@ -14,22 +14,21 @@ export const cancelLoader = (loaderId) => {
     document.getElementById('loadertext').textContent = ''
 }
 
-export const getJsonApi = async (apimethod) => {
+export const callJsonApi = async (apimethod, rqstmethod) => {
     const request = {
-        method: 'GET',
+        method: rqstmethod || 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
     }
-    let response = null
     try {
         startLoader(LOADER_ELEM_ID, 'Loading...')
         const sendRqst = await fetch(ENDPOINT + apimethod, request)
         cancelLoader(LOADER_ELEM_ID)
         const respToJson = await sendRqst.json()
         if (respToJson && !respToJson.error) {
-            return response = respToJson
+            return respToJson
         } else {
             return (respToJson?.error || 'An error occurred')
         }

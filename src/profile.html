@@ -32,10 +32,10 @@
             <p id="emailaddress" class="user-title"></p>
             <p>
             <form action="/logout">
-                <button type="submit">Logout</button>
+                <button class="button-profile logout" type="submit">Logout</button>
             </form>
             </p>
-            <button type="button" id="button-deleteprofile" class="btn btn-outline-danger btn-lg">DELETE PROFILE</button>
+            <button type="button" id="button-deleteprofile" class="btn btn-outline-danger btn-lg btn-block">DELETE PROFILE</button>
         </div>
         <details id="apicard" class="apicard" hidden >
             <summary>API Usage</summary>
@@ -48,7 +48,7 @@
                 Your access token is:
                 <code id='apitoken'>{{token}}</code>
                 <p>
-                    <button id="copytokenbutton" class="btn btn btn-outline-primary btn-sm">Copy to clipboard</button>
+                    <button id="copytokenbutton" class="btn btn btn-outline-primary btn-sm btn-block">Copy to clipboard</button>
                 </p>
             </p>
             <h5><b>curl</b></h5>
@@ -59,10 +59,14 @@
         </details>
         <div id="logincard" class="profile-card" hidden>
             <form action="/login">
-                <button type="submit" class="btn btn-info">Login</button>
+                <button type="submit" class="button-profile btn btn-info">Login</button>
             </form>
         </div>
     </main>
+    <div class="loader-container">
+        <div id="loader" class="loader"></div>
+        <div id="loadertext" class="loader-text">Loading...</div>
+    </div>
     <footer>
 		<div class="footerMenu">
 			<hr>
@@ -75,6 +79,12 @@
             <span id="companyName">&copy; Hi-Audio</span>
 	    </div>
 	</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
     <script src="profile/user.js"></script>
 </body>
 
