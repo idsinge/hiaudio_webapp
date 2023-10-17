@@ -1,10 +1,18 @@
 /* TODO: REFACTORING */
 import { ENDPOINT } from '../js/config'
+import { checkIfTermsAccepted, generateAcceptTermsModal} from '../index/acceptterms'
+
 const goHomeLink = document.getElementById('goHome')
 if (window.location.host === 'localhost:80' || window.location.origin === 'http://localhost') {
   goHomeLink.href = window.location.origin + '/index.html'
 } else {
   goHomeLink.href = window.location.origin
+}
+
+const profilePageTermsAccepted = (termsAccepted) => {  
+  if(!termsAccepted){
+      generateAcceptTermsModal('main')
+  } 
 }
 
 const getUser = async (callback) => {
@@ -45,6 +53,7 @@ const getUser = async (callback) => {
 
 const setUserInfo = (userinfo) => {
   if (userinfo.ok) {
+    checkIfTermsAccepted(userinfo, profilePageTermsAccepted)
     document.getElementById('profilecard').hidden = false
     document.getElementById('profilepicture').src = userinfo.profile_pic
     document.getElementById('username').innerHTML = userinfo.name
@@ -74,7 +83,6 @@ const deleteUserProfile = async (userid) => {
   const api = '/deleteuser/'+userid
   let userDelete = prompt('To confirm, please enter your User ID', '')
   if (userDelete === userid) {
-    let response = null
     const request = {
         method: 'DELETE',
         headers: {
@@ -86,7 +94,6 @@ const deleteUserProfile = async (userid) => {
         const sendRqst = await fetch(ENDPOINT + api, request)
         const respToJson = await sendRqst.json()
         if (respToJson) {
-            response = respToJson
             window.location.href = window.location.origin
         }
     } catch (error) {

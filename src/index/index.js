@@ -1,6 +1,7 @@
 import COMPOSITION_COVER from '../img/agp.png'
-import { getJsonApi } from '../js/utils'
+import { callJsonApi } from '../js/utils'
 import {breadcrumbHandler} from './breadcrumbhandler'
+import {checkIfTermsAccepted, generateAcceptTermsModal} from './acceptterms'
 
 export let uriCompositionPage = '/composition.html?compositionId='
 let uriProfilePage = window.location.origin
@@ -22,13 +23,20 @@ document.getElementById('useroptions').innerHTML = `<li class='nav-item'>
         <a class='nav-link' href='#' id='openMyCollectionsButton' data-toggle='modal' data-target='#editCollectionsModal'>/ My Collections</a>
     </li>`
 
+
+const homePageTermsAccepted = (termsAccepted) => {    
+    if(!termsAccepted){
+        generateAcceptTermsModal('header')
+    } 
+}
 const getMyProfile = async (doAfterIfLogged, doAfterIfNotLogged) => {
   
-  const isAuthenticated = await getJsonApi('/profile')
+  const isAuthenticated = await callJsonApi('/profile', 'GET')
   if (isAuthenticated.ok) {
     document.getElementById('userlogin').style.display = 'none'
     document.getElementById('useroptions').style.display = ''
-    document.getElementById('display_profile_name').innerText = `[${isAuthenticated.name}]`
+    document.getElementById('display_profile_name').innerText = `[${isAuthenticated.name}]`    
+    checkIfTermsAccepted(isAuthenticated, homePageTermsAccepted)
     await doAfterIfLogged(isAuthenticated)
   } else {
     await doAfterIfNotLogged(isAuthenticated)
@@ -37,7 +45,7 @@ const getMyProfile = async (doAfterIfLogged, doAfterIfNotLogged) => {
 }
 
 export const getMyCompositions = async () => {
-  const data = await getJsonApi('/mycompositions')
+  const data = await callJsonApi('/mycompositions', 'GET')
   if(data.compositions){
     return renderHomePage(data.compositions)
   } else {
@@ -45,7 +53,7 @@ export const getMyCompositions = async () => {
   }  
 }
 export const getRecentCompositions = async () => {
-  const data = await getJsonApi('/recentcompositions')
+  const data = await callJsonApi('/recentcompositions', 'GET')
   if(data.compositions){
     return renderHomePage(data.compositions)
   } else {
@@ -54,7 +62,7 @@ export const getRecentCompositions = async () => {
 }
 
 export const getAllCompositions = async () => {
-  const data = await getJsonApi('/compositions')
+  const data = await callJsonApi('/compositions', 'GET')
   if(data.compositions){
     return renderHomePage(data.compositions)
   } else {
