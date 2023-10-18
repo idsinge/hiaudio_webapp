@@ -170,6 +170,7 @@ $container.on("click", ".btn-clear", function() {
 $container.on("click", ".btn-record", function() {
   if(!TestLatency.getCurrentLatency()){
     if (window.confirm(`${warningMessageBeforeRecord}`)) {     
+      TestLatency.start()
       return 
     }
   }  
