@@ -8,14 +8,12 @@ body {
 body>footer {
     position: sticky;
     top: 100vh;
-    flex-grow: 0;      
+    flex-grow: 0;
+    padding-bottom: 1rem;      
 }
 
 .footerMenu {
-    display: flex;
-    width: 100%;
-    text-align: right;
-    padding: 1rem clamp(1rem, 3vw, 2rem);    
+    width: 90%;   
 }
 
 .footerMenu ul {
@@ -27,6 +25,7 @@ body>footer {
     margin-right: 0.8rem;
 }
 
-#companyName{
-    min-width: fit-content;
+#companyName{    
+    padding-left: 2rem;
+    padding-bottom: 1rem;
 }
