@@ -14,6 +14,7 @@
     <script src="https://kit.fontawesome.com/ef69927139.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/fabutton.css">
     <link rel="stylesheet" href="composition/playlist.css">
     <link rel="stylesheet" href="composition/customControls.css">
     <link rel="stylesheet" href="composition/settings.css">
@@ -241,6 +242,22 @@
             </article>
         </div>
     </main>
+    <div class="modal fade" id="bugReportModal" tabindex="-1" role="dialog" aria-labelledby="bugReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bugReportModalLabel">Bug Report</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>This is a beta version of the Hi-Audio Online Platform. It is still under active development, more features and improvements are to come. You can report any issue you encounter or request a feature on the dedicated GitHub page by following the below link.</p>
+                    <a href="https://github.com/hi-paris/hiaudio/issues" target="_blank">Report a Bug</a>
+                </div>
+            </div>
+        </div>
+    </div>
     <footer>
 		<div class="footerMenu">
 			<hr>
@@ -251,7 +268,12 @@
 				<li><a href="./static/cookies.html">Cookies</a></li>
 			</ul>
             <span id="companyName">&copy; Hi-Audio</span>
-	    </div>		
+	    </div>
+        <div class="fab">            
+            <a class="floatingbutton" href="#" data-toggle="modal" data-target="#bugReportModal">
+                <i class="fas fa-bug" style="color:white;"></i>
+            </a>
+        </div>
 	</footer>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
