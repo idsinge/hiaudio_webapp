@@ -1,5 +1,5 @@
-import { ENDPOINT } from '../../common/js/config'
-import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../common/js/utils'
+import { ENDPOINT } from '../../../common/js/config'
+import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../../common/js/utils'
 import { CURRENT_USER_ID } from './composition_helper'
 import { playlist } from './composition'
 

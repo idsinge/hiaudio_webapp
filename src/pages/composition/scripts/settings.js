@@ -1,4 +1,4 @@
-import { ENDPOINT } from '../../common/js/config'
+import { ENDPOINT } from '../../../common/js/config'
 import {openSettingsButtonHandler, saveParentCollection} from './settings/setcollection'
 import {setUITitle, getCurrentTitle, saveTitle} from './settings/settitle'
 import {setUIDescription, getCurrentDescription, saveDescription} from './settings/setdescription'
