@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>himusic</title>
+    <meta name="description" content="himusic">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous" />
+    <script src="https://kit.fontawesome.com/ef69927139.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="common/css/loader.css">
+    <link rel="stylesheet" href="common/css/footer.css">
+    <link rel="stylesheet" href="pages/login/login.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <ol class="breadcrumb">
+            <li>
+                <a id="goHome" href="">
+                    <img id="mainLogo" alt="" height="36"
+                        src="https://hi-audio.imt.fr/wp-content/themes/tpt-hiaudio/assets/images/hi_audio.svg">
+                </a>
+            </li>
+        </ol>
+    </header>
+    <main>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    Please, choose your authentication method:
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <button id="googleLoginButton" type="button" class="btn btn-danger btn-block mb-3">
+                        <i class="fab fa-google mr-2"></i> Sign in with Google
+                    </button>
+                </div>
+            </div>
+            <div class="separator"></div>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <form>
+                        <div class="form-group">
+                            <label for="email">Verification code</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter email">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Send Code</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- <div class="loader-container">
+        <div id="loader" class="loader"></div>
+        <div id="loadertext" class="loader-text">Loading...</div>
+    </div> -->
+    <footer>
+        <div class="footerMenu">
+            <hr>
+            <ul>
+                <li><a href="./static/about.html">About</a></li>
+                <li><a href="./static/terms.html">Terms of use</a></li>
+                <li><a href="./static/privacy.html">Privacy</a></li>
+                <li><a href="./static/cookies.html">Cookies</a></li>
+            </ul>
+            <span id="companyName">&copy; Hi-Audio</span>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+    <script src="pages/login/login.js"></script>
+</body>
+
+</html>

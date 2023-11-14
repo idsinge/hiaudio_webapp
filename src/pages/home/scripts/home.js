@@ -8,7 +8,7 @@ let uriProfilePage = window.location.origin
 
 
 document.getElementById('userlogin').innerHTML = `<li class='nav-item'>
-  <a class='dropdown-item' href='${window.location.origin}/login'>Google Login</a>
+  <a class='dropdown-item' href='${window.location.origin}/login.html'>Register / Login</a>
   </li>
   <li class='nav-item'>
     <a class='dropdown-item' href='${uriCompositionPage}demopage'>Test DAW</a>
