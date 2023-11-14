@@ -2,4 +2,4 @@
 .DS_Store
 /dist
 /.cache
-src/js/config.js
+src/common/js/config.js

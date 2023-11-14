@@ -1,4 +1,4 @@
-import { ENDPOINT } from '../../../js/config'
+import { ENDPOINT } from '../../../../common/js/config'
 import {updateSettings} from '../settings'
 
 let CURRENT_CONTRIBUTORS = []

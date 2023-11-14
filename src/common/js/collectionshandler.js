@@ -1,5 +1,5 @@
 
-import { ENDPOINT } from '../js/config'
+import { ENDPOINT } from './config'
 
 export const getCollections = async () => {
    

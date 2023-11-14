@@ -1,4 +1,4 @@
-import { LOADER_ELEM_ID, cancelLoader, callJsonApi } from '../js/utils'
+import { LOADER_ELEM_ID, cancelLoader, callJsonApi } from './utils'
 
 export const checkIfTermsAccepted = (userprofile, callback) => {
     cancelLoader(LOADER_ELEM_ID)

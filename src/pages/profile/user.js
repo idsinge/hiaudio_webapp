@@ -1,6 +1,6 @@
 /* TODO: REFACTORING */
-import { ENDPOINT } from '../js/config'
-import { checkIfTermsAccepted, generateAcceptTermsModal} from '../index/acceptterms'
+import { ENDPOINT } from '../../common/js/config'
+import { checkIfTermsAccepted, generateAcceptTermsModal} from '../../common/js/acceptterms'
 
 const goHomeLink = document.getElementById('goHome')
 if (window.location.host === 'localhost:80' || window.location.origin === 'http://localhost') {
