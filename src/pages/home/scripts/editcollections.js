@@ -1,5 +1,5 @@
 import { ENDPOINT } from '../../../common/js/config'
-import {uriCompositionPage} from './index'
+import {uriCompositionPage} from './home'
 
 let EDIT_STATUS = false
 

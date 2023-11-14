@@ -1,4 +1,4 @@
-import { getRecentCompositions, getMyCompositions, getAllCompositions } from './index'
+import { getRecentCompositions, getMyCompositions, getAllCompositions } from './home'
 
 export const breadcrumbHandler = (isauth) => {
     createBreadCrumbNavBar(isauth)   

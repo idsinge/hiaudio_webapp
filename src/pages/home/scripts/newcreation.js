@@ -1,6 +1,6 @@
 
 import { ENDPOINT } from '../../../common/js/config'
-import {uriCompositionPage} from './index.js'
+import {uriCompositionPage} from './home'
 import {getCollections, getCollectionsError, createListCollections } from '../../../common/js/collectionshandler.js'
 import './editcollections'
 
