@@ -1,5 +1,5 @@
 /* TODO: REFACTORING */
-import { ENDPOINT } from '../js/config'
+import { ENDPOINT } from '../common/js/config'
 import { checkIfTermsAccepted, generateAcceptTermsModal} from '../index/acceptterms'
 
 const goHomeLink = document.getElementById('goHome')

@@ -2,7 +2,7 @@
  * This script is provided to give an example how the playlist can be controlled using the event emitter.
  * This enables projects to create/control the useability of the project.
 */
-import { DB, openDB, updateTable } from '../../js/indexedDB'
+import { DB, openDB, updateTable } from '../../common/js/indexedDB'
 import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
 import { CURRENT_USER_ID } from './composition_helper'
 import { warningMessageBeforeRecord, TestLatency } from './latencymeasure/testlatency'

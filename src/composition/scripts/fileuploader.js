@@ -1,8 +1,8 @@
 /* https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript : Dealing with binary data */
 /* https://stackoverflow.com/a/38968948 */
 
-import { UPLOAD_ENDPOINT } from '../../js/config'
-import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../js/utils'
+import { UPLOAD_ENDPOINT } from '../../common/js/config'
+import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../common/js/utils'
 import { playlist, trackHandler } from './composition'
 
 export class FileUploader {

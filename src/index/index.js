@@ -1,5 +1,5 @@
-import COMPOSITION_COVER from '../img/agp.png'
-import { callJsonApi } from '../js/utils'
+import COMPOSITION_COVER from '../common/img/agp.png'
+import { callJsonApi } from '../common/js/utils'
 import {breadcrumbHandler} from './breadcrumbhandler'
 import {checkIfTermsAccepted, generateAcceptTermsModal} from './acceptterms'
 
