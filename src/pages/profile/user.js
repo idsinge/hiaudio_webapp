@@ -1,5 +1,6 @@
 /* TODO: REFACTORING */
 import { ENDPOINT } from '../../common/js/config'
+import { callJsonApi } from '../../common/js/utils'
 import { checkIfTermsAccepted, generateAcceptTermsModal} from '../../common/js/acceptterms'
 
 const goHomeLink = document.getElementById('goHome')
@@ -17,37 +18,10 @@ const profilePageTermsAccepted = (termsAccepted) => {
 
 const getUser = async (callback) => {
 
-  let errorIs = null
-  let userInfo = {}
-
-  await fetch(ENDPOINT + '/profile', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-  })
-    .then((r) => {
-      if (!r.ok) {
-        errorIs = r.statusText
-      }
-      return r.json()
-    })
-    .then((data) => {
-
-      if (data) {
-        userInfo = data
-      }
-    })
-    .catch((error) => {
-      errorIs = error
-    })
-    .then(() => {
-      if (errorIs) {
-        alert(errorIs)
-      }
-      callback(userInfo)
-    })
+  const data = await callJsonApi('/profile', 'GET')
+  if (data) {    
+    callback(data)
+  }  
 
 }
 

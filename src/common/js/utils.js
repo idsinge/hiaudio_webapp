@@ -14,13 +14,16 @@ export const cancelLoader = (loaderId) => {
     document.getElementById('loadertext').textContent = ''
 }
 
-export const callJsonApi = async (apimethod, rqstmethod) => {
+export const callJsonApi = async (apimethod, rqstmethod, body) => {
     const request = {
         method: rqstmethod || 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
+    }
+    if(body){
+        request.body = JSON.stringify(body)
     }
     try {
         startLoader(LOADER_ELEM_ID, 'Loading...')
@@ -36,4 +39,11 @@ export const callJsonApi = async (apimethod, rqstmethod) => {
         cancelLoader(LOADER_ELEM_ID)
         return(error)
     }
+}
+
+/* https://stackoverflow.com/a/5166806 */
+export const looksLikeMail = (str) => {
+    var lastAtPos = str.lastIndexOf('@');
+    var lastDotPos = str.lastIndexOf('.');
+    return (lastAtPos < lastDotPos && lastAtPos > 0 && str.indexOf('@@') == -1 && lastDotPos > 2 && (str.length - lastDotPos) > 2);
 }

@@ -26,7 +26,20 @@
         </ol>
     </header>
     <main>
-        <div class="container">
+        <div id="validationcodefield" class="container form-group" hidden>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="verificationCode">Enter 6-digit code:</label>
+                        <input type="tel" class="form-control" id="verificationCode" maxlength="6"
+                            placeholder="Enter code">
+                        <div id="validationCodeResult" class="mt-3 invalid-feedback"></div>
+                        <button id="validatecodebutton" class="btn btn-primary mt-3">Validate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="authmethodform" class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6 text-center">
                     Please, choose your authentication method:
@@ -42,21 +55,21 @@
             <div class="separator"></div>
             <div class="row justify-content-center">
                 <div class="col-md-6">
-                    <form>
-                        <div class="form-group">
-                            <label for="email">Verification code</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter email">
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Send Code</button>
-                    </form>
+                    <div class="form-group">
+                        <label for="email">Verification code</label>
+                        <input id="inputloginemail" type="email" class="form-control" id="email"
+                            placeholder="Enter email">
+                        <div id="validationEmailResult" class="mt-3 invalid-feedback"></div>
+                    </div>
+                    <button id="sendcodebutton" type="button" class="btn btn-primary btn-block">Send Code</button>
                 </div>
             </div>
         </div>
     </main>
-    <!-- <div class="loader-container">
+    <div class="loader-container">
         <div id="loader" class="loader"></div>
         <div id="loadertext" class="loader-text">Loading...</div>
-    </div> -->
+    </div>
     <footer>
         <div class="footerMenu">
             <hr>
