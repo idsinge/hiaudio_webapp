@@ -9,6 +9,7 @@ const createNewButtonAtHome  = document.getElementById('createNewButtonAtHome')
 
 const clickNewButtonHandler = () => {
   document.getElementById('newtitle').value = ''
+  document.getElementById('newdescription').value = ''
   const saveCompositionButton = document.getElementById('newcreation')
   saveEventListener(saveCompositionButton)
   getCollections().then( result => {
