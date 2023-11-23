@@ -38,14 +38,13 @@ const sendVerificationCode = async () => {
 
 const requestCodeValidation = async () => {
     const codeIs =  document.getElementById('verificationCode').value
-    var sixDigits = /\d{6}/;
+    const sixDigits = /\d{6}/
     if (sixDigits.test(codeIs)){
         const body = {email: TEMP_EMAIL, code: codeIs}
-        const data = await callJsonApi('/logincodevalidation', 'POST', body)
-        console.log(data)
+        const data = await callJsonApi('/logincodevalidation', 'POST', body)        
         if (data.ok) {
             TEMP_EMAIL = null
-            document.cookie = "access_token_cookie=" + data.access_token_cookie
+            document.cookie = 'access_token_cookie=' + data.access_token_cookie
             window.location.href = window.location.origin
         } else {
             // TODO: if the code is expired display button to request a new one
