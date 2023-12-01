@@ -1,4 +1,5 @@
 import { ENDPOINT } from '../../../../common/js/config'
+import { looksLikeMail } from '../../../../common/js/utils'
 import {updateSettings} from '../settings'
 
 let CURRENT_CONTRIBUTORS = []
@@ -44,8 +45,13 @@ export const addContributorButtonHandler = (compositionId) => {
     button.addEventListener('click', function () {
         const roleInput = document.getElementById('inputGroupSelectRole')
         const role = roleInput.value
-        if (input.value) {
+        document.getElementById('contributorinput').classList.remove('is-invalid')     
+        document.getElementById('validationemailresult').innerText = ''        
+        if (input.value && looksLikeMail(input.value)) {           
             addContributorToList(ul, input.value, compositionId, role)
+        } else {
+            document.getElementById('contributorinput').classList.add('is-invalid')     
+            document.getElementById('validationemailresult').innerText = 'Sorry, invalid email address format.'
         }
     })
 }
@@ -69,7 +75,7 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
     const roleInput = document.getElementById('inputGroupSelectRole').value    
     if(parseInt(roleInput) !== 0){
         
-        const newcontrib = { user_uid: contrib, composition_id: compositionId, role: parseInt(role) }        
+        const newcontrib = { email:contrib, user_uid: contrib, composition_id: compositionId, role: parseInt(role) }        
         const indexContribDuplicateInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.user_uid === contrib)
         const indexContribDuplicateInNew = NEW_CONTRIBUTORS.findIndex(x => x.user_uid === contrib)
 
@@ -83,8 +89,8 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
         
         if(canAdd){
             // #TODO: replace with API call to new endpoint to validate contributor
-            const response = await fetch(ENDPOINT + '/checkuser/' + contrib)             
-            if(response?.ok){                             
+            const response = await fetch(ENDPOINT + '/checkuser/' + contrib)                       
+            if(response?.ok || (response?.status === 404)){                         
                 NEW_CONTRIBUTORS.push(newcontrib)            
                 addContributorToUI(ul, newcontrib)        
             } else {
@@ -138,7 +144,7 @@ export const saveNewContributors = async () => {
         let copy_new_contribs = [...NEW_CONTRIBUTORS]
         for (let i=0; i < NEW_CONTRIBUTORS.length; i++){                    
             const newcontrib = NEW_CONTRIBUTORS[i]
-            const resultAddContrib = await updateSettings('POST', '/addcontributorbyid', newcontrib)                    
+            const resultAddContrib = await updateSettings('POST', '/addcontributorbyemail', newcontrib)                    
             if(resultAddContrib?.ok){                        
                 NEW_CONTRIBUTORS[i].id = resultAddContrib.contribid
                 copy_new_contribs[i] = null                       
