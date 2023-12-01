@@ -184,7 +184,7 @@ const removeContributorSwitchHandler = (contribId) => {
         const chk = event.target        
         if (chk.tagName === 'INPUT' && chk.type === 'checkbox') {        
             if(chk.checked){                
-                if (confirm(`Do you want remove the contributor with ID ${contribId}?`) == true) {                    
+                if (confirm(`Do you want remove the contributor: ${contribId}?`) == true) {                    
                     const indexContribInNew = NEW_CONTRIBUTORS.findIndex(x => x.user_uid === contribId)                    
                     if(indexContribInNew > -1){                        
                         NEW_CONTRIBUTORS.splice(indexContribInNew,1)

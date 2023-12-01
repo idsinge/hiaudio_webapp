@@ -2,16 +2,16 @@ import { ENDPOINT } from './config'
 
 export const LOADER_ELEM_ID = 'loader'
 
-export const startLoader = (loaderId, loadingMessage) => {
-    document.getElementById('loadertext').textContent = loadingMessage
-    const loaderElement = document.getElementById(loaderId)
+export const startLoader = (loaderId, loadingMessage) => {    
+    const loaderElement = document.getElementById(loaderId)    
+    loaderElement.nextElementSibling.textContent = loadingMessage
     loaderElement.classList.add(loaderId)
 }
 
 export const cancelLoader = (loaderId) => {
     const loaderElement = document.getElementById(loaderId)
     loaderElement.classList.remove(loaderId)
-    document.getElementById('loadertext').textContent = ''
+    loaderElement.nextElementSibling.textContent = ''
 }
 
 export const callJsonApi = async (apimethod, rqstmethod, body) => {
