@@ -90,9 +90,12 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
         if(canAdd){
             // #TODO: replace with API call to new endpoint to validate contributor
             const response = await fetch(ENDPOINT + '/checkuser/' + contrib)                       
-            if(response?.ok || (response?.status === 404)){                         
+            if(response?.ok || (response?.status === 404)){                                        
                 NEW_CONTRIBUTORS.push(newcontrib)            
-                addContributorToUI(ul, newcontrib)        
+                addContributorToUI(ul, newcontrib)
+                if(response?.status === 404){
+                    alert('An invitation via email will be sent to: '+ contrib + ', after clicking on the button Confirm')
+                }
             } else {
                 alert(`User can't be added`)
             }
