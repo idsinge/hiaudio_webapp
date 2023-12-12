@@ -1,13 +1,13 @@
 {
-  "name": "himusic",
+  "name": "hiaudio",
   "version": "0.0.1",
   "description": "Simple Web DAW",
   "main": "index.js",
   "author": "Telecom Paris",
   "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp",
   "scripts": {
-    "dev": "parcel src/index.html src/composition.html src/login.html src/profile.html src/static/* --port 80 --https --out-dir ../public --public-url .",
-    "build": "parcel build src/index.html src/composition.html src/login.html src/profile.html src/static/* --out-dir ../public --public-url .",
+    "dev": "parcel src/index.html src/composition.html src/login.html src/profile.html src/refusal.html src/static/* --port 80 --https --out-dir ../public --public-url .",
+    "build": "parcel build src/index.html src/composition.html src/login.html src/refusal.html src/profile.html src/static/* --out-dir ../public --public-url .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
