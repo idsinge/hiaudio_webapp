@@ -78,7 +78,10 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
         const newcontrib = { email:contrib, user_uid: contrib, composition_id: compositionId, role: parseInt(role) }        
         const indexContribDuplicateInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.email === contrib)
         const indexContribDuplicateInNew = NEW_CONTRIBUTORS.findIndex(x => x.email === contrib)
-
+        const indexToRemove = TOREMOVE_CONTRIBUTORS.indexOf(contrib)
+        if(indexToRemove > -1){
+            TOREMOVE_CONTRIBUTORS.splice(indexToRemove,1)
+        }
         let canAdd = false
 
         if((indexContribDuplicateInNew < 0) && (indexContribDuplicateInCurrent < 0)){
@@ -112,8 +115,8 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
 const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) => {
     
     let canAdd = false
-    const contribListElem = document.getElementById(newcontrib.user_uid)
-    
+    const uid = CURRENT_CONTRIBUTORS[atIndexCurrent]?.user_uid || NEW_CONTRIBUTORS[atIndexNew]?.user_uid
+    const contribListElem = document.getElementById(uid)    
     if(contribListElem){
     
         if(atIndexCurrent >= 0 && atIndexNew < 0){
@@ -201,7 +204,12 @@ const removeContributorSwitchHandler = (contrib) => {
                     const indexContribInNew = NEW_CONTRIBUTORS.findIndex(x => x.email === contrib.email)                                     
                     if(indexContribInNew > -1){                        
                         NEW_CONTRIBUTORS.splice(indexContribInNew,1)
-                        document.getElementById(contrib.user_uid).remove()
+                        const indexContribInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.email === contrib.email)
+                        if(indexContribInCurrent === -1){                            
+                            document.getElementById(contrib.user_uid).remove()
+                        } else {
+                            TOREMOVE_CONTRIBUTORS.push(contrib.email)
+                        }
                     } else {                        
                         TOREMOVE_CONTRIBUTORS.push(contrib.email)
                     }                 
