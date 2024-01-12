@@ -94,7 +94,7 @@ const paintListOfCompositions = (compositionsList) => {
             <div class="card-body">              
                 <div>  
                   <h5 class='card-title'>${element.title}</h5>
-                  <p class='card-text text-truncate'>${element.description}</p>
+                  <p class='card-text text-truncate'>${element.description ||''}</p>
                   <p class='text-black-50'>${element.parent_collection ? ('Collection: ' + element.parent_collection) : ''}</p>
                   <span class='card-url'><i class='fa fa-user'></i>&nbsp;${element.username}</span>&nbsp;
                   <span class='card-url'><i class='fa fa-music'></i>&nbsp;${'Tracks: ' +element.tracks.length}</span>
