@@ -29,7 +29,7 @@ const setUserInfo = (userinfo) => {
   if (userinfo.ok) {
     checkIfTermsAccepted(userinfo, profilePageTermsAccepted)
     document.getElementById('profilecard').hidden = false
-    document.getElementById('profilepicture').src = userinfo.profile_pic
+    document.getElementById('profilepicture').src = `https://picsum.photos/seed/${userinfo.user_uid}/200`
     document.getElementById('username').innerHTML = userinfo.name
     document.getElementById('userid').innerHTML = 'User Id: ' + userinfo.user_uid
     document.getElementById('emailaddress').innerHTML = userinfo.email
