@@ -87,24 +87,21 @@ const paintListOfCompositions = (compositionsList) => {
     let listElelemts = ''
     compositionsList.forEach((element) => {
       if (element) {
-        let collection = ''
-        if (element.collection) {
-          collection = `<a href='./index.html?collection=${element.collection}' class='card-link green'>${element.collection}</a>`
-        }
         const template = `
-          <div class='grid-div'>
-            <div class='card'>
-              ${element.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}
-              <a href='${uriCompositionPage + element.uuid}'>
-                <img src='${element.photo_url || COMPOSITION_COVER}' alt='Card image cap' class='card-img'>
-              </a>
-              <div class='card-container'>
-                <a href='${uriCompositionPage + element.uuid}' class='card-link blue'>${element.title}</a>
-                <p>${collection}</p>
-              </div>
+        <a href='${uriCompositionPage + element.uuid}' class='card-url'>
+        <div class='card'>          
+            ${element.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}            
+            <div class="card-body">              
+                <div>  
+                  <h5 class='card-title'>${element.title}</h5>
+                  <p class='card-text text-truncate'>${element.description}</p>
+                  <p class='text-black-50'>${element.parent_collection ? ('Collection: ' + element.parent_collection) : ''}</p>
+                  <span class='card-url'><i class='fa fa-user'></i>&nbsp;${element.username}</span>&nbsp;
+                  <span class='card-url'><i class='fa fa-music'></i>&nbsp;${'Tracks: ' +element.tracks.length}</span>
+                </div>
             </div>
-          </div>
-        `
+        </div>
+        </a>`
         listElelemts += template
       }
     })
