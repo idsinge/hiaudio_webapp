@@ -27,13 +27,25 @@
     <main>
         <div id="profilecard" class="profile-card" hidden>
             <img id="profilepicture" src="" alt="User Picture">
-            <p><h2 id="username"></h2></p>
-            <h5 id="userid"></h5>
+            <hr class="hr" />     
+            <div class="form-group">
+                <h6><b>Username:</b></h6>               
+                <input type="text" class="form-control mr-2" id='usernameinputfield' placeholder="" readonly/>                
+                <button id="editusernamebutton" type="button" class="btn btn-sm">
+                    <i class="fas fa-edit">&nbsp;</i>Edit username
+                </button>
+                <div id="validationusernameresult" class="mt-3 invalid-feedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="userid"><b>User ID:</b></label>
+                <h6 id="userid"></h6>
+            </div>
+            
             <p id="emailaddress" class="user-title"></p>
             <p>
-            <form action="/logout">
-                <button class="button-profile logout" type="submit">Logout</button>
-            </form>
+                <form action="/logout">
+                    <button class="button-profile logout" type="submit">Logout</button>
+                </form>
             </p>
             <button type="button" id="button-deleteprofile" class="btn btn-outline-danger btn-lg btn-block">DELETE PROFILE</button>
         </div>

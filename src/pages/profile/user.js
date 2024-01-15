@@ -10,6 +10,11 @@ if (window.location.host === 'localhost:80' || window.location.origin === 'http:
   goHomeLink.href = window.location.origin
 }
 
+let CURRENT_USERNAME = null
+let EDIT_STATUS = false
+
+const editUserNameButton = document.getElementById('editusernamebutton')
+
 const profilePageTermsAccepted = (termsAccepted) => {  
   if(!termsAccepted){
       generateAcceptTermsModal('main')
@@ -30,8 +35,9 @@ const setUserInfo = (userinfo) => {
     checkIfTermsAccepted(userinfo, profilePageTermsAccepted)
     document.getElementById('profilecard').hidden = false
     document.getElementById('profilepicture').src = `https://picsum.photos/seed/${userinfo.user_uid}/200`
-    document.getElementById('username').innerHTML = userinfo.name
-    document.getElementById('userid').innerHTML = 'User Id: ' + userinfo.user_uid
+    CURRENT_USERNAME = userinfo.name
+    document.getElementById('usernameinputfield').value = userinfo.name
+    document.getElementById('userid').innerHTML = userinfo.user_uid
     document.getElementById('emailaddress').innerHTML = userinfo.email
     deleteProfileHandler(userinfo.user_uid)
 
@@ -77,4 +83,52 @@ const deleteUserProfile = async (userid) => {
     alert('Sorry, the User ID does not match')
   }
 }
+
+const clickEditButtonHandler = () => {
+    
+  if(EDIT_STATUS){      
+      disableEdition()
+  } else {
+      EDIT_STATUS = true
+      editUserNameButton.innerHTML =  '<i class="fas fa-save">&nbsp;</i>Save'
+      enableEdition()
+  }   
+}
+
+const enableEdition = () => {
+  document.getElementById('usernameinputfield').classList.add('italic')
+  document.getElementById('usernameinputfield').removeAttribute('readonly')
+}
+
+const disableEdition = async () => {
+  const usernameinput = document.getElementById('usernameinputfield')
+  const newname =  usernameinput.value
+  usernameinput.value = newname.trim()
+  if(CURRENT_USERNAME === newname){
+    setBackToReadOnly()    
+  } else {
+    const body = {user_name: newname}
+    const resultNewName = await callJsonApi('/updateusername', 'PATCH', body)  
+    if(!resultNewName.ok){    
+      usernameinput.classList.add('is-invalid')     
+      document.getElementById('validationusernameresult').innerText = 'Sorry, ' + resultNewName
+    } else {
+      CURRENT_USERNAME = newname
+      setBackToReadOnly()     
+    }  
+  }  
+}
+
+const setBackToReadOnly = () => {
+  const usernameinput = document.getElementById('usernameinputfield')
+  EDIT_STATUS = false        
+  editUserNameButton.innerHTML =  '<i class="fas fa-edit">&nbsp;</i>Edit username'
+  usernameinput.setAttribute('readonly', 'true')
+  usernameinput.classList.remove('is-invalid')
+  usernameinput.classList.remove('italic')     
+  document.getElementById('validationusernameresult').innerText = '' 
+}
+
+editUserNameButton.addEventListener('click', clickEditButtonHandler, false)
+
 getUser(setUserInfo)
