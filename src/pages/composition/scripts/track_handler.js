@@ -2,6 +2,7 @@ import { ENDPOINT } from '../../../common/js/config'
 import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../../common/js/utils'
 import { CURRENT_USER_ID } from './composition_helper'
 import { playlist } from './composition'
+import { createTrackInfoTable } from './trackinfo'
 
 export class TrackHandler {
     displayOptMenuForNewTrack(newTrack){        
@@ -52,30 +53,55 @@ export class TrackHandler {
         document.getElementById(menuBtnId).appendChild(listOptions)
         const spanTitle = controlsList[pos].getElementsByClassName('track-header')[0].getElementsByTagName('span')[0]        
         spanTitle.style['margin-left'] = '3em'
-        this.detectClickOutsideMenuOpt()          
     }
     createListMenuOpt(menuDrpDownId, pos, name, track_id){
         const listOptions = document.createElement('ul')
         listOptions.id = menuDrpDownId
-        listOptions.className = 'dropdown-content'
-        const listOptionsItem = document.createElement('li')
-        listOptionsItem.dataset.pos = pos
-        listOptionsItem.dataset.name = name
-        listOptionsItem.dataset.trackId = track_id
-        listOptionsItem.onclick = (event) => {
+        listOptions.className = 'dropdown-menu'        
+        const deleteMenuOpt = this.createDeleteMenuOpt(pos, name, track_id)
+        const trackInfoMenuOpt = this.createTrackInfoMenuOpt(pos, name, track_id)        
+        listOptions.appendChild(deleteMenuOpt)
+        listOptions.appendChild(trackInfoMenuOpt)
+        return listOptions
+    }
+    createDeleteMenuOpt(pos, name, track_id){
+        const deleteMenuOpt = document.createElement('li')
+        deleteMenuOpt.className = 'dropdown-item btn-light'        
+        deleteMenuOpt.dataset.pos = pos
+        deleteMenuOpt.dataset.name = name
+        deleteMenuOpt.dataset.trackId = track_id
+        deleteMenuOpt.onclick = (event) => {
             this.deleteTrackConfirmDialog(event, this.sendDeleteRequest, this.doAfterDeleted)
         }
-        listOptionsItem.appendChild(document.createTextNode('Delete'))
-        listOptions.appendChild(listOptionsItem)
-        return listOptions
+        deleteMenuOpt.appendChild(document.createTextNode('Delete'))
+        return deleteMenuOpt
+    }
+    createTrackInfoMenuOpt(pos, name, track_id){
+        const trackInfoMenuOpt = document.createElement('li')
+        trackInfoMenuOpt.className = 'dropdown-item btn-light'        
+        trackInfoMenuOpt.dataset.target = '#trackInfoModal'
+        trackInfoMenuOpt.dataset.toggle = 'modal'
+        trackInfoMenuOpt.onclick = (event) => {            
+            createTrackInfoTable(pos, name, track_id)            
+        }              
+        trackInfoMenuOpt.appendChild(document.createTextNode('Track Info'))
+        return trackInfoMenuOpt
     }
     detectClickOutsideMenuOpt(){
         window.onclick = function(event) {
-            const dropdownDisplayed = document.getElementsByClassName('dropdown-content show')           
+            const dropdownDisplayed = document.getElementsByClassName('dropdown-menu show')           
             if((dropdownDisplayed.length > 0) && (event.target.className!=='menuoptbtn')){                
                 Array.from(dropdownDisplayed).forEach(function(item) {
-                    item.className = 'dropdown-content'
+                    item.className = 'dropdown-menu'
                 })
+            } else {
+                if(dropdownDisplayed.length > 1){                    
+                    Array.from(dropdownDisplayed).forEach(function(item) {                        
+                        if(!event.target.contains(item)){
+                            item.className = 'dropdown-menu'
+                        }                        
+                    })
+                }                
             }
         }
     }
