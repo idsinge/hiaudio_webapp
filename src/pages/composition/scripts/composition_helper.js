@@ -4,6 +4,7 @@ import { LOADER_ELEM_ID, cancelLoader } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
+import { trackInfoHandler } from './trackinfo'
 
 export let CURRENT_USER_ID = null
 function Track(id, title, muted, soloed, gain, stereoPan, customClass) {
@@ -145,6 +146,8 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
         } else {
             recorder.init()
             if (canUpload) {
+                trackInfoHandler()
+                trackHandler.detectClickOutsideMenuOpt()
                 trackHandler.displayOptMenuForTracks(userRole)
             }
         }

@@ -151,6 +151,36 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="trackInfoModal" tabindex="-1" aria-labelledby="trackInfoModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center border-0">
+                        <button id="edittrackinfobutton" type="button" class="btn btn-primary">Edit</button>
+                        <h5 class="modal-title w-100" id="trackInfoModalLabel">Track info</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="loader-container">
+                            <div id="trackinfoloader" class="trackinfoloader"></div>
+                            <div id="loadertext" class="loader-text">Loading track info..</div>
+                        </div>
+                        <table class="table">
+                            <caption></caption>
+                            <tbody id="trackinfotablebody">
+                                <th scope="col"></th>                    
+                            </tbody>
+                        </table>                       
+                    </div>
+                    <div class="modal-footer">
+                        <button id="canceltrackinfobutton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button id="updatetrackinfobutton" type="button" class="btn btn-primary">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="wrapper">
             <article class="post">
                 <header id="post-header" class="post-header">

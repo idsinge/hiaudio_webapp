@@ -31,3 +31,13 @@
 .dropdown-content li:hover {background-color: #ddd;}
   
 .show {display: block;}
+
+.btn-solo, .btn-mute {
+    z-index: 0 !important;
+}
+.dropdown-menu{
+    background-color:#efeaea;    
+}
+.italic {
+   font-style: italic;
+}
