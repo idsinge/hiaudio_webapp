@@ -1,5 +1,5 @@
 diff --git a/waveform-playlist.umd.js b/waveform-playlist.umd.js
-index 8fe0bb6..3af833f 100644
+index 8fe0bb6..62784da 100644
 --- a/waveform-playlist.umd.js
 +++ b/waveform-playlist.umd.js
 @@ -7168,6 +7168,8 @@ const MAX_CANVAS_WIDTH = 1000;
@@ -101,7 +101,7 @@ index 8fe0bb6..3af833f 100644
      });
  
      ee.on("statechange", (state) => {
-@@ -9051,7 +9085,8 @@ class AnnotationList {
+@@ -9051,10 +9085,15 @@ class AnnotationList {
        this.drawRequest();
      });
  
@@ -111,7 +111,14 @@ index 8fe0bb6..3af833f 100644
        this.record();
      });
  
-@@ -9323,7 +9358,7 @@ class AnnotationList {
++    ee.on("updateview", () => {
++      this.drawRequest();
++    });
++
+     ee.on("play", (start, end) => {
+       this.play(start, end);
+     });
+@@ -9323,7 +9362,7 @@ class AnnotationList {
      this.cursor = start;
    }
  
@@ -120,7 +127,7 @@ index 8fe0bb6..3af833f 100644
      if (this.isRendering) {
        return;
      }
-@@ -9346,14 +9381,18 @@ class AnnotationList {
+@@ -9346,14 +9385,18 @@ class AnnotationList {
      const currentTime = this.offlineAudioContext.currentTime;
      const mg = this.offlineAudioContext.createGain();
  
@@ -141,7 +148,7 @@ index 8fe0bb6..3af833f 100644
          masterGain: 1,
          isOffline: true,
        });
-@@ -9363,8 +9402,12 @@ class AnnotationList {
+@@ -9363,8 +9406,12 @@ class AnnotationList {
        TODO cleanup of different audio playouts handling.
      */
      await Promise.all(setUpChain);
@@ -155,7 +162,7 @@ index 8fe0bb6..3af833f 100644
      if (type === "buffer") {
        this.ee.emit("audiorenderingfinished", type, audioBuffer);
        this.isRendering = false;
-@@ -9378,7 +9421,7 @@ class AnnotationList {
+@@ -9378,7 +9425,7 @@ class AnnotationList {
  
        // callback for `exportWAV`
        this.exportWorker.onmessage = (e) => {
@@ -164,7 +171,7 @@ index 8fe0bb6..3af833f 100644
          this.isRendering = false;
  
          // clear out the buffer for next renderings.
-@@ -9437,8 +9480,10 @@ class AnnotationList {
+@@ -9437,8 +9484,10 @@ class AnnotationList {
      const index = this.mutedTracks.indexOf(track);
  
      if (index > -1) {
@@ -175,7 +182,7 @@ index 8fe0bb6..3af833f 100644
        this.mutedTracks.push(track);
      }
    }
-@@ -9447,10 +9492,13 @@ class AnnotationList {
+@@ -9447,10 +9496,13 @@ class AnnotationList {
      const index = this.soloedTracks.indexOf(track);
  
      if (index > -1) {
@@ -189,7 +196,7 @@ index 8fe0bb6..3af833f 100644
        this.soloedTracks.push(track);
      }
    }
-@@ -9647,9 +9695,14 @@ class AnnotationList {
+@@ -9647,9 +9699,14 @@ class AnnotationList {
      });
    }
  
