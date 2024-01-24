@@ -84,7 +84,11 @@ const saveButtonHandler = async () => {
 const handleUpdatetrackInfo = (data, objEdited) => {
     if (typeof data === 'object' && data.ok) {
         CURRENT_TRACKINFO = objEdited
-        playlist.tracks[CURRENT_TRACKPOS].name = CURRENT_TRACKINFO.title        
+        playlist.tracks[CURRENT_TRACKPOS].name = CURRENT_TRACKINFO.title
+        const menuBtnItem = document.querySelectorAll(`[data-track-id='${CURRENT_TRACKID}']`)
+        if(menuBtnItem.length === 1){
+            menuBtnItem[0].dataset.name = CURRENT_TRACKINFO.title
+        }        
         const ee = playlist.getEventEmitter()
         ee.emit('updateview')
     } else {
