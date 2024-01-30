@@ -4,13 +4,61 @@
     width: 100%;
     border-radius: 5px;
 }
+
 .card:hover {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
-.card-url{    
-    color:#212529;
+
+.card-url {
+    color: #006494;
     text-decoration: none;
-} 
-.card-text{
+}
+
+.card-text {
     color: #565e67;
+}
+
+.listing {
+    padding: 0;
+    list-style: none;
+    margin: 2em;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.listing .body {
+    padding: 10px;
+}
+
+.list-group {
+    max-height: 200px;
+    margin-bottom: 10px;
+    overflow-y: scroll;
+}
+
+.legendbuttons {
+    padding-top: 2em;
+    padding-right: 1em;
+}
+
+.legenditem {
+    padding-right: 1em;
+}
+
+.badge-collection {
+    color: white;
+    background-color: #c485e9;
+}
+
+.border-collection {
+    border-color: #c485e9;
+}
+
+#listCollContainerAllColl {
+    max-height: 70vh;
+}
+
+.badge-warning {
+    color: white;
 }

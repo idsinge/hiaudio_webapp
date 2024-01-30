@@ -1,4 +1,3 @@
-import COMPOSITION_COVER from '../../../common/img/agp.png'
 import { callJsonApi } from '../../../common/js/utils'
 import {breadcrumbHandler} from './breadcrumbhandler'
 import {checkIfTermsAccepted, generateAcceptTermsModal} from '../../../common/js/acceptterms'
@@ -45,70 +44,243 @@ const getMyProfile = async (doAfterIfLogged, doAfterIfNotLogged) => {
 }
 
 export const getMyCompositions = async () => {
-  const data = await callJsonApi('/mycompositions', 'GET')
+  const endpoint = '/mycompositions'
+  const data = await callJsonApi(endpoint, 'GET')
   if(data.compositions){
-    return renderHomePage(data.compositions)
+    return renderHomePage(data.compositions, endpoint)
   } else {
     alert('invalid return value for compisitions list')
   }  
 }
 export const getRecentCompositions = async () => {
+  const endpoint = '/recentcompositions'
   const data = await callJsonApi('/recentcompositions', 'GET')
   if(data.compositions){
-    return renderHomePage(data.compositions)
+    return renderHomePage(data.compositions, endpoint)
   } else {
     alert('invalid return value for compisitions list')
   }
 }
 
 export const getAllCompositions = async () => {
+  const endpoint = '/compositions'
   const data = await callJsonApi('/compositions', 'GET')
   if(data.compositions){
-    return renderHomePage(data.compositions)
+    return renderHomePage(data.compositions, endpoint)
   } else {
     alert('invalid return value for compisitions list')
   }
 }
 
-const renderHomePage = (compositionsList) => {
+const renderHomePage = (compositionsList, endpoint) => {
 
   document.getElementById('loadertext').textContent = ''
   document.getElementById('grid').innerHTML = ''
-  paintListOfCompositions(compositionsList)
-
-}
-
-const paintListOfCompositions = (compositionsList) => {
-  
-  if(!compositionsList.length){
+  document.getElementById('legendbuttons').innerHTML = ''
+  if (!compositionsList.length) {
     document.getElementById('initialmessage').hidden = false
     document.getElementById('initialmessage').classList.add('d-flex')
   } else {
-    let listElelemts = ''
-    compositionsList.forEach((element) => {
-      if (element) {
-        const template = `
-        <a href='${uriCompositionPage + element.uuid}' class='card-url'>
-        <div class='card'>          
-            ${element.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}            
-            <div class="card-body">              
-                <div>  
-                  <h5 class='card-title'>${element.title}</h5>
-                  <p class='card-text text-truncate'>${element.description ||''}</p>
-                  <p class='text-black-50'>${element.parent_collection ? ('Collection: ' + element.parent_collection) : ''}</p>
-                  <span class='card-url'><i class='fa fa-user'></i>&nbsp;${element.username}</span>&nbsp;
-                  <span class='card-url'><i class='fa fa-music'></i>&nbsp;${'Tracks: ' +element.tracks.length}</span>
-                </div>
-            </div>
-        </div>
-        </a>`
-        listElelemts += template
+    const groupedComps = getGroupedCompositions(compositionsList)
+    paintListOfCompositions(groupedComps, endpoint, compositionsList.length)
+  }
+}
+
+const getGroupsByCollAndUser = (compositionsList) => {
+
+  const groupedbycoll = {}
+  const groupedbyuser_aux = {}
+
+  compositionsList.forEach(composition => {
+
+    const collectionId = composition.collection_id
+    const userId = composition.user_id
+
+    if (collectionId !== null) {
+      if (!groupedbycoll[collectionId]) {
+        groupedbycoll[collectionId] = []
       }
+      groupedbycoll[collectionId].push(composition)
+    } else {
+      if (!groupedbyuser_aux[userId]) {
+        groupedbyuser_aux[userId] = []
+      }
+      groupedbyuser_aux[userId].push(composition)
+    }
+  })
+
+  return { groupedbycoll, groupedbyuser_aux }
+}
+
+
+const getFinalGroupByUserAndSingleComp = (groupedbyuser_aux) => {
+
+  const groupedbyuser_final = {}
+  const singlecomps = []
+
+  for (const elem in groupedbyuser_aux) {
+
+    if (groupedbyuser_aux[elem].length === 1) {
+      singlecomps.push(groupedbyuser_aux[elem][0])
+    } else {
+      if (!groupedbyuser_final[elem]) {
+        groupedbyuser_final[elem] = []
+      }
+      groupedbyuser_final[elem] = groupedbyuser_aux[elem]
+    }
+  }
+  return { singlecomps, groupedbyuser_final }
+}
+
+const getGroupedCompositions = (compositionsList) => {
+
+  const { groupedbycoll, groupedbyuser_aux } = getGroupsByCollAndUser(compositionsList)
+
+  const { singlecomps, groupedbyuser_final } = getFinalGroupByUserAndSingleComp(groupedbyuser_aux)
+
+  return {
+    groupedbycoll,
+    groupedbyuser_final,
+    singlecomps,
+  }
+}
+
+const paintSingleComposition = (element) => {
+
+  return `<div class='card border-success'>                       
+            <div class="card-body">
+            ${element.opentocontrib ? '<p class="badge badge-info">OPEN TO CONTRIB</p>' : ''}               
+                <div>  
+                  <a href='${uriCompositionPage + element.uuid}' class='card-url'>
+                    <h5 class='card-title'>${element.title}</h5>
+                  </a>
+                  <p class='card-text text-truncate'>${element.description || ''}</p>
+                  <p class='text-black-50'>${element.parent_collection ? ('Collection: ' + element.parent_collection) : ''}</p>
+                  <span class="d-inline-block text-truncate" style="max-width: 250px;">
+                    <i class='fa fa-user'></i>&nbsp;${element.username}&nbsp;
+                  </span>
+                  <span class="d-inline-block text-truncate" style="max-width: 250px;">
+                    <i class='fa fa-music'></i>&nbsp;${'Tracks: ' + element.tracks?.length}
+                  </span>                  
+                </div>                
+            </div>            
+        </div>`
+}
+
+const getUICardElemForCollection = (typebadge, numitems, collName, listgroup) => {
+
+    return `<div class='card ${typebadge === 'user' ? 'border-warning' : 'border-collection'}'>                        
+              <h4>
+                <span class="badge ${typebadge === 'user' ? 
+                    'badge-warning' : 'badge-collection'} d-inline-block text-truncate" style="max-width: 250px;">
+                    <span class="badge badge-light">${numitems}</span>&nbsp;
+                    ${collName}
+                </span>
+              </h4>        
+              <div class="card-body">
+                <div class="list-group border">              
+                  ${listgroup}
+                </div>
+              </div>
+            </div>`
+}
+
+const getUIListElemInsideCollection = (item, typebadge) => {
+
+    return `<div class="list-group-item ">
+            ${item.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}  
+            <p class="list-group-item-heading">
+              <a href='${uriCompositionPage + item.uuid}' class='card-url'>
+                  <h5 class='card-title'>${item.title}</h5>
+              </a>
+            </p>
+            <p class="list-group-item-text text-truncate">
+              ${item.description || ''}
+            </p>
+            ${typebadge !== 'user' ? 
+                '<span class="d-inline-block text-truncate" style="max-width: 220px;">'+
+                  '<i class="fa fa-user"></i>&nbsp;' + item.username + '&nbsp;'+
+                '</span>' : ''}            
+            <span class="d-inline-block text-truncate" style="max-width: 200px;">
+              <i class='fa fa-music'></i>&nbsp;${'Tracks: ' + item.tracks?.length}
+            </span>
+          </div>`
+}
+
+const paintGroupCollection = (listcomps, typebadge) => {
+
+  let allCompUIelem = ''  
+  for (const comp in listcomps) {    
+    const element = listcomps[comp]
+    let listgroup = ''
+    const collName = Object.values(element)[0].parent_collection || Object.values(element)[0].username
+    for (const item of element) {
+      listgroup += getUIListElemInsideCollection(item, typebadge)
+    }
+    allCompUIelem += getUICardElemForCollection(typebadge, element.length, collName, listgroup)
+  }
+  return allCompUIelem
+}
+
+const getLegendButtons = (numberGroupsByCollections, numberGroupsByUser, numberSinglComp, endpoint, totalcomps) => {
+  // TODO: display Collaborators instead of Users when endpoint is mycompositions
+  return `<ul class="nav justify-content-end">
+            <li class="legenditem nav-item"><h4><span class="badge badge-light">Groups by:&nbsp;</span></h4></li>
+            ${numberGroupsByCollections ? '<li class="legenditem nav-item"><h4><span class="badge badge-collection">Collection&nbsp;<span class="badge badge-light">' + numberGroupsByCollections + '</span></span></h4></li>' : ''}
+            ${((endpoint !== '/mycompositions') && numberGroupsByUser) ? '<li class="legenditem nav-item"><h4><span class="badge badge-warning">User&nbsp;<span class="badge badge-light">' + numberGroupsByUser + '</span></span></h4></li>' : ''}
+            ${numberSinglComp ? '<li class="legenditem nav-item"><h4><span class="badge badge-success">None&nbsp;<span class="badge badge-light">' + numberSinglComp + '</span></span></h4></li>' : ''}
+            <li class="legenditem nav-item"><h4><span class="badge badge-light">Total:&nbsp;</span><span class="badge badge-light">${totalcomps}</span></h4></li>
+          </ul>`
+}
+
+const getSingleCompsOrMyMusicUIElems = (groupedComps, endpoint, numberSinglComp) => {
+  let listElelemts = ''
+  const listCompsSingle = groupedComps.singlecomps
+  listCompsSingle?.forEach((element) => {
+    const template = paintSingleComposition(element)
+    listElelemts += template
+  })
+  if ((endpoint === '/mycompositions')) {
+    numberSinglComp += Object.values(groupedComps.groupedbyuser_final)[0]?.length
+    const listCompCurrentUser = Object.values(groupedComps.groupedbyuser_final)[0]
+    listCompCurrentUser?.forEach((element) => {
+      const template = paintSingleComposition(element)
+      listElelemts += template
     })
-    document.getElementById('grid').innerHTML = ''
-    document.getElementById('grid').insertAdjacentHTML('afterbegin', listElelemts)
-    document.getElementById('searchInput').removeAttribute('disabled')
-  }  
+  }
+  return listElelemts
+}
+const paintListOfCompositions = (groupedComps, endpoint, totalcomps) => {
+  
+  let listElelemts = ''
+  const numberGroupsByCollections = Object.keys(groupedComps.groupedbycoll).length
+  const numberGroupsByUser = Object.keys(groupedComps.groupedbyuser_final).length
+  let numberSinglComp = groupedComps.singlecomps.length
+
+  if (numberGroupsByCollections > 0) {
+    const listComps = groupedComps.groupedbycoll
+    const template = paintGroupCollection(listComps, 'coll')
+    listElelemts += template
+  }
+  if (numberGroupsByUser > 0 && ((endpoint !== '/mycompositions'))) {
+    const listComps = groupedComps.groupedbyuser_final
+    const template = paintGroupCollection(listComps, 'user')
+    listElelemts += template
+  }
+  if (numberSinglComp > 0 || (endpoint === '/mycompositions')) {
+    listElelemts += getSingleCompsOrMyMusicUIElems(groupedComps, endpoint, numberSinglComp)    
+  }
+  const legendButtons = getLegendButtons(numberGroupsByCollections, numberGroupsByUser, numberSinglComp, endpoint, totalcomps) 
+  paintMainElemsHomePage(listElelemts, legendButtons) 
+
+}
+
+const paintMainElemsHomePage = (listElelemts, legendButtons) => {
+  document.getElementById('grid').innerHTML = ''
+  document.getElementById('grid').insertAdjacentHTML('afterbegin', listElelemts)
+  document.getElementById('legendbuttons').innerHTML = ''
+  document.getElementById('legendbuttons').insertAdjacentHTML('afterbegin', legendButtons)
+  document.getElementById('searchInput').removeAttribute('disabled')
 }
 
 const initHomPage = async () => {
