@@ -55,6 +55,15 @@
     border-color: #c485e9;
 }
 
+.badge-collab {
+    color: white;
+    background-color: #e9858a;
+}
+
+.border-collab {
+    border-color: #e9858a;
+}
+
 #listCollContainerAllColl {
     max-height: 70vh;
 }
