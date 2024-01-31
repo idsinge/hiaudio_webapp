@@ -177,12 +177,12 @@ const paintGroupCollection = (listcomps, typebadge) => {
   return allCompUIelem
 }
 
-const getLegendButtons = (numberGroupsByCollections, numberGroupsByUser, numberSinglComp, endpoint, totalcomps) => {
-
+const getLegendButtons = (numberGroupsByCollections, numberGroupsCustom, numberSinglComp, endpoint, totalcomps) => {
+  const displayGroupsByLabel = (numberGroupsByCollections || ((endpoint !== '/mycompositions') && numberGroupsCustom) || numberSinglComp)
   return `<ul class="nav justify-content-end">
-            <li class="legenditem nav-item"><h4><span class="badge badge-light">Groups by:&nbsp;</span></h4></li>
+            ${ displayGroupsByLabel ? '<li class="legenditem nav-item"><h4><span class="badge badge-light">Groups by:&nbsp;</span></h4></li>' : ''}
             ${numberGroupsByCollections ? '<li class="legenditem nav-item"><h4><span class="badge badge-collection">Collection&nbsp;<span class="badge badge-light">' + numberGroupsByCollections + '</span></span></h4></li>' : ''}            
-            ${((endpoint !== '/mycompositions') && numberGroupsByUser) ? '<li class="legenditem nav-item"><h4><span class="badge badge-warning">User&nbsp;<span class="badge badge-light">' + numberGroupsByUser + '</span></span></h4></li>' : ''}
+            ${((endpoint !== '/mycompositions') && numberGroupsCustom) ? '<li class="legenditem nav-item"><h4><span class="badge badge-warning">User&nbsp;<span class="badge badge-light">' + numberGroupsCustom + '</span></span></h4></li>' : ''}
             ${numberSinglComp ? '<li class="legenditem nav-item"><h4><span class="badge badge-success">None&nbsp;<span class="badge badge-light">' + numberSinglComp + '</span></span></h4></li>' : ''}
             <li class="legenditem nav-item"><h4><span class="badge badge-light">Total:&nbsp;</span><span class="badge badge-light">${totalcomps}</span></h4></li>
           </ul>`
@@ -202,7 +202,7 @@ const paintListOfCompositions = (groupedComps, customgroup, endpoint, totalcomps
   
   let listElelemts = ''
   const numberGroupsByCollections = Object.keys(groupedComps.groupedbycoll).length
-  const numberGroupsByUser = Object.keys(groupedComps[customgroup]).length
+  const numberCustomGroups = Object.keys(groupedComps[customgroup]).length
   let numberSinglComp = groupedComps.singlecomps.length
 
   if (numberGroupsByCollections > 0) {
@@ -210,7 +210,7 @@ const paintListOfCompositions = (groupedComps, customgroup, endpoint, totalcomps
     const template = paintGroupCollection(listComps, 'coll')
     listElelemts += template
   }
-  if (numberGroupsByUser > 0) {
+  if (numberCustomGroups > 0) {
     const listComps = groupedComps[customgroup]
     const typeofbadge = (customgroup==='groupedbycollab') ? 'collab' : 'user'
     const template = paintGroupCollection(listComps, typeofbadge)
@@ -219,7 +219,7 @@ const paintListOfCompositions = (groupedComps, customgroup, endpoint, totalcomps
   if (numberSinglComp > 0) {
     listElelemts += getSingleComps(groupedComps)    
   }
-  const legendButtons = getLegendButtons(numberGroupsByCollections, numberGroupsByUser, numberSinglComp, endpoint, totalcomps) 
+  const legendButtons = getLegendButtons(numberGroupsByCollections, numberCustomGroups, numberSinglComp, endpoint, totalcomps) 
   paintMainElemsHomePage(listElelemts, legendButtons)
 }
 
