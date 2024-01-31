@@ -1,10 +1,13 @@
 import { callJsonApi } from '../../../common/js/utils'
 import {breadcrumbHandler} from './breadcrumbhandler'
 import {checkIfTermsAccepted, generateAcceptTermsModal} from '../../../common/js/acceptterms'
+import {getGroupedCompositionsWithUsers, getGroupedCompositionsWithCollab} from './home_helper'
 
-export let uriCompositionPage = '/composition.html?compositionId='
+export const uriCompositionPage = '/composition.html?compositionId='
 let uriProfilePage = window.location.origin
 
+const BADGE_STYLE = {'coll':'badge-collection', 'user':'badge-warning', 'collab':'badge-collab'}
+const BORDER_STYLE = {'coll':'border-collection', 'user':'border-warning', 'collab':'border-collab'}
 
 document.getElementById('userlogin').innerHTML = `<li class='nav-item'>
   <a class='dropdown-item' href='${window.location.origin}/login.html'>Register / Login</a>
@@ -80,68 +83,18 @@ const renderHomePage = (compositionsList, endpoint) => {
   if (!compositionsList.length) {
     document.getElementById('initialmessage').hidden = false
     document.getElementById('initialmessage').classList.add('d-flex')
+  } else {   
+    renderHomePageWithLists(compositionsList, endpoint)
+  }
+}
+
+const renderHomePageWithLists = (compositionsList, endpoint) => {
+  if(endpoint !== '/mycompositions'){
+    const groupedComps = getGroupedCompositionsWithUsers(compositionsList)
+    paintListOfCompositions(groupedComps, 'groupedbyuser_final', endpoint, compositionsList.length)       
   } else {
-    const groupedComps = getGroupedCompositions(compositionsList)
-    paintListOfCompositions(groupedComps, endpoint, compositionsList.length)
-  }
-}
-
-const getGroupsByCollAndUser = (compositionsList) => {
-
-  const groupedbycoll = {}
-  const groupedbyuser_aux = {}
-
-  compositionsList.forEach(composition => {
-
-    const collectionId = composition.collection_id
-    const userId = composition.user_id
-
-    if (collectionId !== null) {
-      if (!groupedbycoll[collectionId]) {
-        groupedbycoll[collectionId] = []
-      }
-      groupedbycoll[collectionId].push(composition)
-    } else {
-      if (!groupedbyuser_aux[userId]) {
-        groupedbyuser_aux[userId] = []
-      }
-      groupedbyuser_aux[userId].push(composition)
-    }
-  })
-
-  return { groupedbycoll, groupedbyuser_aux }
-}
-
-
-const getFinalGroupByUserAndSingleComp = (groupedbyuser_aux) => {
-
-  const groupedbyuser_final = {}
-  const singlecomps = []
-
-  for (const elem in groupedbyuser_aux) {
-
-    if (groupedbyuser_aux[elem].length === 1) {
-      singlecomps.push(groupedbyuser_aux[elem][0])
-    } else {
-      if (!groupedbyuser_final[elem]) {
-        groupedbyuser_final[elem] = []
-      }
-      groupedbyuser_final[elem] = groupedbyuser_aux[elem]
-    }
-  }
-  return { singlecomps, groupedbyuser_final }
-}
-
-const getGroupedCompositions = (compositionsList) => {
-
-  const { groupedbycoll, groupedbyuser_aux } = getGroupsByCollAndUser(compositionsList)
-
-  const { singlecomps, groupedbyuser_final } = getFinalGroupByUserAndSingleComp(groupedbyuser_aux)
-
-  return {
-    groupedbycoll,
-    groupedbyuser_final,
-    singlecomps,
+    const groupedCompsWithCollab = getGroupedCompositionsWithCollab(compositionsList)
+    paintListOfCompositions(groupedCompsWithCollab, 'groupedbycollab', endpoint, compositionsList.length)
   }
 }
 
@@ -168,11 +121,13 @@ const paintSingleComposition = (element) => {
 }
 
 const getUICardElemForCollection = (typebadge, numitems, collName, listgroup) => {
+    
+    const badegstyle = BADGE_STYLE[typebadge]
+    const borderstyle = BORDER_STYLE[typebadge]
 
-    return `<div class='card ${typebadge === 'user' ? 'border-warning' : 'border-collection'}'>                        
+    return `<div class='card ${borderstyle}'>                        
               <h4>
-                <span class="badge ${typebadge === 'user' ? 
-                    'badge-warning' : 'badge-collection'} d-inline-block text-truncate" style="max-width: 250px;">
+                <span class="badge ${badegstyle} d-inline-block text-truncate" style="max-width: 250px;">
                     <span class="badge badge-light">${numitems}</span>&nbsp;
                     ${collName}
                 </span>
@@ -186,7 +141,7 @@ const getUICardElemForCollection = (typebadge, numitems, collName, listgroup) =>
 }
 
 const getUIListElemInsideCollection = (item, typebadge) => {
-
+    
     return `<div class="list-group-item ">
             ${item.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}  
             <p class="list-group-item-heading">
@@ -208,12 +163,12 @@ const getUIListElemInsideCollection = (item, typebadge) => {
 }
 
 const paintGroupCollection = (listcomps, typebadge) => {
-
+  
   let allCompUIelem = ''  
   for (const comp in listcomps) {    
     const element = listcomps[comp]
     let listgroup = ''
-    const collName = Object.values(element)[0].parent_collection || Object.values(element)[0].username
+    const collName = (typebadge === 'collab') ? 'Collaborations' : (Object.values(element)[0].parent_collection || Object.values(element)[0].username)
     for (const item of element) {
       listgroup += getUIListElemInsideCollection(item, typebadge)
     }
@@ -223,38 +178,31 @@ const paintGroupCollection = (listcomps, typebadge) => {
 }
 
 const getLegendButtons = (numberGroupsByCollections, numberGroupsByUser, numberSinglComp, endpoint, totalcomps) => {
-  // TODO: display Collaborators instead of Users when endpoint is mycompositions
+
   return `<ul class="nav justify-content-end">
             <li class="legenditem nav-item"><h4><span class="badge badge-light">Groups by:&nbsp;</span></h4></li>
-            ${numberGroupsByCollections ? '<li class="legenditem nav-item"><h4><span class="badge badge-collection">Collection&nbsp;<span class="badge badge-light">' + numberGroupsByCollections + '</span></span></h4></li>' : ''}
+            ${numberGroupsByCollections ? '<li class="legenditem nav-item"><h4><span class="badge badge-collection">Collection&nbsp;<span class="badge badge-light">' + numberGroupsByCollections + '</span></span></h4></li>' : ''}            
             ${((endpoint !== '/mycompositions') && numberGroupsByUser) ? '<li class="legenditem nav-item"><h4><span class="badge badge-warning">User&nbsp;<span class="badge badge-light">' + numberGroupsByUser + '</span></span></h4></li>' : ''}
             ${numberSinglComp ? '<li class="legenditem nav-item"><h4><span class="badge badge-success">None&nbsp;<span class="badge badge-light">' + numberSinglComp + '</span></span></h4></li>' : ''}
             <li class="legenditem nav-item"><h4><span class="badge badge-light">Total:&nbsp;</span><span class="badge badge-light">${totalcomps}</span></h4></li>
           </ul>`
 }
 
-const getSingleCompsOrMyMusicUIElems = (groupedComps, endpoint, numberSinglComp) => {
+const getSingleComps = (groupedComps) => {
   let listElelemts = ''
   const listCompsSingle = groupedComps.singlecomps
   listCompsSingle?.forEach((element) => {
     const template = paintSingleComposition(element)
     listElelemts += template
   })
-  if ((endpoint === '/mycompositions')) {
-    numberSinglComp += Object.values(groupedComps.groupedbyuser_final)[0]?.length
-    const listCompCurrentUser = Object.values(groupedComps.groupedbyuser_final)[0]
-    listCompCurrentUser?.forEach((element) => {
-      const template = paintSingleComposition(element)
-      listElelemts += template
-    })
-  }
   return listElelemts
 }
-const paintListOfCompositions = (groupedComps, endpoint, totalcomps) => {
+
+const paintListOfCompositions = (groupedComps, customgroup, endpoint, totalcomps) => {
   
   let listElelemts = ''
   const numberGroupsByCollections = Object.keys(groupedComps.groupedbycoll).length
-  const numberGroupsByUser = Object.keys(groupedComps.groupedbyuser_final).length
+  const numberGroupsByUser = Object.keys(groupedComps[customgroup]).length
   let numberSinglComp = groupedComps.singlecomps.length
 
   if (numberGroupsByCollections > 0) {
@@ -262,17 +210,17 @@ const paintListOfCompositions = (groupedComps, endpoint, totalcomps) => {
     const template = paintGroupCollection(listComps, 'coll')
     listElelemts += template
   }
-  if (numberGroupsByUser > 0 && ((endpoint !== '/mycompositions'))) {
-    const listComps = groupedComps.groupedbyuser_final
-    const template = paintGroupCollection(listComps, 'user')
+  if (numberGroupsByUser > 0) {
+    const listComps = groupedComps[customgroup]
+    const typeofbadge = (customgroup==='groupedbycollab') ? 'collab' : 'user'
+    const template = paintGroupCollection(listComps, typeofbadge)
     listElelemts += template
   }
-  if (numberSinglComp > 0 || (endpoint === '/mycompositions')) {
-    listElelemts += getSingleCompsOrMyMusicUIElems(groupedComps, endpoint, numberSinglComp)    
+  if (numberSinglComp > 0) {
+    listElelemts += getSingleComps(groupedComps)    
   }
   const legendButtons = getLegendButtons(numberGroupsByCollections, numberGroupsByUser, numberSinglComp, endpoint, totalcomps) 
-  paintMainElemsHomePage(listElelemts, legendButtons) 
-
+  paintMainElemsHomePage(listElelemts, legendButtons)
 }
 
 const paintMainElemsHomePage = (listElelemts, legendButtons) => {
