@@ -4,17 +4,10 @@ import WaveformPlaylist from 'waveform-playlist'
 import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
 import { TestLatency } from './latencymeasure/testlatency'
+import { activateGoHomeLink } from '../../../common/js/utils'
 
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
-
-const goHomeLink = document.getElementById('goHome')
-if(window.location.host === 'localhost:80' || window.location.origin === 'http://localhost'){
-  goHomeLink.href = window.location.origin + '/index.html'
-} else {
-  goHomeLink.href = window.location.origin
-}
-  
 export let USER_PERMISSION = false
 
 export const setUserPermission = (permission) => {
@@ -57,6 +50,7 @@ const createTestLatencyButton = () => {
  `
 }
 
+activateGoHomeLink()
 createTestLatencyButton()
 TestLatency.initialize()
 

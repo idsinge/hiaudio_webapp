@@ -1,14 +1,6 @@
-import { callJsonApi, looksLikeMail } from '../../common/js/utils'
+import { callJsonApi, looksLikeMail, activateGoHomeLink } from '../../common/js/utils'
 
 let TEMP_EMAIL = null
-
-const goHomeLink = document.getElementById('goHome')
-
-if (window.location.host === 'localhost:80' || window.location.origin === 'http://localhost') {
-    goHomeLink.href = window.location.origin + '/index.html'
-} else {
-    goHomeLink.href = window.location.origin
-}
 
 const redirectToGoogleLogin = () => {
     window.location.href = '/googlelogin'
@@ -56,6 +48,8 @@ const requestCodeValidation = async () => {
         document.getElementById('validationCodeResult').innerText = 'Sorry, invalid code format.'
     } 
 }
+
+activateGoHomeLink()
 
 document.getElementById('googleLoginButton').onclick = redirectToGoogleLogin
 

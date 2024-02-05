@@ -1,12 +1,4 @@
-import { callJsonApi, looksLikeMail, cancelLoader, LOADER_ELEM_ID } from '../../common/js/utils'
-
-const goHomeLink = document.getElementById('goHome')
-
-if (window.location.host === 'localhost:80' || window.location.origin === 'http://localhost') {
-    goHomeLink.href = window.location.origin + '/index.html'
-} else {
-    goHomeLink.href = window.location.origin
-}
+import { callJsonApi, looksLikeMail, cancelLoader, LOADER_ELEM_ID, activateGoHomeLink } from '../../common/js/utils'
 
 const sendRemovalRequest = async () => {
     const toRemoveEmail = document.getElementById('inputemailtoremove').value
@@ -26,6 +18,8 @@ const sendRemovalRequest = async () => {
         document.getElementById('validationEmailResult').innerText = 'Sorry, invalid email address format.'
     }    
 }
+
+activateGoHomeLink()
 
 document.getElementById('requestremovalbutton').onclick = sendRemovalRequest
 

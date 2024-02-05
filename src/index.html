@@ -17,7 +17,7 @@
 
 <body>
     <header class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="">
+        <a id="goHome" class="navbar-brand" href="">
             <img id="mainLogo" alt="" height="36" src="https://hi-audio.imt.fr/wp-content/themes/tpt-hiaudio/assets/images/hi_audio.svg">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -148,7 +148,21 @@
     </nav>
     <div class="d-flex justify-content-center">
         <div class="col-sm-6">      
-            <em>We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.</em>      
+            <em id="welcometext">We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.</em>
+            <div id="userprofilecard" class="card mb-3">
+                <div class="row no-gutters">
+                  <div class="col-md-4">
+                    <img id="userprofilepicture" class="img-fluid" src="" alt="User Picture">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title" id="userprofilename">User Name</h5>
+                      <p class="card-text">User UUID:</p>
+                      <p class="card-text"><span class="text-muted" id="userprofileid">Last updated 3 mins ago</span></p>
+                    </div>
+                  </div>
+                </div>
+              </div>            
         </div>
     </div>
     <div id="initialmessage" class="justify-content-center jumbotron bg-white" hidden>
