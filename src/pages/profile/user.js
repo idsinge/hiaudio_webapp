@@ -1,14 +1,7 @@
 /* TODO: REFACTORING */
 import { ENDPOINT } from '../../common/js/config'
-import { callJsonApi } from '../../common/js/utils'
+import { callJsonApi, activateGoHomeLink } from '../../common/js/utils'
 import { checkIfTermsAccepted, generateAcceptTermsModal} from '../../common/js/acceptterms'
-
-const goHomeLink = document.getElementById('goHome')
-if (window.location.host === 'localhost:80' || window.location.origin === 'http://localhost') {
-  goHomeLink.href = window.location.origin + '/index.html'
-} else {
-  goHomeLink.href = window.location.origin
-}
 
 let CURRENT_USERNAME = null
 let EDIT_STATUS = false
@@ -128,6 +121,8 @@ const setBackToReadOnly = () => {
   usernameinput.classList.remove('italic')     
   document.getElementById('validationusernameresult').innerText = '' 
 }
+
+activateGoHomeLink()
 
 editUserNameButton.addEventListener('click', clickEditButtonHandler, false)
 

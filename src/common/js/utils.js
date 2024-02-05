@@ -47,3 +47,12 @@ export const looksLikeMail = (str) => {
     const lastDotPos = str.lastIndexOf('.')
     return (lastAtPos < lastDotPos && lastAtPos > 0 && str.indexOf('@@') == -1 && lastDotPos > 2 && (str.length - lastDotPos) > 2)
 }
+
+export const activateGoHomeLink = () => {
+    const goHomeLink = document.getElementById('goHome')
+    if(window.location.host === 'localhost:80' || window.location.origin === 'http://localhost'){
+        goHomeLink.href = window.location.origin + '/index.html'
+    } else {
+        goHomeLink.href = window.location.origin
+    }
+}

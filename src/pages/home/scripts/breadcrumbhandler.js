@@ -1,7 +1,7 @@
 import { getRecentCompositions, getMyCompositions, getAllCompositions } from './home'
 
-export const breadcrumbHandler = (isauth) => {
-    createBreadCrumbNavBar(isauth)   
+export const breadcrumbHandler = (isauth, isuserprofile) => {
+    createBreadCrumbNavBar(isauth, isuserprofile)   
     document.querySelectorAll('.breadcrumb-item a').forEach(function (element) {
         element.addEventListener('click', function (event) {
             event.preventDefault()
@@ -13,21 +13,24 @@ export const breadcrumbHandler = (isauth) => {
     })
 }
 
-const createBreadCrumbNavBar = (isauth) => {
+const createBreadCrumbNavBar = (isauth, isuserprofile) => {
     const navBar = document.getElementById('breadcrumbnavbar')
     let userOptions = ''
     if(isauth.ok){
-        userOptions = `<li class='breadcrumb-item active-breadcrumb' aria-current='page'><a href='#' data-section='my-comp'>My Music</a></li>
+        userOptions = `<li class='breadcrumb-item ${isuserprofile ? '' : 'active-breadcrumb'}' aria-current='page'><a href='#' data-section='my-comp'>My Music</a></li>
         <li class='breadcrumb-item'><a href='#' data-section='all-comp'>All</a></li>`
     } else {
-        userOptions = `<li class='breadcrumb-item active-breadcrumb' aria-current='page'><a href='#' data-section='recent-comp'>Recent</a></li>
+        userOptions = `<li class='breadcrumb-item ${isuserprofile ? '' : 'active-breadcrumb'}' aria-current='page'><a href='#' data-section='recent-comp'>Recent</a></li>
         <li class='breadcrumb-item'><a href='#' data-section='all-comp'>All</a></li>`
     }
     navBar.innerHTML = userOptions    
 }
 
-function navigate(section) { 
-    
+export function navigate(section) { 
+    const url = new URL(window.location.href)
+    url.searchParams.delete('userid')
+    // TODO: url.searchParams.delete('collectionid');
+    history.replaceState(null, null, url)
     switch (section) {
         case 'recent-comp':           
             getRecentCompositions()   

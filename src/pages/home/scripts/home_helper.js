@@ -1,3 +1,10 @@
+export const isuserpage = (endpoint) => {
+    if (endpoint === '/mycompositions' || endpoint.includes('/compositionsbyuserid/')){
+        return true
+    } else {
+        return false
+    }
+}
 const getGroupsByCollAndUser = (compositionsList) => {
 
     const groupedbycoll = {}
