@@ -14,6 +14,14 @@
     text-decoration: none;
 }
 
+.card-header-url {
+    color: #ffffff;
+    text-decoration: underline;
+}
+.card-header-url:hover {
+    color: #2a468e;
+}
+
 .card-text {
     color: #565e67;
 }

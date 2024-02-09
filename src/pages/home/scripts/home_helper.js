@@ -1,10 +1,11 @@
 export const isuserpage = (endpoint) => {
-    if (endpoint === '/mycompositions' || endpoint.includes('/compositionsbyuserid/')){
-        return true
-    } else {
-        return false
-    }
+    let result = false
+    if (endpoint === '/mycompositions' || endpoint.includes('/compositionsbyuserid/') || endpoint.includes('/collectionastreebyid/')){
+        result = true
+    } 
+    return result    
 }
+
 const getGroupsByCollAndUser = (compositionsList) => {
 
     const groupedbycoll = {}
@@ -12,7 +13,7 @@ const getGroupsByCollAndUser = (compositionsList) => {
 
     compositionsList.forEach(composition => {
 
-        const collectionId = composition.collection_id
+        const collectionId = composition.collection_uid
         const userId = composition.user_id
 
         if (collectionId !== null) {
@@ -31,6 +32,29 @@ const getGroupsByCollAndUser = (compositionsList) => {
     return { groupedbycoll, groupedbyuser_aux }
 }
 
+
+const getGroupsByCollectionAndSubColl = (compositionsList, parent_coll_id) => {
+
+    const groupedbycoll = {}
+    const singlecomps = []
+
+    compositionsList.forEach(composition => {
+
+        const collectionId = composition.collection_uid
+
+        if ((collectionId !== null) && (collectionId !== parent_coll_id)) {
+            if (!groupedbycoll[collectionId]) {
+                groupedbycoll[collectionId] = []
+            }
+            groupedbycoll[collectionId].push(composition)
+        } else {
+            singlecomps.push(composition)
+        }
+    })
+
+    return { groupedbycoll, singlecomps}
+}
+
 const getGroupsByCollAndCollab = (compositionsList) => {
 
     const groupedbycoll = {}
@@ -39,7 +63,7 @@ const getGroupsByCollAndCollab = (compositionsList) => {
 
     compositionsList.forEach(composition => {
 
-        const collectionId = composition.collection_id        
+        const collectionId = composition.collection_uid        
 
         if (collectionId !== null) {
             if (!groupedbycoll[collectionId]) {
@@ -99,6 +123,16 @@ export const getGroupedCompositionsWithCollab = (compositionsList) => {
     return {
         groupedbycoll,
         groupedbycollab,
+        singlecomps,
+    }
+}
+
+export const getGroupedCompositionsWithSubCollect = (compositionsList, parent_coll_id) => {
+
+    const { groupedbycoll, singlecomps } = getGroupsByCollectionAndSubColl(compositionsList, parent_coll_id)    
+    
+    return {
+        groupedbycoll,        
         singlecomps,
     }
 }
