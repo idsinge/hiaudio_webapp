@@ -1,11 +1,12 @@
 import { callJsonApi, activateGoHomeLink } from '../../../common/js/utils'
 import {breadcrumbHandler, navigate} from './breadcrumbhandler'
 import {checkIfTermsAccepted, generateAcceptTermsModal} from '../../../common/js/acceptterms'
-import {getGroupedCompositionsWithUsers, getGroupedCompositionsWithCollab, isuserpage} from './home_helper'
+import {getGroupedCompositionsWithUsers, getGroupedCompositionsWithCollab, isuserpage, getGroupedCompositionsWithSubCollect} from './home_helper'
 
 export const uriCompositionPage = '/composition.html?compositionId='
 
 const uriUserPage = '/index.html?userid='
+const uriCollectionPage = '/index.html?collectionid='
 
 let CURRENT_USERNAME = null
 
@@ -13,6 +14,9 @@ let uriProfilePage = window.location.origin
 
 const BADGE_STYLE = {'coll':'badge-collection', 'user':'badge-warning', 'collab':'badge-collab'}
 const BORDER_STYLE = {'coll':'border-collection', 'user':'border-warning', 'collab':'border-collab'}
+const URI_PAGE = {'coll':uriCollectionPage, 'user':uriUserPage}
+
+const WELCOME_TEXT = 'We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.'
 
 document.getElementById('userlogin').innerHTML = `<li class='nav-item'>
   <a class='dropdown-item' href='${window.location.origin}/login.html'>Register / Login</a>
@@ -69,21 +73,83 @@ const displayUserNameInCard = (endpoint, username) => {
   return displayName
 }
 const updateUIWithUserInfo = (username, useruid) => {
-  CURRENT_USERNAME = username
-  document.getElementById('welcometext').setAttribute('hidden', true)
-  document.getElementById('userprofilecard').hidden = false
-  document.getElementById('userprofilepicture').src = `https://picsum.photos/seed/${useruid}/200`
-  document.getElementById('userprofilename').innerText  = username
-  document.getElementById('userprofileid').innerText = useruid
+  
+  cleanWelcomeContainer(true)
+  
+  const userInfoContainer = document.createElement('div')
+  userInfoContainer.id = 'infocontainer'
+  userInfoContainer.innerHTML= `<div class="card mb-3" style="max-width: 540px;">
+                                  <div class="row no-gutters">
+                                    <div class="col-md-4">
+                                      <img class="img-fluid" src="https://picsum.photos/seed/${useruid}/200" alt="User Picture">
+                                    </div>
+                                    <div class="col-md-8">
+                                      <div class="card-body">
+                                        <h5 class="card-title">User</h5>
+                                        <p class="card-text" style="width:300px;">${username ?`${username }`: ''}</p>                                        
+                                        <p class="card-text"><small class="text-muted"></small></p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>` 
+  document.getElementById('welcomecontainer').appendChild(userInfoContainer) 
+  
 }
 const getCompositionsByUserUid = async (useruid, auth) => {
   const endpoint = '/compositionsbyuserid/'+useruid
   const data = await callJsonApi(endpoint, 'GET')
-  if(data.compositions){    
-    updateUIWithUserInfo(data.compositions[0].username, useruid)
+  if(data.compositions){
+    CURRENT_USERNAME = data.username
+    updateUIWithUserInfo(data.username, useruid)
     return renderHomePage(data.compositions, endpoint)
   } else {
     alert('invalid return value for user id')
+    if(auth.ok){
+      navigate('my-comp')
+    } else {
+      navigate('recent-comp')
+    }      
+  }  
+}
+
+const cleanWelcomeContainer = (hidetext) => { 
+  const welcomecontainer = document.getElementById('welcomecontainer')
+  if(welcomecontainer.lastChild?.id){
+    welcomecontainer.removeChild(welcomecontainer.lastChild)
+  }
+  if(!hidetext){
+    const welcometextelem = document.createElement('div')
+    welcometextelem.id = 'welcometext'
+    welcometextelem.classList.add('col-sm-6')
+    welcometextelem.classList.add('mx-auto')
+    welcometextelem.innerHTML = `<em>${WELCOME_TEXT}</em>`
+    document.getElementById('welcomecontainer').appendChild(welcometextelem)
+  }  
+}
+const updateUIWithCollectionInfo = (collectiontitle, username, owner_uuid) => {
+
+  cleanWelcomeContainer(true)  
+  const collectionInfoContainer = document.createElement('div')
+  collectionInfoContainer.id = 'infocontainer'
+  collectionInfoContainer.innerHTML= `<div class="card border-collection mb-3">
+                                        <div class="card-header bg-transparent border-collection"><b>Collection</b></div>
+                                        <div class="card-body text-dark">
+                                          <h5 class="card-title">${collectiontitle}</h5>
+                                          <p class="card-text" style="width:300px;">Owner: <a href=${uriUserPage + owner_uuid} class="card-url">${username}</a></p>
+                                        </div>
+                                      </div>`
+  document.getElementById('welcomecontainer').appendChild(collectionInfoContainer)
+}
+
+const getCompositionsByColelctionUid = async (collectionuid, auth) => {
+  const endpoint = '/collectionastreebyid/'+collectionuid
+  const data = await callJsonApi(endpoint, 'GET')
+  if(data.compositions){
+    CURRENT_USERNAME = data.username
+    updateUIWithCollectionInfo(data.collection_name, data.username, data.owneruid)
+    return renderHomePage(data.compositions, endpoint)
+  } else {
+    alert('invalid return value for collection id')
     if(auth.ok){
       navigate('my-comp')
     } else {
@@ -117,12 +183,11 @@ const renderHomePage = (compositionsList, endpoint) => {
   document.getElementById('loadertext').textContent = ''
   document.getElementById('grid').innerHTML = ''
   document.getElementById('legendbuttons').innerHTML = ''
-  if(!endpoint.includes('/compositionsbyuserid/')){
-    document.getElementById('welcometext').hidden = false
-    document.getElementById('userprofilecard').setAttribute('hidden', true)
+  const notUserPublicPage = !endpoint.includes('/compositionsbyuserid/') && !endpoint.includes('/collectionastreebyid/')
+  if(notUserPublicPage){
+    cleanWelcomeContainer(false)
   }
-  
-  if (!compositionsList.length) {
+  if (!compositionsList.length && notUserPublicPage) {
     document.getElementById('initialmessage').hidden = false
     document.getElementById('initialmessage').classList.add('d-flex')
   } else {   
@@ -131,10 +196,14 @@ const renderHomePage = (compositionsList, endpoint) => {
 }
 
 const renderHomePageWithLists = (compositionsList, endpoint) => {
-  if(!isuserpage(endpoint)){
+  if(endpoint.includes('/collectionastreebyid/')){        
+    const parent_coll_id = endpoint.replace('/collectionastreebyid/', '')
+    const groupedCompsAndSubColl = getGroupedCompositionsWithSubCollect(compositionsList, parent_coll_id)       
+    paintListOfCompositions(groupedCompsAndSubColl, null, endpoint, compositionsList.length)
+  } else if (!isuserpage(endpoint)) {
     const groupedComps = getGroupedCompositionsWithUsers(compositionsList)
-    paintListOfCompositions(groupedComps, 'groupedbyuser_final', endpoint, compositionsList.length)       
-  } else {
+    paintListOfCompositions(groupedComps, 'groupedbyuser_final', endpoint, compositionsList.length)
+  }else {
     const groupedCompsWithCollab = getGroupedCompositionsWithCollab(compositionsList)
     paintListOfCompositions(groupedCompsWithCollab, 'groupedbycollab', endpoint, compositionsList.length)
   }
@@ -170,17 +239,12 @@ const getUICardElemForCollection = (typebadge, numitems, groupTitle, groupId, li
     
     const badegstyle = BADGE_STYLE[typebadge]
     const borderstyle = BORDER_STYLE[typebadge]
-    // TODO: for issue-268 make same element to link either Collection or User
-    const badgeForUser = `<span class="badge ${badegstyle} d-inline-block text-truncate" style="max-width: 250px;">
+    const url = URI_PAGE[typebadge]
+    const badgeDisplayed = `<span class="badge ${badegstyle} d-inline-block text-truncate" style="max-width:85%;">
                               <span class="badge badge-light">${numitems}</span>&nbsp;
-                              <a href=${uriUserPage + groupId} class="card-url">${groupTitle}</a>
+                              ${url ? `<a href=${url + groupId} class="card-header-url">${groupTitle}</a>` : `${groupTitle}`}                              
                           </span>`
-    const badgeForCollection = `<span class="badge ${badegstyle} d-inline-block text-truncate" style="max-width: 250px;">
-                          <span class="badge badge-light">${numitems}</span>&nbsp;
-                          ${groupTitle}
-                      </span>`
-    
-    const badgeDisplayed = (typebadge === 'user') ? badgeForUser : badgeForCollection
+
     return `<div class='card ${borderstyle}'>                        
               <h4>${badgeDisplayed}</h4>        
               <div class="card-body">
@@ -217,7 +281,8 @@ const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
           </div>`
 }
 
-const paintGroupCollection = (listcomps, typebadge, endpoint) => {  
+const paintGroupCollection = (listcomps, typebadge, endpoint) => {
+  
   let allCompUIelem = ''  
   for (const comp in listcomps) {    
     const element = listcomps[comp]
@@ -228,14 +293,14 @@ const paintGroupCollection = (listcomps, typebadge, endpoint) => {
       groupTitle = 'Collaborations'
     } else if (typebadge === 'coll'){
       groupTitle = Object.values(element)[0].parent_collection
-      // TODO: groupId = Object.values(element)[0].collection_id
+      groupId = Object.values(element)[0].collection_uid
     } else {
       groupTitle = Object.values(element)[0].username
       groupId = Object.values(element)[0].owner_uuid
     } 
     for (const item of element) {      
       listgroup += getUIListElemInsideCollection(item, typebadge, endpoint)
-    }
+    }    
     allCompUIelem += getUICardElemForCollection(typebadge, element.length, groupTitle, groupId, listgroup)
   }
   return allCompUIelem
@@ -245,9 +310,9 @@ const getLegendButtons = (numberGroupsByCollections, numberGroupsCustom, numberS
   const displayGroupsByLabel = (numberGroupsByCollections || ((!isuserpage(endpoint)) && numberGroupsCustom) || numberSinglComp)
   return `<ul class="nav justify-content-end">
             ${ displayGroupsByLabel ? '<li class="legenditem nav-item"><h4><span class="badge badge-light">Groups by:&nbsp;</span></h4></li>' : ''}
-            ${numberGroupsByCollections ? '<li class="legenditem nav-item"><h4><span class="badge badge-collection">Collection&nbsp;<span class="badge badge-light">' + numberGroupsByCollections + '</span></span></h4></li>' : ''}            
-            ${((!isuserpage(endpoint)) && numberGroupsCustom) ? '<li class="legenditem nav-item"><h4><span class="badge badge-warning">User&nbsp;<span class="badge badge-light">' + numberGroupsCustom + '</span></span></h4></li>' : ''}
-            ${numberSinglComp ? '<li class="legenditem nav-item"><h4><span class="badge badge-success">None&nbsp;<span class="badge badge-light">' + numberSinglComp + '</span></span></h4></li>' : ''}
+            ${numberGroupsByCollections ? '<li class="legenditem nav-item"><h4><span class="badge badge-collection">Collections&nbsp;<span class="badge badge-light">' + numberGroupsByCollections + '</span></span></h4></li>' : ''}            
+            ${((!isuserpage(endpoint)) && numberGroupsCustom) ? '<li class="legenditem nav-item"><h4><span class="badge badge-warning">Users&nbsp;<span class="badge badge-light">' + numberGroupsCustom + '</span></span></h4></li>' : ''}
+            ${numberSinglComp ? '<li class="legenditem nav-item"><h4><span class="badge badge-success">Singles&nbsp;<span class="badge badge-light">' + numberSinglComp + '</span></span></h4></li>' : ''}
             <li class="legenditem nav-item"><h4><span class="badge badge-light">Total:&nbsp;</span><span class="badge badge-light">${totalcomps}</span></h4></li>
           </ul>`
 }
@@ -266,7 +331,7 @@ const paintListOfCompositions = (groupedComps, customgroup, endpoint, totalcomps
   
   let listElelemts = ''
   const numberGroupsByCollections = Object.keys(groupedComps.groupedbycoll).length
-  const numberCustomGroups = Object.keys(groupedComps[customgroup]).length
+  const numberCustomGroups = customgroup ? Object.keys(groupedComps[customgroup]).length : 0
   let numberSinglComp = groupedComps.singlecomps.length
 
   if (numberGroupsByCollections > 0) {
@@ -298,15 +363,19 @@ const paintMainElemsHomePage = (listElelemts, legendButtons) => {
 const initHomPage = async () => {  
   const queryString = window.location.search
   const user_id = queryString.split('userid=')[1]
+  const collection_uid = queryString.split('collectionid=')[1]
   let isAuth  = await getMyProfile()    
   if(user_id){    
     await getCompositionsByUserUid(user_id, isAuth)
+  } else if(collection_uid){
+    await getCompositionsByColelctionUid(collection_uid, isAuth)
   } else if (isAuth.ok) {
     await getMyCompositions()
   } else {
     await getRecentCompositions()
   }
-  breadcrumbHandler(isAuth, user_id)
+  breadcrumbHandler(isAuth, user_id || collection_uid)
 }
+
 activateGoHomeLink()
 initHomPage()
