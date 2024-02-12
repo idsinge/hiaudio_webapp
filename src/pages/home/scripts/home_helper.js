@@ -1,3 +1,5 @@
+let _USERNAME = null
+
 export const isuserpage = (endpoint) => {
     let result = false
     if (endpoint === '/mycompositions' || endpoint.includes('/compositionsbyuserid/') || endpoint.includes('/collectionastreebyid/')){
@@ -5,6 +7,24 @@ export const isuserpage = (endpoint) => {
     } 
     return result    
 }
+
+const getCurrentUserName = () => {
+    return _USERNAME
+}
+
+export const setCurrentUserName = (username) => {
+    _USERNAME = username
+}
+
+export const displayUserNameInCard = (endpoint, username) => {
+    let displayName = false
+    if(!isuserpage(endpoint)){
+      displayName = true
+    } else {
+      displayName = (username !== getCurrentUserName())
+    }
+    return displayName
+  }
 
 const getGroupsByCollAndUser = (compositionsList) => {
 
