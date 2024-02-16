@@ -8921,8 +8921,10 @@ class AnnotationList {
           .load()
           .then((audioBuffer) => {
             
-            // THIS AFFECTS TO ALL (RECORDED AND PLAYOUT) BUT IT'S CALCULATED EVERY 300 ms                        
-            audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)            
+            // THIS AFFECTS TO ALL (RECORDED AND PLAYOUT) BUT IT'S CALCULATED EVERY 300 ms
+            if(this.latency > 0){
+              audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)
+            }
          
             // ask web worker for peaks.
             this.recorderWorker.postMessage({

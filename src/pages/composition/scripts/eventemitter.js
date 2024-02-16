@@ -5,7 +5,7 @@
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
 import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
 import { CURRENT_USER_ID } from './composition_helper'
-import { warningMessageBeforeRecord, TestLatency } from './latencymeasure/testlatency'
+import { TestLatency } from './latencymeasure/testlatency'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
 var ee = playlist.getEventEmitter();
@@ -167,18 +167,33 @@ $container.on("click", ".btn-clear", function() {
   ee.emit("clear");
 });
 
-$container.on("click", ".btn-record", function() {
-  if(!TestLatency.getCurrentLatency()){
-    if (window.confirm(`${warningMessageBeforeRecord}`)) {     
-      TestLatency.start()
-      return 
-    }
+const handleTestLatencyDialog = () => {  
+  $('#testLatencyModal').modal('show')
+  document.getElementById('buttonOkTestLatency').onclick  = () => {
+    $('#testLatencyModal').modal('hide')
+    TestLatency.start()
+  }
+  document.getElementById('buttonNoTestLatency').onclick = () => {
+      $('#testLatencyModal').modal('hide')
+      TestLatency.setCurrentLatency(0)
+      startRecording(0)
   }  
+}
+
+const startRecording = (currentLatency) => {
   if(!isRecording){
-    isRecording = true;
-    const latency = TestLatency.getCurrentLatency();
-    const latencyInSeconds = latency/1000;
+    isRecording = true;  
+    const latencyInSeconds = currentLatency/1000;
     ee.emit("record", latencyInSeconds);
+  } 
+}
+
+$container.on("click", ".btn-record", function() {
+  const currentLatency = TestLatency.getCurrentLatency()
+  if(!currentLatency && currentLatency !== 0){
+    handleTestLatencyDialog()
+  } else {
+    startRecording(currentLatency)
   }  
 });
 

@@ -1,5 +1,5 @@
 diff --git a/waveform-playlist.umd.js b/waveform-playlist.umd.js
-index 8fe0bb6..0e7aa6c 100644
+index 8fe0bb6..1460a01 100644
 --- a/waveform-playlist.umd.js
 +++ b/waveform-playlist.umd.js
 @@ -7168,6 +7168,8 @@ const MAX_CANVAS_WIDTH = 1000;
@@ -52,18 +52,20 @@ index 8fe0bb6..0e7aa6c 100644
    // TODO extract into a plugin
    initRecorder(stream) {
      this.mediaRecorder = new MediaRecorder(stream);
-@@ -8892,6 +8921,10 @@ class AnnotationList {
+@@ -8892,6 +8921,12 @@ class AnnotationList {
          loader
            .load()
            .then((audioBuffer) => {
 +            
-+            // THIS AFFECTS TO ALL (RECORDED AND PLAYOUT) BUT IT'S CALCULATED EVERY 300 ms                        
-+            audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)            
++            // THIS AFFECTS TO ALL (RECORDED AND PLAYOUT) BUT IT'S CALCULATED EVERY 300 ms
++            if(this.latency > 0){
++              audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)
++            }
 +         
              // ask web worker for peaks.
              this.recorderWorker.postMessage({
                samples: audioBuffer.getChannelData(0),
-@@ -8899,6 +8932,8 @@ class AnnotationList {
+@@ -8899,6 +8934,8 @@ class AnnotationList {
              });
              this.recordingTrack.setCues(0, audioBuffer.duration);
              this.recordingTrack.setBuffer(audioBuffer);
@@ -72,7 +74,7 @@ index 8fe0bb6..0e7aa6c 100644
              this.recordingTrack.setPlayout(
                new Playout(this.ac, audioBuffer, this.masterGainNode)
              );
-@@ -9036,8 +9071,8 @@ class AnnotationList {
+@@ -9036,8 +9073,8 @@ class AnnotationList {
        }
      });
  
@@ -83,7 +85,7 @@ index 8fe0bb6..0e7aa6c 100644
      });
  
      ee.on("statechange", (state) => {
-@@ -9051,10 +9086,15 @@ class AnnotationList {
+@@ -9051,10 +9088,15 @@ class AnnotationList {
        this.drawRequest();
      });
  
@@ -100,7 +102,7 @@ index 8fe0bb6..0e7aa6c 100644
      ee.on("play", (start, end) => {
        this.play(start, end);
      });
-@@ -9323,7 +9363,7 @@ class AnnotationList {
+@@ -9323,7 +9365,7 @@ class AnnotationList {
      this.cursor = start;
    }
  
@@ -109,7 +111,7 @@ index 8fe0bb6..0e7aa6c 100644
      if (this.isRendering) {
        return;
      }
-@@ -9346,14 +9386,18 @@ class AnnotationList {
+@@ -9346,14 +9388,18 @@ class AnnotationList {
      const currentTime = this.offlineAudioContext.currentTime;
      const mg = this.offlineAudioContext.createGain();
  
@@ -130,7 +132,7 @@ index 8fe0bb6..0e7aa6c 100644
          masterGain: 1,
          isOffline: true,
        });
-@@ -9363,8 +9407,12 @@ class AnnotationList {
+@@ -9363,8 +9409,12 @@ class AnnotationList {
        TODO cleanup of different audio playouts handling.
      */
      await Promise.all(setUpChain);
@@ -144,7 +146,7 @@ index 8fe0bb6..0e7aa6c 100644
      if (type === "buffer") {
        this.ee.emit("audiorenderingfinished", type, audioBuffer);
        this.isRendering = false;
-@@ -9378,7 +9426,7 @@ class AnnotationList {
+@@ -9378,7 +9428,7 @@ class AnnotationList {
  
        // callback for `exportWAV`
        this.exportWorker.onmessage = (e) => {
@@ -153,7 +155,7 @@ index 8fe0bb6..0e7aa6c 100644
          this.isRendering = false;
  
          // clear out the buffer for next renderings.
-@@ -9437,8 +9485,10 @@ class AnnotationList {
+@@ -9437,8 +9487,10 @@ class AnnotationList {
      const index = this.mutedTracks.indexOf(track);
  
      if (index > -1) {
@@ -164,7 +166,7 @@ index 8fe0bb6..0e7aa6c 100644
        this.mutedTracks.push(track);
      }
    }
-@@ -9447,10 +9497,13 @@ class AnnotationList {
+@@ -9447,10 +9499,13 @@ class AnnotationList {
      const index = this.soloedTracks.indexOf(track);
  
      if (index > -1) {
@@ -178,17 +180,16 @@ index 8fe0bb6..0e7aa6c 100644
        this.soloedTracks.push(track);
      }
    }
-@@ -9623,7 +9676,8 @@ class AnnotationList {
+@@ -9623,7 +9678,7 @@ class AnnotationList {
      });
  
      // TODO improve this.
 -    this.masterGainNode.disconnect();
-+    // issue 280: [16/02/204] line commented to avoid problem in Safari when playing and stopping
 +    //this.masterGainNode.disconnect();
      this.drawRequest();
      return Promise.all(this.playoutPromises);
    }
-@@ -9647,9 +9701,14 @@ class AnnotationList {
+@@ -9647,9 +9702,14 @@ class AnnotationList {
      });
    }
  
