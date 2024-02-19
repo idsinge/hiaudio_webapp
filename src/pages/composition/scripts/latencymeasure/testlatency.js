@@ -3,7 +3,6 @@ import { latencyMeasurer } from './latencyMeasurer.js'
 
 export const NUMBER_TRIALS = 3
 
-export const warningMessageBeforeRecord = 'Do you want to test the latency first?'
 const warningMessageBeforeTest = `Please Make sure you are in a quiet place (so the browser can hear itself). Set both input and output audio volume to near maximum. This may be LOUD. Note: not all browsers on all devices will allow the browser permission to the speakers and microphone. If they don't, the test will not function.`
 
 export class TestLatency {
