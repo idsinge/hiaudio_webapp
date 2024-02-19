@@ -53,7 +53,7 @@ export const paintMainElemsHomePage = (listElelemts, legendButtons) => {
 
 export const paintSingleComposition = (element, endpoint) => {
     const displayName = displayUserNameInCard(endpoint, element.username)
-
+    const displayCollectionName = element.parent_collection && !endpoint.includes('/collectionastreebyid/')    
     return `<div class='card border-success'>                       
               <div class="card-body">
               ${element.opentocontrib ? '<p class="badge badge-info">OPEN TO CONTRIB</p>' : ''}               
@@ -62,7 +62,7 @@ export const paintSingleComposition = (element, endpoint) => {
                       <h5 class='card-title'>${element.title}</h5>
                     </a>
                     <p class='card-text text-truncate'>${element.description || ''}</p>
-                    <p class='text-black-50'>${element.parent_collection ? ('Collection: ' + element.parent_collection) : ''}</p>
+                    <p class='text-black-50'>${displayCollectionName ? ('Collection: ' + element.parent_collection) : ''}</p>
                     ${displayName ? `<span class="d-inline-block text-truncate" style="max-width: 250px;">
                     <i class='fa fa-user'></i>&nbsp;
                     <a href='${uriUserPage + element.owner_uuid}' class='card-url'>
