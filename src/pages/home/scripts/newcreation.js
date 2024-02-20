@@ -87,11 +87,9 @@ const saveEventListenerHandler = (e) => {
     })
 }
 
-const verifyResponse = (response)=> {  
+const verifyResponse = (response)=> {
+  $('#newMusicModal').modal('hide')  
   if(response.composition){
     window.location.href = uriCompositionPage + response.composition.uuid  
-  } else {
-    $('#newMusicModal').modal('hide')
-    //document.getElementById('openMyCollectionsButton').click()    
   }
 }

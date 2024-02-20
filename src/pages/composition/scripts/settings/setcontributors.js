@@ -220,3 +220,29 @@ const removeContributorSwitchHandler = (contrib) => {
         }
     })
 }
+
+export const updateContributorsAtCompPage = () => {
+
+    const contributorsbadgetext = document.getElementById('contributorsbadgetext')
+    if(contributorsbadgetext || CURRENT_CONTRIBUTORS.length){
+        const rolebadgetext = document.getElementById('rolebadgetext')        
+        if(!contributorsbadgetext){            
+            if(rolebadgetext){                
+                const badgeHtml = `&nbsp;<span class="badge badge-light">COLLABORATORS:&nbsp;</span><span id="contributorsbadgetext" class="badge badge-dark">${CURRENT_CONTRIBUTORS.length}</span>`
+                rolebadgetext.insertAdjacentHTML('afterend', badgeHtml)
+            }
+        } else {
+            if(CURRENT_CONTRIBUTORS.length !== parseInt(contributorsbadgetext.innerText)){
+                if(CURRENT_CONTRIBUTORS.length){
+                    contributorsbadgetext.innerText = CURRENT_CONTRIBUTORS.length
+                } else {
+                    const prevBadge = contributorsbadgetext.previousSibling
+                    contributorsbadgetext.remove()
+                    console.log(contributorsbadgetext.nextSibling)
+                    prevBadge.remove()
+                    rolebadgetext.nextSibling.remove()                
+                }
+            }
+        }
+    }
+}

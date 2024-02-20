@@ -159,8 +159,8 @@ const drawCompositionDetailInfo = (tracksInfo) => {
         const compositionName = tracksInfo.title
         const compositionDesc = tracksInfo.description || ''
         compositionNameHtml = '<br>'       
-        compositionNameHtml += `${tracksInfo.role ? '<span class="badge badge-light">YOUR ROLE:&nbsp;</span><span class="badge badge-success">'+ ROLES[tracksInfo.role] +'</span>&nbsp;' : ''}`
-        compositionNameHtml += `${tracksInfo.contributors.length ? `<span class="badge badge-light">COLLABORATORS:&nbsp;</span><span class="badge badge-dark">${tracksInfo.contributors.length}</span>` : ''}`        
+        compositionNameHtml += `${tracksInfo.role ? '<span class="badge badge-light">YOUR ROLE:&nbsp;</span><span id="rolebadgetext" class="badge badge-success">'+ ROLES[tracksInfo.role] +'</span>&nbsp;' : ''}`
+        compositionNameHtml += `${tracksInfo.contributors.length ? `<span class="badge badge-light">COLLABORATORS:&nbsp;</span><span id="contributorsbadgetext" class="badge badge-dark">${tracksInfo.contributors.length}</span>&nbsp;` : ''}`        
         compositionNameHtml += `<span class="badge badge-light">PRIVACY:&nbsp;</span><span id="privacybadgetext" class="badge ${PRIVACY_BADGE_STYLE[tracksInfo.privacy]}">${PRIVACY_BADGE_TEXT[tracksInfo.privacy]}</span>&nbsp;`
         compositionNameHtml += `${tracksInfo.opentocontrib ? '<span class="badge badge-light">STATUS:&nbsp;</span><span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}`
         compositionNameHtml += `<p><h2 id="comp-title" class="post-title">${compositionName}</h2></p>`       

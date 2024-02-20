@@ -11,7 +11,8 @@ import {setUIContributors,
     getCurrentContributors, 
     addContributorButtonHandler, 
     saveNewContributors, 
-    saveRemoveContributors
+    saveRemoveContributors,
+    updateContributorsAtCompPage
 } from './settings/setcontributors'
 
 export const enableCompositionSettings = (tracksInfo) => {
@@ -95,6 +96,7 @@ const saveButtonHandler = async (compId) => {
             await saveNewContributors()     
             await saveRemoveContributors(compId)
             await saveParentCollection(compId)
+            updateContributorsAtCompPage()
             $('#settingsModal').modal('hide')
             cancelLoader('settingsloader')
         }

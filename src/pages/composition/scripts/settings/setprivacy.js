@@ -1,5 +1,6 @@
 import {updateSettings} from '../settings'
 import {changeOpenToContrib} from './setopentocontrib'
+import { PRIVACY_BADGE_TEXT, PRIVACY_BADGE_STYLE, LevelPrivacy } from '../../../../common/js/utils'
 
 let CURRENT_PRIVACY = null
 
@@ -25,11 +26,11 @@ export const privateRadioButtonHandler = () => {
     }
 }
 
-export const setUIPrivacy = (privacyLevel) => {
+export const setUIPrivacy = (privacyLevel) => {    
     CURRENT_PRIVACY = privacyLevel
     const radiobtn = document.getElementById('settingsPrivacyRadios' + privacyLevel)
     radiobtn.checked = true
-    if(privacyLevel === 3){
+    if(privacyLevel === LevelPrivacy.private){           
         changeOpenToContrib(0)
     }
 }
@@ -47,6 +48,9 @@ const updateCompPrivacy = async (compId, privacy) => {
     const data = { uuid: compId, privacy: privacy }
     const resultNewPrivacy = await updateSettings('PATCH', '/updatecompprivacy', data)
     if (resultNewPrivacy.ok) {
-        CURRENT_PRIVACY = privacy
+        CURRENT_PRIVACY = privacy        
+        const rolebadgetext = document.getElementById('privacybadgetext')
+        rolebadgetext.className = 'badge ' + PRIVACY_BADGE_STYLE[privacy]        
+        rolebadgetext.innerText = PRIVACY_BADGE_TEXT[privacy]     
     }
 }
