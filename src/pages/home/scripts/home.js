@@ -19,6 +19,7 @@ import {getGroupedCompositionsWithUsers,
 from './home_helper'
 
 export const uriCompositionPage = '/composition.html?compositionId='
+export let IS_AUTH = false
 
 const homePageTermsAccepted = (termsAccepted) => {    
     if(!termsAccepted){
@@ -197,7 +198,8 @@ const initHomPage = async () => {
   const queryString = window.location.search
   const user_id = queryString.split('userid=')[1]
   const collection_uid = queryString.split('collectionid=')[1]
-  let isAuth  = await getMyProfile()    
+  let isAuth  = await getMyProfile()
+  IS_AUTH = isAuth.ok
   if(user_id){    
     await getCompositionsByUserUid(user_id, isAuth)
   } else if(collection_uid){

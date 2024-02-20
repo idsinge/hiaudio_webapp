@@ -1,12 +1,16 @@
-import { uriCompositionPage } from './home'
+import { uriCompositionPage, IS_AUTH } from './home'
 import { isuserpage, displayUserNameInCard } from './home_helper'
+import { LevelPrivacy } from '../../../common/js/utils'
 
 const uriUserPage = '/index.html?userid='
 const uriCollectionPage = '/index.html?collectionid='
 
-const BADGE_STYLE = { 'coll': 'badge-collection', 'user': 'badge-warning', 'collab': 'badge-collab' }
-const BORDER_STYLE = { 'coll': 'border-collection', 'user': 'border-warning', 'collab': 'border-collab' }
+const CARD_BADGE_STYLE = { 'coll': 'badge-collection', 'user': 'badge-warning', 'collab': 'badge-collab' }
+const CARD_BORDER_STYLE = { 'coll': 'border-collection', 'user': 'border-warning', 'collab': 'border-collab' }
 const URI_PAGE = { 'coll': uriCollectionPage, 'user': uriUserPage }
+
+const PRIVACY_BADGE_STYLE = {[LevelPrivacy.public] : 'badge-public', [LevelPrivacy.onlyreg] : 'badge-onlyreg', [LevelPrivacy.private] : 'badge-private'}
+const PRIVACY_BADGE_TEXT = {[LevelPrivacy.public] : 'PUBLIC', [LevelPrivacy.onlyreg] : 'REG USERS', [LevelPrivacy.private] : 'PRIVATE'}
 
 const WELCOME_TEXT = 'We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.'
 
@@ -51,16 +55,19 @@ export const paintMainElemsHomePage = (listElelemts, legendButtons) => {
     document.getElementById('searchInput').removeAttribute('disabled')
 }
 
-export const paintSingleComposition = (element, endpoint) => {
+export const paintSingleComposition = (element, endpoint) => {    
     const displayName = displayUserNameInCard(endpoint, element.username)
-    const displayNumCollabs = element.contributors.length  
+    const displayNumCollabs = element.contributors.length    
     return `<div class='card border-success'>                       
               <div class="card-body">
+              ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[element.privacy]}">${PRIVACY_BADGE_TEXT[element.privacy]}</span>` : ''}
               ${element.opentocontrib ? '<p class="badge badge-info">OPEN TO CONTRIB</p>' : ''}               
-                  <div>  
-                    <a href='${uriCompositionPage + element.uuid}' class='card-url'>
-                      <h5 class='card-title'>${element.title}</h5>
-                    </a>
+                  <div>
+                    <p class="list-group-item-heading">  
+                      <a href='${uriCompositionPage + element.uuid}' class='card-url'>
+                        <h5 class='card-title'>${element.title}</h5>
+                      </a>
+                    </p>
                     <p class='card-text text-truncate'>${element.description || ''}</p>
                     <p class='text-black-50'>${displayNumCollabs ? ('Collaborators: ' + displayNumCollabs) : ''}</p>
                     ${displayName ? `<span class="d-inline-block text-truncate" style="max-width: 250px;">
@@ -81,8 +88,9 @@ export const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
 
     const displayName = displayUserNameInCard(endpoint, item.username)
     const displayNumCollabs = item.contributors.length
-
+    
     return `<div class="list-group-item ">
+              ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[item.privacy]}">${PRIVACY_BADGE_TEXT[item.privacy]}</span>` : ''}
               ${item.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}  
               <p class="list-group-item-heading">
                 <a href='${uriCompositionPage + item.uuid}' class='card-url'>
@@ -107,8 +115,8 @@ export const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
 
 export const getUICardElemForCollection = (typebadge, numitems, groupTitle, groupId, listgroup) => {
 
-    const badegstyle = BADGE_STYLE[typebadge]
-    const borderstyle = BORDER_STYLE[typebadge]
+    const badegstyle = CARD_BADGE_STYLE[typebadge]
+    const borderstyle = CARD_BORDER_STYLE[typebadge]
     const url = URI_PAGE[typebadge]
     const badgeDisplayed = `<span class="badge ${badegstyle} d-inline-block text-truncate" style="max-width:85%;">
                               <span class="badge badge-light">${numitems}</span>&nbsp;
