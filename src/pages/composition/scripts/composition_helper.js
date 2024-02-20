@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../../../common/js/config'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
-import { LOADER_ELEM_ID, cancelLoader } from '../../../common/js/utils'
+import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
@@ -158,9 +158,12 @@ const drawCompositionDetailInfo = (tracksInfo) => {
     if (tracksInfo.title) {
         const compositionName = tracksInfo.title
         const compositionDesc = tracksInfo.description || ''
-        compositionNameHtml = `${tracksInfo.opentocontrib ? '<br><span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}`
-        compositionNameHtml += `${tracksInfo.role ? '<br><span class="badge badge-success">'+ ROLES[tracksInfo.role] +'</span>' : ''}`
-        compositionNameHtml += `<p><h1 id="comp-title" class="post-title">${compositionName}</h1></p>`       
+        compositionNameHtml = '<br>'       
+        compositionNameHtml += `${tracksInfo.role ? '<span class="badge badge-light">YOUR ROLE:&nbsp;</span><span class="badge badge-success">'+ ROLES[tracksInfo.role] +'</span>&nbsp;' : ''}`
+        compositionNameHtml += `${tracksInfo.contributors.length ? `<span class="badge badge-light">COLLABORATORS:&nbsp;</span><span class="badge badge-dark">${tracksInfo.contributors.length}</span>` : ''}`        
+        compositionNameHtml += `<span class="badge badge-light">PRIVACY:&nbsp;</span><span id="privacybadgetext" class="badge ${PRIVACY_BADGE_STYLE[tracksInfo.privacy]}">${PRIVACY_BADGE_TEXT[tracksInfo.privacy]}</span>&nbsp;`
+        compositionNameHtml += `${tracksInfo.opentocontrib ? '<span class="badge badge-light">STATUS:&nbsp;</span><span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}`
+        compositionNameHtml += `<p><h2 id="comp-title" class="post-title">${compositionName}</h2></p>`       
         compositionNameHtml += `<p>
                                     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseDescription" aria-expanded="false">
                                     Description

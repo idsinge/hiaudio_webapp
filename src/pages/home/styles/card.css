@@ -68,20 +68,6 @@
     background-color: #e9858a;
 }
 
-.badge-public {
-    color: white;
-    background-color: #257945;
-}
-
-.badge-onlyreg {    
-    background-color: #deda5b;
-}
-
-.badge-private {
-    color: white;
-    background-color: #721015;
-}
-
 .border-collab {
     border-color: #e9858a;
 }

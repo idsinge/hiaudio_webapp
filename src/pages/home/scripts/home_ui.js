@@ -1,6 +1,6 @@
 import { uriCompositionPage, IS_AUTH } from './home'
 import { isuserpage, displayUserNameInCard } from './home_helper'
-import { LevelPrivacy } from '../../../common/js/utils'
+import { PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT } from '../../../common/js/utils'
 
 const uriUserPage = '/index.html?userid='
 const uriCollectionPage = '/index.html?collectionid='
@@ -8,9 +8,6 @@ const uriCollectionPage = '/index.html?collectionid='
 const CARD_BADGE_STYLE = { 'coll': 'badge-collection', 'user': 'badge-warning', 'collab': 'badge-collab' }
 const CARD_BORDER_STYLE = { 'coll': 'border-collection', 'user': 'border-warning', 'collab': 'border-collab' }
 const URI_PAGE = { 'coll': uriCollectionPage, 'user': uriUserPage }
-
-const PRIVACY_BADGE_STYLE = {[LevelPrivacy.public] : 'badge-public', [LevelPrivacy.onlyreg] : 'badge-onlyreg', [LevelPrivacy.private] : 'badge-private'}
-const PRIVACY_BADGE_TEXT = {[LevelPrivacy.public] : 'PUBLIC', [LevelPrivacy.onlyreg] : 'REG USERS', [LevelPrivacy.private] : 'PRIVATE'}
 
 const WELCOME_TEXT = 'We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.'
 
