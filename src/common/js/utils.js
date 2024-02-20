@@ -2,6 +2,23 @@ import { ENDPOINT } from './config'
 
 export const LOADER_ELEM_ID = 'loader'
 
+export const UserRole = Object.freeze({
+    none : 0,
+    owner : 1,
+    admin : 2,
+    member : 3,
+    guest : 4
+})
+
+export const LevelPrivacy = Object.freeze({
+    public : 1,
+    onlyreg : 2,
+    private : 3
+})
+
+export const PRIVACY_BADGE_STYLE = {[LevelPrivacy.public] : 'badge-public', [LevelPrivacy.onlyreg] : 'badge-onlyreg', [LevelPrivacy.private] : 'badge-private'}
+export const PRIVACY_BADGE_TEXT = {[LevelPrivacy.public] : 'PUBLIC', [LevelPrivacy.onlyreg] : 'REG USERS', [LevelPrivacy.private] : 'PRIVATE'}
+
 export const startLoader = (loaderId, loadingMessage) => {    
     const loaderElement = document.getElementById(loaderId)    
     loaderElement.nextElementSibling.textContent = loadingMessage
