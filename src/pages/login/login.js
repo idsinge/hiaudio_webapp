@@ -22,10 +22,10 @@ const sendVerificationCode = async () => {
             document.getElementById('authmethodform').hidden = true
             document.getElementById('validationcodefield').hidden = false
         }
-    } else {        
-        document.getElementById('inputloginemail').classList.add('is-invalid')     
+    } else {
+        document.getElementById('inputloginemail').classList.add('is-invalid')
         document.getElementById('validationEmailResult').innerText = 'Sorry, invalid email address format.'
-    }    
+    }
 }
 
 const requestCodeValidation = async () => {
@@ -33,20 +33,19 @@ const requestCodeValidation = async () => {
     const sixDigits = /\d{6}/
     if (sixDigits.test(codeIs)){
         const body = {email: TEMP_EMAIL, code: codeIs}
-        const data = await callJsonApi('/logincodevalidation', 'POST', body)        
+        const data = await callJsonApi('/logincodevalidation', 'POST', body)
         if (data.ok) {
             TEMP_EMAIL = null
-            document.cookie = 'access_token_cookie=' + data.access_token_cookie
             window.location.href = window.location.origin
         } else {
             // TODO: if the code is expired display button to request a new one
-            document.getElementById('verificationCode').classList.add('is-invalid')     
+            document.getElementById('verificationCode').classList.add('is-invalid')
             document.getElementById('validationCodeResult').innerText = 'Wrong code, sorry'
         }
     } else {
-        document.getElementById('verificationCode').classList.add('is-invalid')     
+        document.getElementById('verificationCode').classList.add('is-invalid')
         document.getElementById('validationCodeResult').innerText = 'Sorry, invalid code format.'
-    } 
+    }
 }
 
 activateGoHomeLink()
@@ -54,7 +53,21 @@ activateGoHomeLink()
 document.getElementById('googleLoginButton').onclick = redirectToGoogleLogin
 
 document.getElementById('sendcodebutton').onclick = sendVerificationCode
+document.getElementById('inputloginemail').onkeydown = function(e) {
+    if (e.key == "Enter") {
+        return sendVerificationCode()
+    }
+}
+
+
 
 document.getElementById('validatecodebutton').onclick = requestCodeValidation
+document.getElementById('verificationCode').onkeydown = function(e) {
+    if (e.key == "Enter") {
+        return requestCodeValidation()
+    }
+}
+
+
 
 getUser()
