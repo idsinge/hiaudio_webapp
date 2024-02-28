@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../../../common/js/config'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
-import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage } from '../../../common/js/utils'
+import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
@@ -207,11 +207,19 @@ const getPrivacyLabel = (compInfo) => {
             </span>&nbsp;`
 }
 
+const getCollectionLabel = (compInfo) => {
+
+    return `${compInfo.collection_id ? `<span class="badge badge-light">COLLECTION:&nbsp;</span>
+    <i class="fa fa-th-list"></i>&nbsp;
+    <a href="${uriCollectionPage + compInfo.collection_id}" class="card-url">${compInfo.parent_collection}&nbsp;</a>` : ''}`
+}
+
 const drawCompositionDetailInfo = (tracksInfo) => {
     let contentHtml = '<h1 class="post-title">Test DAW</h1>'
     if (tracksInfo.title) {
         contentHtml = '<br>'
         contentHtml += getUserNameLabel(tracksInfo)
+        contentHtml += getCollectionLabel(tracksInfo)
         contentHtml += '<br>'
         contentHtml += getRoleLabel(tracksInfo)
         contentHtml += getContributorsLabel(tracksInfo)
