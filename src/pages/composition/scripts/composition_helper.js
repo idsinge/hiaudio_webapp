@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../../../common/js/config'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
-import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT } from '../../../common/js/utils'
+import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
@@ -153,27 +153,72 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
         }
     })
 }
+
+const getUserNameLabel = (compInfo) => {
+
+    return `<span class="badge badge-light">OWNER:&nbsp;</span>
+            <i class="fa fa-user"></i>&nbsp;
+            <a href="${uriUserPage + compInfo.user_id}" class="card-url">${compInfo.username}&nbsp;</a>`
+}
+
+const getRoleLabel = (compInfo) => {
+    return `${compInfo.role ? 
+        `<span class="badge badge-light">YOUR ROLE:&nbsp;</span>
+        <span id="rolebadgetext" class="badge badge-success">
+         ${ROLES[compInfo.role]}
+        </span>&nbsp;` 
+        : ''}`
+}
+
+const getContributorsLabel = (compInfo) => {
+
+    return `${compInfo.contributors.length ? 
+        `<span class="badge badge-light">COLLABORATORS:&nbsp;</span>
+        <span id="contributorsbadgetext" class="badge badge-dark">
+        ${compInfo.contributors.length}</span>&nbsp;` 
+        : ''}`
+}
+
+const getOpenStatusLabel = (compInfo) => {
+    return `${compInfo.opentocontrib ? 
+        `<span class="badge badge-light">STATUS:&nbsp;</span><span class="badge badge-info">OPEN TO CONTRIB</span>`
+        : ''}`
+}
+
+const getDescriptionUIelem = (compInfo) => {
+    const compositionDesc = compInfo.description || ''
+    return `<p>
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseDescription" aria-expanded="false">
+                Description
+                </button>
+            </p>
+            <div class="collapse" id="collapseDescription">
+                <div class="card card-body" id="comp-description">
+                ${compositionDesc}
+                </div>
+            </div>`
+}
+
+const getPrivacyLabel = (compInfo) => {
+
+    return `<span class="badge badge-light">PRIVACY:&nbsp;</span>
+            <span id="privacybadgetext" class="badge 
+            ${PRIVACY_BADGE_STYLE[compInfo.privacy]}">${PRIVACY_BADGE_TEXT[compInfo.privacy]}
+            </span>&nbsp;`
+}
+
 const drawCompositionDetailInfo = (tracksInfo) => {
-    let compositionNameHtml = '<h1 class="post-title">Test DAW</h1>'
+    let contentHtml = '<h1 class="post-title">Test DAW</h1>'
     if (tracksInfo.title) {
-        const compositionName = tracksInfo.title
-        const compositionDesc = tracksInfo.description || ''
-        compositionNameHtml = '<br>'       
-        compositionNameHtml += `${tracksInfo.role ? '<span class="badge badge-light">YOUR ROLE:&nbsp;</span><span id="rolebadgetext" class="badge badge-success">'+ ROLES[tracksInfo.role] +'</span>&nbsp;' : ''}`
-        compositionNameHtml += `${tracksInfo.contributors.length ? `<span class="badge badge-light">COLLABORATORS:&nbsp;</span><span id="contributorsbadgetext" class="badge badge-dark">${tracksInfo.contributors.length}</span>&nbsp;` : ''}`        
-        compositionNameHtml += `<span class="badge badge-light">PRIVACY:&nbsp;</span><span id="privacybadgetext" class="badge ${PRIVACY_BADGE_STYLE[tracksInfo.privacy]}">${PRIVACY_BADGE_TEXT[tracksInfo.privacy]}</span>&nbsp;`
-        compositionNameHtml += `${tracksInfo.opentocontrib ? '<span class="badge badge-light">STATUS:&nbsp;</span><span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}`
-        compositionNameHtml += `<p><h2 id="comp-title" class="post-title">${compositionName}</h2></p>`       
-        compositionNameHtml += `<p>
-                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseDescription" aria-expanded="false">
-                                    Description
-                                    </button>
-                                </p>
-                                <div class="collapse" id="collapseDescription">
-                                    <div class="card card-body" id="comp-description">
-                                    ${compositionDesc}
-                                    </div>
-                                </div>`
+        contentHtml = '<br>'
+        contentHtml += getUserNameLabel(tracksInfo)
+        contentHtml += '<br>'
+        contentHtml += getRoleLabel(tracksInfo)
+        contentHtml += getContributorsLabel(tracksInfo)
+        contentHtml += getPrivacyLabel(tracksInfo)
+        contentHtml += getOpenStatusLabel(tracksInfo)
+        contentHtml += `<p><h2 id="comp-title" class="post-title">${tracksInfo.title}</h2></p>`
+        contentHtml += getDescriptionUIelem(tracksInfo)
     }
-    document.getElementById('post-header').insertAdjacentHTML('afterbegin', compositionNameHtml)
+    document.getElementById('post-header').insertAdjacentHTML('afterbegin', contentHtml)
 }

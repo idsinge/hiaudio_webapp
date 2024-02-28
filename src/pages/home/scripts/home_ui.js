@@ -1,9 +1,6 @@
 import { uriCompositionPage, IS_AUTH } from './home'
 import { isuserpage, displayUserNameInCard } from './home_helper'
-import { PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT } from '../../../common/js/utils'
-
-const uriUserPage = '/index.html?userid='
-const uriCollectionPage = '/index.html?collectionid='
+import { PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
 
 const CARD_BADGE_STYLE = { 'coll': 'badge-collection', 'user': 'badge-warning', 'collab': 'badge-collab' }
 const CARD_BORDER_STYLE = { 'coll': 'border-collection', 'user': 'border-warning', 'collab': 'border-collab' }

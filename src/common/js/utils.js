@@ -2,6 +2,9 @@ import { ENDPOINT } from './config'
 
 export const LOADER_ELEM_ID = 'loader'
 
+export const uriUserPage = '/index.html?userid='
+export const uriCollectionPage = '/index.html?collectionid='
+
 export const UserRole = Object.freeze({
     none : 0,
     owner : 1,
