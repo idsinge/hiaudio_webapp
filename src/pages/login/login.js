@@ -21,6 +21,9 @@ const sendVerificationCode = async () => {
             TEMP_EMAIL = loginEmail
             document.getElementById('authmethodform').hidden = true
             document.getElementById('validationcodefield').hidden = false
+        } else {            
+            document.getElementById('inputloginemail').classList.add('is-invalid')
+            document.getElementById('validationEmailResult').innerText = data
         }
     } else {
         document.getElementById('inputloginemail').classList.add('is-invalid')
