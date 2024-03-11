@@ -1,7 +1,6 @@
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/record.js */
 import { playlist } from './composition'
-
-const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+import { isSafari } from '../../../common/js/utils'
 
 export class Recorder {
 
