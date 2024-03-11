@@ -1,6 +1,7 @@
 import { ENDPOINT } from '../../../../common/js/config'
-import { looksLikeMail } from '../../../../common/js/utils'
+import { looksLikeMail, isSafari } from '../../../../common/js/utils'
 import {updateSettings} from '../settings'
+import { playlist } from '../composition'
 
 let CURRENT_CONTRIBUTORS = []
 let NEW_CONTRIBUTORS = []
@@ -108,7 +109,10 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
             }
         } else {
             alert('Duplicate user')
-        }       
+        }
+        if(isSafari){
+            playlist.getEventEmitter().emit('resume')
+        }        
     }   
 }
 
@@ -199,8 +203,12 @@ const removeContributorSwitchHandler = (contrib) => {
     document.getElementById('removeContSwitch'+contrib.user_uid).addEventListener('change', function(event) {        
         const chk = event.target        
         if (chk.tagName === 'INPUT' && chk.type === 'checkbox') {        
-            if(chk.checked){                
-                if (confirm(`Do you want remove the contributor: ${contrib.email}?`) == true) {                    
+            if(chk.checked){ 
+                const removeContributorDialog = confirm(`Do you want remove the contributor: ${contrib.email}?`)
+                if(isSafari){
+                    playlist.getEventEmitter().emit('resume')
+                } 
+                if ( removeContributorDialog === true) {
                     const indexContribInNew = NEW_CONTRIBUTORS.findIndex(x => x.email === contrib.email)                                     
                     if(indexContribInNew > -1){                        
                         NEW_CONTRIBUTORS.splice(indexContribInNew,1)

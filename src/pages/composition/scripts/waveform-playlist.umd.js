@@ -9096,6 +9096,13 @@ class AnnotationList {
       this.drawRequest();
     });
 
+    ee.on("resume", async () => {
+      console.log(`Audio context state change: ${this.getAudioContext().state}`);
+      if (this.getAudioContext().state === 'running') {        
+        await this.getAudioContext().resume();
+      }
+    });
+
     ee.on("play", (start, end) => {
       this.play(start, end);
     });

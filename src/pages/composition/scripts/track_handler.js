@@ -1,5 +1,5 @@
 import { ENDPOINT } from '../../../common/js/config'
-import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../../common/js/utils'
+import { LOADER_ELEM_ID, startLoader, cancelLoader, isSafari } from '../../../common/js/utils'
 import { CURRENT_USER_ID } from './composition_helper'
 import { playlist } from './composition'
 import { createTrackInfoTable } from './trackinfo'
@@ -107,6 +107,9 @@ export class TrackHandler {
     }
     deleteTrackConfirmDialog(event, callback, afterCallback) {       
         const dialog = confirm('Delete ' + event.target.dataset.name + '?')
+        if(isSafari){
+            playlist.getEventEmitter().emit('resume')
+        }        
         if (dialog) {
             callback(event.target.dataset.pos, event.target.dataset.trackId, afterCallback)
         }

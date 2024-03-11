@@ -1,5 +1,7 @@
 /* Source: https://github.com/superpoweredSDK/WebBrowserAudioLatencyMeasurement */
 import { latencyMeasurer } from './latencyMeasurer.js'
+import { isSafari } from '../../../../common/js/utils'
+import { playlist } from '../composition'
 
 export const NUMBER_TRIALS = 3
 
@@ -87,7 +89,10 @@ export class TestLatency {
         TestLatency.startbutton.classList.remove('btn-outline-danger')
         TestLatency.startbutton.classList.add('btn-outline-primary')
         TestLatency.startbutton.onclick = TestLatency.displayStart    
-        alert(message)       
+        alert(message)
+        if(isSafari){
+            playlist.getEventEmitter().emit('resume')
+        }        
     }
 
     static onAudioPermissionGranted(inputStream) {
@@ -121,7 +126,11 @@ export class TestLatency {
     static start(e) {
         
         if(!TestLatency.getCurrentLatency()){
-            if (!window.confirm(`${warningMessageBeforeTest}`)) {     
+            const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
+            if(isSafari){
+                playlist.getEventEmitter().emit('resume')
+            } 
+            if (!doTestLatency) {     
               return 
             }
         }

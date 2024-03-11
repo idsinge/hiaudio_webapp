@@ -76,3 +76,5 @@ export const activateGoHomeLink = () => {
         goHomeLink.href = window.location.origin
     }
 }
+
+export const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
