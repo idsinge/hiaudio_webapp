@@ -43,15 +43,20 @@ export const fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
 export const recorder = new Recorder()
 
 const compositionId = COMPOSITION_ID
-const createTestLatencyButton = () => {
+const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `<li class="nav-item">
   <a class="nav-link" href="#" id="testlatency" data-toggle="modal">Test Latency</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="#" id="testmicrophone" data-toggle="modal" data-target="#testMicrophoneModal">
+    <i class="fa-solid fa-microphone"></i> TEST MIC
+  </a>
 </li>
  `
 }
 
 activateGoHomeLink()
-createTestLatencyButton()
+createTestButtons()
 TestLatency.initialize()
 
 if(compositionId === 'demopage'){ 
