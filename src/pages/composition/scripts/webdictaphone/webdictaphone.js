@@ -6,6 +6,9 @@ const stop = document.querySelector('.stop-test-mic')
 const soundClips = document.querySelector('.sound-clips-test-mic')
 const canvas = document.querySelector('.visualizer-test-mic')
 const mainSection = document.querySelector('.main-controls-test-mic')
+const gainSlider = document.getElementById('gainSliderTestMic')
+
+let CURRENT_GAIN_TEST_MIC = 1
 
 // Disable stop button while not recording
 stop.disabled = true
@@ -14,6 +17,9 @@ stop.disabled = true
 let audioCtx
 const canvasCtx = canvas.getContext('2d')
 
+let analyser
+let gainNode
+
 // Main block for doing the audio recording
 if (navigator.mediaDevices.getUserMedia) {
 
@@ -21,9 +27,33 @@ if (navigator.mediaDevices.getUserMedia) {
     let chunks = []
 
     let onSuccess = function (stream) {
+        if (!audioCtx) {
+            audioCtx = new AudioContext()
+        }
+    
+        const source = audioCtx.createMediaStreamSource(stream)
+    
+        analyser = audioCtx.createAnalyser()
+        analyser.fftSize = 2048
+            
+        // Create a GainNode to control the gain
+        gainNode = audioCtx.createGain()
+        // Set the desired gain value (experiment with different values)
+        gainNode.gain.value = CURRENT_GAIN_TEST_MIC
+    
+        //source.connect(analyser)
+    
+        // Connect the microphone source to the gain node
+        source.connect(gainNode)
+    
+        gainNode.connect(analyser)
+    
+        // Connect the gain node to the audio context destination (e.g., speakers)
+        //gainNode.connect(audioCtx.destination)
+    
         const mediaRecorder = new MediaRecorder(stream)
 
-        visualize(stream)
+        visualize()
 
         record.onclick = function () {
             mediaRecorder.start()
@@ -80,6 +110,7 @@ if (navigator.mediaDevices.getUserMedia) {
         }
 
         mediaRecorder.ondataavailable = function (e) {
+            console.log('hey')
             chunks.push(e.data)
         }
     }
@@ -93,20 +124,9 @@ if (navigator.mediaDevices.getUserMedia) {
     console.log('MediaDevices.getUserMedia() not supported on your browser!')
 }
 
-function visualize(stream) {
-    if (!audioCtx) {
-        audioCtx = new AudioContext()
-    }
-
-    const source = audioCtx.createMediaStreamSource(stream)
-
-    const analyser = audioCtx.createAnalyser()
-    analyser.fftSize = 2048
+function visualize() {
     const bufferLength = analyser.frequencyBinCount
     const dataArray = new Uint8Array(bufferLength)
-
-    source.connect(analyser)
-
     draw()
 
     function draw() {
@@ -149,10 +169,24 @@ function visualize(stream) {
 }
 
 $('#testMicrophoneModal').on('show.bs.modal', async (event) => {
+    document.getElementById('current-input-gain-test-mic').value = CURRENT_GAIN_TEST_MIC    
+    analyser.connect(audioCtx.destination)
     if (isSafari) {
-        console.log(`Audio context state change: ${audioCtx.state}`);
+        console.log(`Audio context state change: ${audioCtx.state}`)
         if (audioCtx.state === 'suspended') {
-            await audioCtx.resume();
+            await audioCtx.resume()
         }
     }
+})
+
+$('#testMicrophoneModal').on('hide.bs.modal', async (event) => {
+    analyser.disconnect()
+})
+
+// Add an event listener to the range input to update the gain value when it changes
+gainSlider.addEventListener('input', function () {
+    const newGainValue = parseFloat(this.value)
+    CURRENT_GAIN_TEST_MIC = newGainValue
+    gainNode.gain.value = newGainValue
+    document.getElementById('current-input-gain-test-mic').value = newGainValue    
 })
