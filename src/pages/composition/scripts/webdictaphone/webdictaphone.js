@@ -44,8 +44,9 @@ const getUserMediaOnSuccess = (stream) => {
     analyser = audioCtxTestMic.createAnalyser()
     analyser.fftSize = 2048
     gainNode.connect(analyser)
-
-    const mediaRecorder = new MediaRecorder(stream)
+    const dest = audioCtxTestMic.createMediaStreamDestination()
+    gainNode.connect(dest)
+    const mediaRecorder = new MediaRecorder(dest.stream)
 
     draw()
     buttonHandlers(mediaRecorder)
