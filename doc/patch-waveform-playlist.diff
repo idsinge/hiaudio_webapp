@@ -1,5 +1,5 @@
 diff --git a/waveform-playlist.umd.js b/waveform-playlist.umd.js
-index 8fe0bb6..1460a01 100644
+index 25b7347..f03322e 100644
 --- a/waveform-playlist.umd.js
 +++ b/waveform-playlist.umd.js
 @@ -7168,6 +7168,8 @@ const MAX_CANVAS_WIDTH = 1000;
@@ -85,7 +85,7 @@ index 8fe0bb6..1460a01 100644
      });
  
      ee.on("statechange", (state) => {
-@@ -9051,10 +9088,15 @@ class AnnotationList {
+@@ -9051,10 +9088,22 @@ class AnnotationList {
        this.drawRequest();
      });
  
@@ -101,7 +101,7 @@ index 8fe0bb6..1460a01 100644
 +
 +    ee.on("resume", async () => {
 +      console.log(`Audio context state change: ${this.getAudioContext().state}`);
-+      if (this.getAudioContext().state === 'running') {
++      if (this.getAudioContext().state === 'running') {        
 +        await this.getAudioContext().resume();
 +      }
 +    });
@@ -109,7 +109,7 @@ index 8fe0bb6..1460a01 100644
      ee.on("play", (start, end) => {
        this.play(start, end);
      });
-@@ -9323,7 +9365,7 @@ class AnnotationList {
+@@ -9324,7 +9373,7 @@ class AnnotationList {
      this.cursor = start;
    }
  
@@ -118,7 +118,7 @@ index 8fe0bb6..1460a01 100644
      if (this.isRendering) {
        return;
      }
-@@ -9346,14 +9388,18 @@ class AnnotationList {
+@@ -9347,14 +9396,18 @@ class AnnotationList {
      const currentTime = this.offlineAudioContext.currentTime;
      const mg = this.offlineAudioContext.createGain();
  
@@ -139,13 +139,14 @@ index 8fe0bb6..1460a01 100644
          masterGain: 1,
          isOffline: true,
        });
-@@ -9363,8 +9409,12 @@ class AnnotationList {
+@@ -9364,8 +9417,12 @@ class AnnotationList {
        TODO cleanup of different audio playouts handling.
      */
      await Promise.all(setUpChain);
 -    const audioBuffer = await this.offlineAudioContext.startRendering();
+-
 +    let audioBuffer = await this.offlineAudioContext.startRendering();
- 
++    // TODO: check this approach
 +    /*if(trackPos && this.latency) {
 +      // TO LISTEN THE FIX MUST REFRESH BROWSER        
 +      audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)
@@ -153,7 +154,7 @@ index 8fe0bb6..1460a01 100644
      if (type === "buffer") {
        this.ee.emit("audiorenderingfinished", type, audioBuffer);
        this.isRendering = false;
-@@ -9378,7 +9428,7 @@ class AnnotationList {
+@@ -9379,7 +9436,7 @@ class AnnotationList {
  
        // callback for `exportWAV`
        this.exportWorker.onmessage = (e) => {
@@ -162,7 +163,7 @@ index 8fe0bb6..1460a01 100644
          this.isRendering = false;
  
          // clear out the buffer for next renderings.
-@@ -9437,8 +9487,10 @@ class AnnotationList {
+@@ -9438,8 +9495,10 @@ class AnnotationList {
      const index = this.mutedTracks.indexOf(track);
  
      if (index > -1) {
@@ -173,7 +174,7 @@ index 8fe0bb6..1460a01 100644
        this.mutedTracks.push(track);
      }
    }
-@@ -9447,10 +9499,13 @@ class AnnotationList {
+@@ -9448,10 +9507,13 @@ class AnnotationList {
      const index = this.soloedTracks.indexOf(track);
  
      if (index > -1) {
@@ -187,7 +188,7 @@ index 8fe0bb6..1460a01 100644
        this.soloedTracks.push(track);
      }
    }
-@@ -9623,7 +9678,7 @@ class AnnotationList {
+@@ -9625,7 +9687,7 @@ class AnnotationList {
      });
  
      // TODO improve this.
@@ -196,7 +197,7 @@ index 8fe0bb6..1460a01 100644
      this.drawRequest();
      return Promise.all(this.playoutPromises);
    }
-@@ -9647,9 +9702,14 @@ class AnnotationList {
+@@ -9649,9 +9711,14 @@ class AnnotationList {
      });
    }
  
