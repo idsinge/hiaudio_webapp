@@ -1,21 +1,11 @@
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/record.js */
 import { playlist } from './composition'
-//import { isSafari } from '../../../common/js/utils'
 
 export class Recorder {
 
     init() {
         let userMediaStream
         const constraints = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false }}
-        /*if (isSafari) {
-            const safariVersionIndex = navigator.userAgent.indexOf('Version/')
-            const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
-            const safariVersion = parseFloat(versionString)
-            console.log('Safari version:', safariVersion)
-            if(safariVersion > 16){
-                constraints.audio.echoCancellation = true
-            }            
-        }*/
         navigator.getUserMedia = (navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia ||
