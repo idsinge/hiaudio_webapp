@@ -13,7 +13,7 @@ export class Recorder {
 
         const gotStream = (stream) => {            
             userMediaStream = stream
-            playlist.initRecorder(userMediaStream)
+            playlist.initRecorder(userMediaStream, undefined, "Voice Track");
             $(".btn-record").removeClass("disabled")
         }
 
