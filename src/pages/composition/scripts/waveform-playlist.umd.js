@@ -6132,7 +6132,7 @@ function resampleAudioBuffer(audioBuffer, targetSampleRate) {
   // `ceil` is needed because `length` must be in integer greater than 0 and
   // resampling a single sample to a lower sample rate will yield a value value < 1.
   const length = Math.ceil(audioBuffer.duration * targetSampleRate);
-  const ac = new OfflineAudioContext(audioBuffer.numberOfChannels, length, targetSampleRate);
+  const ac = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(audioBuffer.numberOfChannels, length, targetSampleRate);
   const src = ac.createBufferSource();
   src.buffer = audioBuffer;
   src.connect(ac.destination);
@@ -6148,7 +6148,7 @@ const STATE_LOADING = 1;
 const STATE_DECODING = 2;
 const STATE_FINISHED = 3;
 
-/* harmony default export */ const Loader = (class {
+/* harmony default export */ const loader_Loader = (class {
   constructor(src, audioContext, ee = event_emitter_default()()) {
     this.src = src;
     this.ac = audioContext;
@@ -6200,12 +6200,36 @@ const STATE_FINISHED = 3;
       );
     });
   }
+
+  fetchLoad(arrayBuffer) {
+    this.setStateChange(STATE_DECODING);
+
+    return new Promise((resolve, reject) => {
+      this.ac.decodeAudioData(
+        arrayBuffer,
+        (audioBuffer) => {
+          this.audioBuffer = audioBuffer;
+          this.setStateChange(STATE_FINISHED);
+
+          resolve(audioBuffer);
+        },
+        (err) => {
+          if (err === null) {
+            // Safari issues with null error
+            reject(Error("MediaDecodeAudioDataUnknownContentType"));
+          } else {
+            reject(err);
+          }
+        }
+      );
+    });
+  }
 });
 
 ;// CONCATENATED MODULE: ./src/track/loader/BlobLoader.js
 
 
-/* harmony default export */ const BlobLoader = (class extends Loader {
+/* harmony default export */ const BlobLoader = (class extends loader_Loader {
   /*
    * Loads an audio file via a FileReader
    */
@@ -6245,7 +6269,7 @@ const STATE_FINISHED = 3;
 ;// CONCATENATED MODULE: ./src/track/loader/IdentityLoader.js
 
 
-class IdentityLoader extends Loader {
+class IdentityLoader extends loader_Loader {
   load() {
     return Promise.resolve(this.src);
   }
@@ -6254,7 +6278,7 @@ class IdentityLoader extends Loader {
 ;// CONCATENATED MODULE: ./src/track/loader/XHRLoader.js
 
 
-/* harmony default export */ const XHRLoader = (class extends Loader {
+/* harmony default export */ const XHRLoader = (class extends (/* unused pure expression or super */ null && (Loader)) {
   /**
    * Loads an audio file via XHR.
    */
@@ -6287,7 +6311,28 @@ class IdentityLoader extends Loader {
   }
 });
 
+;// CONCATENATED MODULE: ./src/track/loader/FetchLoader.js
+
+
+/* harmony default export */ const FetchLoader = (class extends loader_Loader {
+  /**
+   * Loads an audio file via fetch API.
+   */
+  load() {
+    return new Promise((resolve, reject) => {
+      fetch(this.src)
+        .then((data) => data.arrayBuffer())
+        .then((arrayBuffer) => super.fetchLoad(arrayBuffer))
+        .then((decodedAudio) => resolve(decodedAudio))
+        .catch((err) => {
+          reject(Error(`Track ${this.src} failed to load with error: ${err}`));
+        });
+    });
+  }
+});
+
 ;// CONCATENATED MODULE: ./src/track/loader/LoaderFactory.js
+
 
 
 
@@ -6299,7 +6344,8 @@ class IdentityLoader extends Loader {
     } else if (src instanceof AudioBuffer) {
       return new IdentityLoader(src, audioContext, ee);
     } else if (typeof src === "string") {
-      return new XHRLoader(src, audioContext, ee);
+      //return new XHRLoader(src, audioContext, ee);
+      return new FetchLoader(src, audioContext, ee);
     }
 
     throw new Error("Unsupported src type");
@@ -8025,12 +8071,12 @@ function noEffects(node1, node2) {
     cleanupEffects = this.effectsGraph(
       this.panner,
       this.masterGain,
-      this.ac instanceof OfflineAudioContext
+      this.ac instanceof (window.OfflineAudioContext || window.webkitOfflineAudioContext)
     );
     cleanupMasterEffects = this.masterEffectsGraph(
       this.masterGain,
       this.destination,
-      this.ac instanceof OfflineAudioContext
+      this.ac instanceof (window.OfflineAudioContext || window.webkitOfflineAudioContext)
     );
 
     return sourcePromise;
@@ -8867,8 +8913,8 @@ class AnnotationList {
     this.exportWorker = new (inline_worker_default())(exportWavWorker);
   }
 
-  trimAudioBuffer (audioBuffer, trimDurationInSeconds) {    
-    const sampleRate = audioBuffer.sampleRate;   
+  trimAudioBuffer(audioBuffer, trimDurationInSeconds) {
+    const sampleRate = audioBuffer.sampleRate;
     const startSample = Math.floor(trimDurationInSeconds * sampleRate);
     if (startSample >= audioBuffer.length) {
       // If the trim duration is longer than the audio, return an empty buffer.
@@ -8893,24 +8939,32 @@ class AnnotationList {
   }
 
   // TODO extract into a plugin
-  initRecorder(stream) {
-
+  initRecorder(stream, track, name = "Recording") {
+    this.fixedRecordingTrack = (track !== undefined);
+    this.recordingTrack = track;
     this.mediaRecorder = new MediaRecorder(stream);
 
     this.mediaRecorder.onstart = () => {
-      const track = new Track();
-      track.setName("Recording");
-      track.setEnabledStates();
-      track.setEventEmitter(this.ee);
+      if (!this.fixedRecordingTrack) {
+        const track = new Track();
+        track.setName(name);
+        track.setEnabledStates();
+        track.setEventEmitter(this.ee);
 
-      this.recordingTrack = track;
-      this.tracks.push(track);
+        this.recordingTrack = track;
+        this.tracks.push(track);
+      }
+
+      const start = this.cursor;
+      this.recordingTrack.setStartTime(start);
+    
       this.chunks = [];
       this.working = false;
     };
 
     this.mediaRecorder.ondataavailable = (e) => {
       this.chunks.push(e.data);
+
       // throttle peaks calculation
       if (!this.working) {
         const recording = new Blob(this.chunks, {
@@ -8920,12 +8974,11 @@ class AnnotationList {
         loader
           .load()
           .then((audioBuffer) => {
-            
+
             // THIS AFFECTS TO ALL (RECORDED AND PLAYOUT) BUT IT'S CALCULATED EVERY 300 ms
-            if(this.latency > 0){
+            if (this.latency > 0) {
               audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)
             }
-         
             // ask web worker for peaks.
             this.recorderWorker.postMessage({
               samples: audioBuffer.getChannelData(0),
@@ -8934,7 +8987,7 @@ class AnnotationList {
             this.recordingTrack.setCues(0, audioBuffer.duration);
             this.recordingTrack.setBuffer(audioBuffer);
             // THIS AFFECTS ONLY TO PLAYOUT IT'S CALCULATED EVERY 300 ms
-            //audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency) // Chrome Mac            
+            //audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency) // Chrome Mac 
             this.recordingTrack.setPlayout(
               new Playout(this.ac, audioBuffer, this.masterGainNode)
             );
@@ -9098,7 +9151,7 @@ class AnnotationList {
 
     ee.on("resume", async () => {
       console.log(`Audio context state change: ${this.getAudioContext().state}`);
-      if (this.getAudioContext().state === 'running') {        
+      if (this.getAudioContext().state === 'running') {
         await this.getAudioContext().resume();
       }
     });
@@ -9200,6 +9253,7 @@ class AnnotationList {
       track.calculatePeaks(this.samplesPerPixel, this.sampleRate);
 
       this.setTimeSelection(0, 0);
+      this.adjustDuration();
       this.drawRequest();
     });
 
@@ -9282,7 +9336,7 @@ class AnnotationList {
             this.masterGainNode
           );
 
-          const track = new Track();          
+          const track = new Track();
           track.src = info.src;
           track.setBuffer(audioBuffer);
           track.setName(name);
@@ -9377,7 +9431,7 @@ class AnnotationList {
     }
 
     this.isRendering = true;
-    this.offlineAudioContext = new OfflineAudioContext(
+    this.offlineAudioContext = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(
       2,
       44100 * this.duration,
       44100
@@ -9396,7 +9450,7 @@ class AnnotationList {
 
     this.tracks.forEach((track, pos) => {
       let shouldPlay = this.shouldTrackPlay(track)
-      if(trackPos >= 0){
+      if (trackPos >= 0) {
         shouldPlay = pos === trackPos
       }
       const playout = new Playout(this.offlineAudioContext, track.buffer, mg);
@@ -9416,10 +9470,10 @@ class AnnotationList {
     */
     await Promise.all(setUpChain);
     let audioBuffer = await this.offlineAudioContext.startRendering();
-
+    // TODO: check this approach
     /*if(trackPos && this.latency) {
-      // TO LISTEN THE FIX MUST REFRESH BROWSER        
-      audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)
+     // TO LISTEN THE FIX MUST REFRESH BROWSER        
+     audioBuffer = this.trimAudioBuffer(audioBuffer, this.latency)
     } */
     if (type === "buffer") {
       this.ee.emit("audiorenderingfinished", type, audioBuffer);
@@ -9545,6 +9599,7 @@ class AnnotationList {
         list.splice(index, 1);
       }
     });
+    this.adjustDuration();
   }
 
   adjustTrackPlayout() {
@@ -9622,7 +9677,7 @@ class AnnotationList {
     const selected = this.getTimeSelection();
     const playoutPromises = [];
 
-    const start = startTime || this.pausedAt || this.cursor;
+    const start = (startTime === 0) ? 0 : (startTime || this.pausedAt || this.cursor);
     let end = endTime;
 
     if (!end && selected.end !== selected.start && selected.end > start) {
@@ -9711,7 +9766,7 @@ class AnnotationList {
   clear(trackPos) {
     return this.stop().then(() => {
       var newArray = []
-      if(trackPos || trackPos === 0){
+      if (trackPos || trackPos === 0) {
         this.tracks.splice(trackPos, 1)
         newArray = this.tracks
       }
@@ -9731,13 +9786,14 @@ class AnnotationList {
 
   record() {
     const playoutPromises = [];
+    const start = this.cursor;
     this.mediaRecorder.start(300);
 
     this.tracks.forEach((track) => {
       track.setState("none");
       playoutPromises.push(
-        track.schedulePlay(this.ac.currentTime, 0, undefined, {
-          shouldPlay: this.shouldTrackPlay(track),
+        track.schedulePlay(this.ac.currentTime, start, undefined, {
+          shouldPlay: (track !== this.recordingTrack) && this.shouldTrackPlay(track),
         })
       );
     });

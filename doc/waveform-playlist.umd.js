@@ -6132,7 +6132,7 @@ function resampleAudioBuffer(audioBuffer, targetSampleRate) {
   // `ceil` is needed because `length` must be in integer greater than 0 and
   // resampling a single sample to a lower sample rate will yield a value value < 1.
   const length = Math.ceil(audioBuffer.duration * targetSampleRate);
-  const ac = new OfflineAudioContext(audioBuffer.numberOfChannels, length, targetSampleRate);
+  const ac = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(audioBuffer.numberOfChannels, length, targetSampleRate);
   const src = ac.createBufferSource();
   src.buffer = audioBuffer;
   src.connect(ac.destination);
@@ -8021,12 +8021,12 @@ function noEffects(node1, node2) {
     cleanupEffects = this.effectsGraph(
       this.panner,
       this.masterGain,
-      this.ac instanceof OfflineAudioContext
+      this.ac instanceof (window.OfflineAudioContext || window.webkitOfflineAudioContext)
     );
     cleanupMasterEffects = this.masterEffectsGraph(
       this.masterGain,
       this.destination,
-      this.ac instanceof OfflineAudioContext
+      this.ac instanceof (window.OfflineAudioContext || window.webkitOfflineAudioContext)
     );
 
     return sourcePromise;
@@ -9152,6 +9152,7 @@ class AnnotationList {
       track.calculatePeaks(this.samplesPerPixel, this.sampleRate);
 
       this.setTimeSelection(0, 0);
+      this.adjustDuration();
       this.drawRequest();
     });
 
@@ -9329,7 +9330,7 @@ class AnnotationList {
     }
 
     this.isRendering = true;
-    this.offlineAudioContext = new OfflineAudioContext(
+    this.offlineAudioContext = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(
       2,
       44100 * this.duration,
       44100
@@ -9484,6 +9485,7 @@ class AnnotationList {
         list.splice(index, 1);
       }
     });
+    this.adjustDuration();
   }
 
   adjustTrackPlayout() {
@@ -9561,7 +9563,7 @@ class AnnotationList {
     const selected = this.getTimeSelection();
     const playoutPromises = [];
 
-    const start = startTime || this.pausedAt || this.cursor;
+    const start = (startTime === 0) ? 0 : (startTime || this.pausedAt || this.cursor);
     let end = endTime;
 
     if (!end && selected.end !== selected.start && selected.end > start) {
