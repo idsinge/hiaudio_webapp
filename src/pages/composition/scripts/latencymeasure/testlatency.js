@@ -98,16 +98,11 @@ export class TestLatency {
     static onAudioPermissionGranted(inputStream) {
 
         TestLatency.inputStream = inputStream
-        let audioTracks = inputStream.getAudioTracks()
-        for (let audioTrack of audioTracks) {
-            audioTrack.applyConstraints({ autoGainControl: false, echoCancellation: false, noiseSuppression: false })
-        }        
-
         TestLatency.latencyMeasurer = new latencyMeasurer()
         TestLatency.latencyMeasurer.toggle()
         TestLatency.lastState = 0        
-        // TODO: bufferSize 256 needs to be reviewed
-        TestLatency.audioNode = TestLatency.audioContext.createScriptProcessor(256, 2, 2)
+        // TODO: bufferSize (512) needs to be reviewed
+        TestLatency.audioNode = TestLatency.audioContext.createScriptProcessor(512, 2, 2)
 
         TestLatency.audioNode.onaudioprocess = function (e) {
 
@@ -137,13 +132,7 @@ export class TestLatency {
         let AudioContext = window.AudioContext || window.webkitAudioContext || false
         TestLatency.audioContext = new AudioContext({ latencyHint: 0 })
         TestLatency.data.samplerate = TestLatency.audioContext.sampleRate
-        let constraints = {
-            'echoCancellation': false,
-            'disableLocalEcho': false,
-            'autoGainControl': false,
-            'audio': { mandatory: { googAutoGainControl: false, googAutoGainControl2: false, googEchoCancellation: false, googNoiseSuppression: false, googHighpassFilter: false, googEchoCancellation2: false, googNoiseSuppression2: false, googDAEchoCancellation: false, googNoiseReduction: false } },
-            'video': false
-        }
+        const constraints = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false }}
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(constraints).then(TestLatency.onAudioPermissionGranted).catch(TestLatency.onAudioInputPermissionDenied)
         }
