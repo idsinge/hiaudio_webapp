@@ -45,7 +45,9 @@ export const recorder = new Recorder()
 const compositionId = COMPOSITION_ID
 const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `<li class="nav-item">
-  <a class="nav-link" href="#" id="testlatency" data-toggle="modal">Test Latency</a>
+  <a class="nav-link" href="#" id="testlatency" data-toggle="modal" 
+  data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
+  Test Latency</a>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="#" id="testmicrophone" data-toggle="modal" data-target="#testMicrophoneModal">

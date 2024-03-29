@@ -26,7 +26,7 @@ class latencyMeasurer {
     }
 
     toggle() {
-        if ((this.state == -1) || ((this.state > 0) && (this.state < 11))) { // stop
+        if ((this.state == -1) || ((this.state > 0) && (this.state < (NUMBER_TRIALS + 1)))) { // stop
             this.state = 0;
             this.nextMeasurementState = measurementStates.idle;
         } else { // start
@@ -113,6 +113,7 @@ class latencyMeasurer {
                         this.rampdec = 1.0 / numberOfSamples;
                         this.measurementState = this.nextMeasurementState = measurementStates.waiting;
                         this.latencyMs = -1;
+                        this.samplesElapsed = 0;
                     }
                 }
                 break;

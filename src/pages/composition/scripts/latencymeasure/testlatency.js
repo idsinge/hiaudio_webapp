@@ -3,7 +3,7 @@ import { latencyMeasurer } from './latencyMeasurer.js'
 import { isSafari } from '../../../../common/js/utils'
 import { playlist } from '../composition'
 
-export const NUMBER_TRIALS = 3
+export const NUMBER_TRIALS = 10
 
 const warningMessageBeforeTest = `Please Make sure you are in a quiet place (so the browser can hear itself). Set both input and output audio volume to near maximum. This may be LOUD. Note: not all browsers on all devices will allow the browser permission to the speakers and microphone. If they don't, the test will not function.`
 
@@ -47,6 +47,9 @@ export class TestLatency {
         TestLatency.startbutton.classList.add('btn-outline-success')
         TestLatency.startbutton.onclick = TestLatency.start
         TestLatency.content.appendChild(TestLatency.startbutton)
+        $('#testlatency').popover({
+            trigger: 'focus'            
+        })
     }
 
     static onAudioInputPermissionDenied(error) {
@@ -54,22 +57,15 @@ export class TestLatency {
     }
 
     static onMessageFromAudioScope(message) {
-        let result = null
-        if (message.latencyMs < 0) {
-            result = 'The environment is too loud! Please try it again in a quieter environment.'
-            TestLatency.displayResult(result)
-        } else if (message.state == NUMBER_TRIALS) {
-            if (message.latency < 1) {
-                result = 'The variance is too big. Please try it again in a quieter environment.'
-                TestLatency.displayResult(result)
-            }
-            else {
-                TestLatency.data.ms = message.latency                             
-                result = 'Result: ' + message.latency + ' ms'
-                TestLatency.setCurrentLatency(message.latency)                
-                TestLatency.displayResult(result)
-            }
-        } 
+        if (message.latency > 0) {
+            TestLatency.setCurrentLatency(message.latency) 
+        }
+        $('#testlatency').attr('data-content', message.state + '/' + NUMBER_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
+        $('#testlatency').popover('show')
+       
+        if (message.state == NUMBER_TRIALS) {
+            TestLatency.finishTest()
+        }
     }
 
     static onAudioSetupFinished() {
@@ -82,14 +78,14 @@ export class TestLatency {
         TestLatency.startbutton.onclick = TestLatency.displayStart
     }
 
-    static displayResult(message) {
+    static finishTest() {
         if (TestLatency.audioContext != null) TestLatency.audioContext.close()
         TestLatency.audioContext = TestLatency.audioNode = null
         TestLatency.startbutton.innerText = 'TEST AGAIN'        
         TestLatency.startbutton.classList.remove('btn-outline-danger')
         TestLatency.startbutton.classList.add('btn-outline-primary')
-        TestLatency.startbutton.onclick = TestLatency.displayStart    
-        alert(message)
+        TestLatency.startbutton.onclick = TestLatency.displayStart
+        $('#testlatency').popover('hide')
         if(isSafari){
             playlist.getEventEmitter().emit('resume')
         }        
