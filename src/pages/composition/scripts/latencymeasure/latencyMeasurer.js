@@ -26,7 +26,7 @@ class latencyMeasurer {
     }
 
     toggle() {
-        if ((this.state == -1) || ((this.state > 0) && (this.state < 11))) { // stop
+        if ((this.state == -1) || ((this.state > 0) && (this.state < (NUMBER_TRIALS + 1)))) { // stop
             this.state = 0;
             this.nextMeasurementState = measurementStates.idle;
         } else { // start
