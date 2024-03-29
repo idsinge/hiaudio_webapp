@@ -113,6 +113,7 @@ class latencyMeasurer {
                         this.rampdec = 1.0 / numberOfSamples;
                         this.measurementState = this.nextMeasurementState = measurementStates.waiting;
                         this.latencyMs = -1;
+                        this.samplesElapsed = 0;
                     }
                 }
                 break;
