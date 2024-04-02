@@ -19,7 +19,7 @@ export class TestLatency {
         return TestLatency.currentlatency
     }
 
-    static initialize(e) {
+    static initialize() {
 
         const currentlatency = localStorage.getItem('latency')
         TestLatency.currentlatency = currentlatency ? parseInt(currentlatency):null
@@ -47,6 +47,7 @@ export class TestLatency {
         TestLatency.startbutton.classList.add('btn-outline-success')
         TestLatency.startbutton.onclick = TestLatency.start
         TestLatency.content.appendChild(TestLatency.startbutton)
+        $('#testlatency').popover('hide')
         $('#testlatency').popover({
             trigger: 'focus'            
         })
@@ -58,12 +59,15 @@ export class TestLatency {
 
     static onMessageFromAudioScope(message) {
         if (message.latency > 0) {
-            TestLatency.setCurrentLatency(message.latency) 
+            TestLatency.setCurrentLatency(message.latency)
+            $('#testlatency').attr('data-content', message.state + '/' + NUMBER_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
+            $('#testlatency').popover('show')
+        } else {
+            $('#testlatency').attr('data-content', 'No input detected')
+            $('#testlatency').popover('show')
         }
-        $('#testlatency').attr('data-content', message.state + '/' + NUMBER_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
-        $('#testlatency').popover('show')
        
-        if (message.state == NUMBER_TRIALS) {
+        if (message.state >= NUMBER_TRIALS) {
             TestLatency.finishTest()
         }
     }
@@ -85,7 +89,6 @@ export class TestLatency {
         TestLatency.startbutton.classList.remove('btn-outline-danger')
         TestLatency.startbutton.classList.add('btn-outline-primary')
         TestLatency.startbutton.onclick = TestLatency.displayStart
-        $('#testlatency').popover('hide')
         if(isSafari){
             playlist.getEventEmitter().emit('resume')
         }        
@@ -114,8 +117,8 @@ export class TestLatency {
         TestLatency.onAudioSetupFinished()     
     }
 
-    static start(e) {
-        
+    static start() {
+        $('#testlatency').popover('hide')
         if(!TestLatency.getCurrentLatency()){
             const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
             if(isSafari){
