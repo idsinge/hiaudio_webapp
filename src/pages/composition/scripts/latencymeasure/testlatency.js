@@ -88,10 +88,7 @@ export class TestLatency {
         TestLatency.startbutton.innerText = 'TEST AGAIN'        
         TestLatency.startbutton.classList.remove('btn-outline-danger')
         TestLatency.startbutton.classList.add('btn-outline-primary')
-        TestLatency.startbutton.onclick = TestLatency.displayStart
-        if(isSafari){
-            playlist.getEventEmitter().emit('resume')
-        }        
+        TestLatency.startbutton.onclick = TestLatency.displayStart 
     }
 
     static onAudioPermissionGranted(inputStream) {
