@@ -4,7 +4,7 @@ import WaveformPlaylist from './waveform-playlist.umd'
 import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
 import { TestLatency } from './latencymeasure/testlatency'
-import { activateGoHomeLink } from '../../../common/js/utils'
+import { activateGoHomeLink, isSafari } from '../../../common/js/utils'
 
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
@@ -43,18 +43,27 @@ export const fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
 export const recorder = new Recorder()
 
 const compositionId = COMPOSITION_ID
+
+const testMicButtonForSafari  = () => {
+  const safariVersionIndex = navigator.userAgent.indexOf('Version/')
+  const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
+  const safariVersion = parseFloat(versionString)
+  if(isSafari && safariVersion > 16){   
+    return `<li class="nav-item">
+              <a class="nav-link" href="#" id="testmicrophone" data-toggle="modal" data-target="#testMicrophoneModal">
+                <i class="fa-solid fa-microphone"></i> TEST MIC
+              </a>
+            </li>`
+  } else {
+    return ''
+  }  
+}
 const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `<li class="nav-item">
-  <a class="nav-link" href="#" id="testlatency" data-toggle="modal" 
-  data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-  Test Latency</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="#" id="testmicrophone" data-toggle="modal" data-target="#testMicrophoneModal">
-    <i class="fa-solid fa-microphone"></i> TEST MIC
-  </a>
-</li>
- `
+    <a class="nav-link" href="#" id="testlatency" data-toggle="modal" 
+      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
+      Test Latency</a>
+  </li>${testMicButtonForSafari()}`
 }
 
 activateGoHomeLink()
