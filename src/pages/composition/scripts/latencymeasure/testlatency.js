@@ -76,7 +76,7 @@ export class TestLatency {
         let audioInput = TestLatency.audioContext.createMediaStreamSource(TestLatency.inputStream)
         audioInput.connect(TestLatency.audioNode)
         TestLatency.audioNode.connect(TestLatency.audioContext.destination)
-        TestLatency.startbutton.innerText = 'CANCEL'
+        TestLatency.startbutton.innerText = 'STOP'
         TestLatency.startbutton.classList.remove('btn-outline-success')
         TestLatency.startbutton.classList.add('btn-outline-danger')
         TestLatency.startbutton.onclick = TestLatency.displayStart
