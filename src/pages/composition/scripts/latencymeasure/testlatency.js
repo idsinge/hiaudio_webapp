@@ -3,7 +3,8 @@ import { latencyMeasurer } from './latencyMeasurer.js'
 import { isSafari } from '../../../../common/js/utils'
 import { playlist } from '../composition'
 
-export const NUMBER_TRIALS = 10
+export const NUMBER_TRIALS = 4
+const TOTAL_TRIALS = NUMBER_TRIALS - 1
 
 const warningMessageBeforeTest = `Please Make sure you are in a quiet place (so the browser can hear itself). Set both input and output audio volume to near maximum. This may be LOUD. Note: not all browsers on all devices will allow the browser permission to the speakers and microphone. If they don't, the test will not function.`
 
@@ -60,7 +61,8 @@ export class TestLatency {
     static onMessageFromAudioScope(message) {
         if (message.latency > 0) {
             TestLatency.setCurrentLatency(message.latency)
-            $('#testlatency').attr('data-content', message.state + '/' + NUMBER_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
+            const trialNum = message.state - 1
+            $('#testlatency').attr('data-content', trialNum + '/' + TOTAL_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
             $('#testlatency').popover('show')
         } else {
             $('#testlatency').attr('data-content', 'No input detected')
@@ -68,7 +70,7 @@ export class TestLatency {
         }
        
         if (message.state >= NUMBER_TRIALS) {
-            TestLatency.finishTest()
+            TestLatency.finishTest(message.latency)
         }
     }
 
@@ -82,13 +84,15 @@ export class TestLatency {
         TestLatency.startbutton.onclick = TestLatency.displayStart
     }
 
-    static finishTest() {
+    static finishTest(latency) {
         if (TestLatency.audioContext != null) TestLatency.audioContext.close()
         TestLatency.audioContext = TestLatency.audioNode = null
-        TestLatency.startbutton.innerText = 'TEST AGAIN'        
+        TestLatency.startbutton.innerText = 'TEST AGAIN '
+        TestLatency.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
         TestLatency.startbutton.classList.remove('btn-outline-danger')
         TestLatency.startbutton.classList.add('btn-outline-primary')
-        TestLatency.startbutton.onclick = TestLatency.displayStart 
+        TestLatency.startbutton.onclick = TestLatency.displayStart
+        $('#testlatency').popover('hide') 
     }
 
     static onAudioPermissionGranted(inputStream) {
