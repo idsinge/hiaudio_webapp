@@ -133,11 +133,13 @@ $container.on("click", ".btn-loop", function() {
 
 $container.on("click", ".btn-play", function() {
   ee.emit("play");
+  $(".btn-group .btn-record").prop('disabled', true);
 });
 
 $container.on("click", ".btn-pause", function() {
   isLooping = false;
   ee.emit("pause");
+  $(".btn-group .btn-record").prop('disabled', false);
 });
 
 $container.on("click", ".btn-stop", function() {
@@ -150,16 +152,19 @@ $container.on("click", ".btn-stop", function() {
     }
   }
   ee.emit("stop");
+  $(".btn-group button").prop('disabled', false);
 });
 
 $container.on("click", ".btn-rewind", function() {
   isLooping = false;
   ee.emit("rewind");
+  $(".btn-group .btn-record").prop('disabled', false);
 });
 
 $container.on("click", ".btn-fast-forward", function() {
   isLooping = false;
   ee.emit("fastforward");
+  $(".btn-group .btn-record").prop('disabled', false);
 });
 
 $container.on("click", ".btn-clear", function() {
@@ -184,17 +189,21 @@ const startRecording = (currentLatency) => {
   if(!isRecording){
     isRecording = true;  
     const latencyInSeconds = currentLatency/1000;
+    $(".btn-group button").prop('disabled', true);
+    $(".btn-group .btn-stop").prop('disabled', false);
     ee.emit("record", latencyInSeconds);
   } 
 }
 
 $container.on("click", ".btn-record", function() {
-  const currentLatency = TestLatency.getCurrentLatency()
-  if(!currentLatency && currentLatency !== 0){
-    handleTestLatencyDialog()
-  } else {
-    startRecording(currentLatency)
-  }  
+  if(!isRecording){
+    const currentLatency = TestLatency.getCurrentLatency()
+    if(!currentLatency && currentLatency !== 0){
+      handleTestLatencyDialog()
+    } else {
+      startRecording(currentLatency)
+    }
+  }
 });
 
 //track interaction states
