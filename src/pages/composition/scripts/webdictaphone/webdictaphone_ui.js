@@ -35,31 +35,45 @@ export const setCanvasData = (bufferLength, dataArray) => {
     canvasCtx.stroke()
 }
 
-export const buttonHandlers = (mediaRecorder) => {
-    const recordButton = document.querySelector('.record-test-mic')
-    const stopButton = document.querySelector('.stop-test-mic')
-    stopButton.disabled = true
-    recordButton.onclick = function () {
-        mediaRecorder.start()
-        recordButton.style.background = 'red'
-        stopButton.disabled = false
-        recordButton.disabled = true
+export class ButtonHandlers {
+    constructor(mediaRecorder, testMic) {
+        this.mediaRecorder = mediaRecorder
+        this.testMic = testMic
+        this.recordButton = document.querySelector('.record-test-mic')
+        this.stopButton = document.querySelector('.stop-test-mic')
     }
-
-    stopButton.onclick = function () {
-        mediaRecorder.stop()
-        recordButton.style.background = ''
-        recordButton.style.color = ''
-        stopButton.disabled = true
-        recordButton.disabled = false
-    }   
+    init() {
+        this.stopButton.disabled = true
+        this.recordButton.onclick = this.recorButtonClick.bind(this)
+        this.stopButton.onclick = this.stopButtonClick.bind(this)
+    }
+    async recorButtonClick() {
+        await this.testMic.connectSource()
+        this.mediaRecorder.start()
+        this.recordButton.style.background = 'red'
+        this.stopButton.disabled = false
+        this.recordButton.disabled = true
+    }
+    stopButtonClick() {
+        this.mediaRecorder.stop()
+        this.recordButton.style.background = ''
+        this.recordButton.style.color = ''
+        this.stopButton.disabled = true
+        this.recordButton.disabled = false
+        this.testMic.disconnectSource()
+    }
 }
 
 
 export const mediaRecorderStopUI = (audioURL) => {
-    const clipContainer = createClipContainer(audioURL)
-    const soundClips = document.querySelector('.sound-clips-test-mic')
-    soundClips.appendChild(clipContainer)
+    const audioElem = document.querySelector('.audio-test-mic')
+    if(!audioElem){
+        const clipContainer = createClipContainer(audioURL)
+        const soundClips = document.querySelector('.sound-clips-test-mic')
+        soundClips.appendChild(clipContainer)
+    } else {
+        audioElem.src = audioURL
+    }
 }
 
 const createClipContainer = (audioURL) => {
