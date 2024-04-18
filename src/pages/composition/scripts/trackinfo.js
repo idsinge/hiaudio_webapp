@@ -1,10 +1,12 @@
 import { startLoader, cancelLoader, callJsonApi } from '../../../common/js/utils'
+import { dynamicModalDialog } from './modaldialog'
 import { playlist } from './composition'
 
 let EDIT_STATUS = false
 let CURRENT_TRACKINFO = null
 let CURRENT_TRACKPOS = null
 let CURRENT_TRACKID = null
+let RESERVED_KEYS = null
 
 const editButton = document.getElementById('edittrackinfobutton')
 
@@ -30,18 +32,61 @@ export const createTrackInfoTable = async (trackpos, trackname, trackid) => {
     }
 }
 
+const getTitleFromResp = (resp) => {
+    let html = ''
+    if (resp['title']) {
+        html += `<tr><th scope='row'>title</th><td contenteditable='false' data-key='title'>${resp['title']}</td></tr>`
+    }
+    return html
+}
+
+const getAnnotationsFromResp = (resp) => {
+    let html = ''
+    if (resp['annotations']) {
+        html += createAnnotationsSection(resp['annotations'])
+    }
+    return html
+}
+
+const getReservedKeysFromResp = (resp) => {
+    if (resp['reserved_keys']) {
+        return resp['reserved_keys']
+    } else {
+        return null
+    }
+}
+
 const renderTable = async (trackinfo, currenttrackname) => {
     cancelLoader('trackinfoloader')
     const tableContainer = document.getElementById('trackinfotablebody')
     let html = ''
     if (trackinfo) {
-        for (const key in trackinfo) {
-            html += `<tr><th scope='row'>${key}</th><td contenteditable='false' data-key=${key}>${trackinfo[key]}</td></tr>`
-        }       
+        RESERVED_KEYS = getReservedKeysFromResp(trackinfo)
+        html += getTitleFromResp(trackinfo)
+        html += getAnnotationsFromResp(trackinfo)
     } else {
-        html += `<tr><th scope='row'>title</th><td data-key='title'>${currenttrackname}</td></tr>`        
+        html += `<tr><th scope='row'>title</th><td data-key='title' class='linebreak'>${currenttrackname}</td></tr>`
     }
     tableContainer.innerHTML = html
+}
+
+const createAnnotationsSection = (annnotations) => {
+    let html = ''
+    for (const pos in annnotations) {
+        const annotation = annnotations[pos]
+        html += `<tr class="linebreak"><th ${annotation.custom_added ? "contenteditable='false'" : ''} scope='row'>${annotation.key}</th>
+        <td contenteditable='false' data-key='${annotation.key}' data-uuid='${annotation.uuid}'>${annotation.value}</td>
+        <td class='delete-row' data-key='${annotation.key}' data-uuid='${annotation.uuid}' hidden>${annotation.custom_added ? `<i class="fa fa-trash text-danger"></i>` : ''}</td>
+        </tr>`
+    }
+    return html
+}
+
+const deleteRow = (row) => {
+    dynamicModalDialog('Delete: ' + row.dataset.key + ' ?', 'btn-delete-row')
+    document.getElementById('btn-delete-row').onclick = ()=>{
+        console.log(row.dataset.uuid)
+    }
 }
 
 const clickCancelButtonHandler = () => {
@@ -54,22 +99,53 @@ const cancelButtonHandler = () => {
     cancelTrackInfoButton?.addEventListener('click', () => { clickCancelButtonHandler() })
 }
 
+const checkIfCellWasEdited = (cell) => {
+    const uuid = cell.getAttribute('data-uuid')
+    const newkey = cell.getAttribute('data-key')
+    const newvalue = cell.innerText
+    const current_annot = CURRENT_TRACKINFO.annotations.find(annotation => annotation.uuid === uuid)
+    const editedObj = {}
+    // TODO: if no UUID then we need to create new annotation in backend
+    if (uuid && !RESERVED_KEYS.includes(current_annot.key) && !RESERVED_KEYS.includes(newkey)) {
+        if (current_annot.key !== newkey) {
+            editedObj.key = newkey
+        }
+    }
+    if (current_annot.value !== newvalue) {
+        editedObj.value = newvalue
+    }
+    if (Object.keys(editedObj).length > 0) {
+        editedObj.uuid = uuid
+    }
+    return editedObj
+}
+
+const getEditedFields = () => {
+    const editedObject = {}
+    editedObject.annotations = []
+    document.querySelectorAll('td[contenteditable]').forEach(cell => {
+        if (cell.getAttribute('data-uuid')) {
+            const editedObj = checkIfCellWasEdited(cell)
+            if (Object.keys(editedObj).length > 0) {
+                editedObject.annotations.push(editedObj)
+            }
+        } else {
+            const keyId = cell.getAttribute('data-key')
+            if (CURRENT_TRACKINFO[keyId] !== cell.innerText) {
+                editedObject[keyId] = cell.innerText
+            }
+        }
+    })
+    return editedObject
+}
+
 const saveButtonHandler = async () => {
     const confirmTrackInfoButton = document.getElementById('updatetrackinfobutton')
     confirmTrackInfoButton?.addEventListener('click', async (e) => {
-
-        const editedObject = {}
-        document.querySelectorAll('td[contenteditable]').forEach(cell => {
-            editedObject[cell.getAttribute('data-key')] = cell.innerText
-        })
-        if (JSON.stringify(CURRENT_TRACKINFO) !== JSON.stringify((editedObject))) {
-            // TODO: before sending all annotations, 
-            // check if the title has changed or not to send it with the other attributes
-            // so we avoid an update title in Tracks table
-            // if the title has not changed then is not sent
-            //if(editedObject.title === CURRENT_TRACKINFO.title){     
-            //    delete editedObject.title
-            //}        
+        const editedObject = getEditedFields()
+        if (editedObject.title || editedObject.annotations.length > 0) {
+            console.log('CURRENT_TRACKINFO', CURRENT_TRACKINFO)
+            console.log('editedObject', editedObject)
             startLoader('trackinfoloader', 'Updating track info...')
             const bodyrqst = {trackid:CURRENT_TRACKID}
             const data = await callJsonApi('/updatetrackinfo', 'PATCH', {...editedObject, ...bodyrqst})
@@ -77,20 +153,20 @@ const saveButtonHandler = async () => {
             cancelLoader('trackinfoloader')
         }
         $('#trackInfoModal').modal('hide')
-
     })
 }
 
 const handleUpdatetrackInfo = (data, objEdited) => {
     if (typeof data === 'object' && data.ok) {
-        CURRENT_TRACKINFO = objEdited
-        playlist.tracks[CURRENT_TRACKPOS].name = CURRENT_TRACKINFO.title
-        const menuBtnItem = document.querySelectorAll(`[data-track-id='${CURRENT_TRACKID}']`)
-        if(menuBtnItem.length === 1){
-            menuBtnItem[0].dataset.name = CURRENT_TRACKINFO.title
-        }        
-        const ee = playlist.getEventEmitter()
-        ee.emit('updateview')
+        if (objEdited?.title) {
+            playlist.tracks[CURRENT_TRACKPOS].name = objEdited.title
+            const menuBtnItem = document.querySelectorAll(`[data-track-id='${CURRENT_TRACKID}']`)
+            if (menuBtnItem.length === 1) {
+                menuBtnItem[0].dataset.name = objEdited.title
+            }
+            const ee = playlist.getEventEmitter()
+            ee.emit('updateview')
+        }
     } else {
         alert('Error updating track info: ' + data)
     }
@@ -111,16 +187,33 @@ const clickEditButtonHandler = () => {
 
 const enableEdition = () => {
 
-    document.querySelectorAll(`td[contenteditable='false']`).forEach(cell => {
+    document.querySelectorAll(`*[contenteditable='false']`).forEach(cell => {
+
         cell.contentEditable = true
         cell.classList.add('italic')
+        if (cell.tagName === 'TH') {
+            cell.addEventListener('input', function () {
+                cell.nextSibling.dataset.key = cell.innerText
+            })
+            const nextTD = cell.parentNode.lastElementChild
+            if (nextTD.classList.contains('delete-row')) {
+                nextTD.hidden = false
+                nextTD.onclick = () => { deleteRow(nextTD) }
+            }
+        }
     })
 }
 
 const disableEdition = () => {
 
-    document.querySelectorAll(`td[contenteditable='true']`).forEach(cell => {
+    document.querySelectorAll(`*[contenteditable='true']`).forEach(cell => {
         cell.contentEditable = false
         cell.classList.remove('italic')
+        if (cell.tagName === 'TH') {
+            const nextTD = cell.parentNode.lastElementChild
+            if (nextTD.classList.contains('delete-row')) {
+                nextTD.hidden = true
+            }
+        }
     })
 }
