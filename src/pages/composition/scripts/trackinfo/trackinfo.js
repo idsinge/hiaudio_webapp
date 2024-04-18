@@ -40,9 +40,29 @@ const getTitleFromResp = (resp) => {
     return html
 }
 
+const checkKeys = (objArray, wordsArray) => {
+    const missingKeys = []    
+    wordsArray.forEach(word => {
+        if (!objArray.some(obj => obj.key === word)) {            
+            missingKeys.push(word)
+        }
+    })
+
+    return missingKeys
+}
+
+const createReservedKeysSection = (reservedkeys) => {
+    let html = ''
+    for(const pos in reservedkeys){
+        html += `<tr><th scope='row'>${reservedkeys[pos]}</th><td contenteditable='false' data-key='${reservedkeys[pos]}'></td></tr>`
+    }
+    return html
+}
 const getAnnotationsFromResp = (resp) => {
     let html = ''
     if (resp['annotations']) {
+        const missingKeys = checkKeys(resp['annotations'], RESERVED_KEYS)
+        html += createReservedKeysSection(missingKeys)
         html += createAnnotationsSection(resp['annotations'])
     }
     return html
@@ -120,8 +140,7 @@ const checkIfCellWasEdited = (cell) => {
     const newvalue = cell.innerText
     const current_annot = CURRENT_TRACKINFO.annotations.find(annotation => annotation.uuid === uuid)
     const editedObj = {}
-    
-    // TODO: if no UUID then we need to create new annotation in backend
+
     if (uuid && !RESERVED_KEYS.includes(current_annot.key) && !RESERVED_KEYS.includes(newkey)) {
         if (current_annot.key !== newkey) {
             editedObj.key = newkey
@@ -146,6 +165,7 @@ const getEditedFields = () => {
                 editedObject.annotations.push(editedObj)
             }
         } else {
+            // TODO: if no UUID then we need to create new annotation in backend
             const keyId = cell.getAttribute('data-key')
             if (CURRENT_TRACKINFO[keyId] !== cell.innerText) {
                 editedObject[keyId] = cell.innerText
