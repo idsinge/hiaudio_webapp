@@ -1,6 +1,6 @@
-import { startLoader, cancelLoader, callJsonApi } from '../../../common/js/utils'
-import { dynamicModalDialog } from './modaldialog'
-import { playlist } from './composition'
+import { startLoader, cancelLoader, callJsonApi } from '../../../../common/js/utils'
+import DynamicModal  from '../../../../common/js/modaldialog'
+import { playlist } from '../composition'
 
 let EDIT_STATUS = false
 let CURRENT_TRACKINFO = null
@@ -83,10 +83,25 @@ const createAnnotationsSection = (annnotations) => {
 }
 
 const deleteRow = (row) => {
-    dynamicModalDialog('Delete: ' + row.dataset.key + ' ?', 'btn-delete-row')
+    DynamicModal.dynamicModalDialog('Delete: '+ '<b>'+row.dataset.key+'</b>'+ ' ?', 'btn-delete-row', 'Delete')
     document.getElementById('btn-delete-row').onclick = ()=>{
-        console.log(row.dataset.uuid)
+        doRowDeletion(row)
     }
+}
+
+const doRowDeletion = async (row) => {    
+    const uuid = row.dataset.uuid
+    if(uuid){
+        const data = await callJsonApi('/deleteannotation/' + uuid, 'DELETE')
+        if (typeof data === 'object') {
+            row.parentNode.remove()
+        }
+    }
+    else {
+        console.log('NO UUID')
+        row.parentNode.remove()
+    }
+    DynamicModal.closeDynamicModal()
 }
 
 const clickCancelButtonHandler = () => {
@@ -105,6 +120,7 @@ const checkIfCellWasEdited = (cell) => {
     const newvalue = cell.innerText
     const current_annot = CURRENT_TRACKINFO.annotations.find(annotation => annotation.uuid === uuid)
     const editedObj = {}
+    
     // TODO: if no UUID then we need to create new annotation in backend
     if (uuid && !RESERVED_KEYS.includes(current_annot.key) && !RESERVED_KEYS.includes(newkey)) {
         if (current_annot.key !== newkey) {
@@ -144,8 +160,6 @@ const saveButtonHandler = async () => {
     confirmTrackInfoButton?.addEventListener('click', async (e) => {
         const editedObject = getEditedFields()
         if (editedObject.title || editedObject.annotations.length > 0) {
-            console.log('CURRENT_TRACKINFO', CURRENT_TRACKINFO)
-            console.log('editedObject', editedObject)
             startLoader('trackinfoloader', 'Updating track info...')
             const bodyrqst = {trackid:CURRENT_TRACKID}
             const data = await callJsonApi('/updatetrackinfo', 'PATCH', {...editedObject, ...bodyrqst})
@@ -193,7 +207,8 @@ const enableEdition = () => {
         cell.classList.add('italic')
         if (cell.tagName === 'TH') {
             cell.addEventListener('input', function () {
-                cell.nextSibling.dataset.key = cell.innerText
+                const nextTD = cell.parentNode.children[1]
+                nextTD.dataset.key = cell.innerText
             })
             const nextTD = cell.parentNode.lastElementChild
             if (nextTD.classList.contains('delete-row')) {
