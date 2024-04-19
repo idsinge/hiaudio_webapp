@@ -47,14 +47,15 @@ const checkKeys = (objArray, wordsArray) => {
             missingKeys.push(word)
         }
     })
-
     return missingKeys
 }
 
 const createReservedKeysSection = (reservedkeys) => {
     let html = ''
     for(const pos in reservedkeys){
-        html += `<tr><th scope='row'>${reservedkeys[pos]}</th><td contenteditable='false' data-key='${reservedkeys[pos]}'></td></tr>`
+        if(reservedkeys[pos] !== 'title'){
+            html += `<tr><th scope='row'>${reservedkeys[pos]}</th><td contenteditable='false' data-key='${reservedkeys[pos]}'></td></tr>`
+        }        
     }
     return html
 }
@@ -96,7 +97,7 @@ const createAnnotationsSection = (annnotations) => {
         const annotation = annnotations[pos]
         html += `<tr class="linebreak"><th ${annotation.custom_added ? "contenteditable='false'" : ''} scope='row'>${annotation.key}</th>
         <td contenteditable='false' data-key='${annotation.key}' data-uuid='${annotation.uuid}'>${annotation.value}</td>
-        <td class='delete-row' data-key='${annotation.key}' data-uuid='${annotation.uuid}' hidden>${annotation.custom_added ? `<i class="fa fa-trash text-danger"></i>` : ''}</td>
+        <td class='delete-row' data-key='${annotation.key}' data-uuid='${annotation.uuid}' hidden>${annotation.custom_added ? `&nbsp;<i class="fa fa-trash text-danger"></i>` : ''}</td>
         </tr>`
     }
     return html
@@ -165,10 +166,19 @@ const getEditedFields = () => {
                 editedObject.annotations.push(editedObj)
             }
         } else {
-            // TODO: if no UUID then we need to create new annotation in backend
+
             const keyId = cell.getAttribute('data-key')
-            if (CURRENT_TRACKINFO[keyId] !== cell.innerText) {
-                editedObject[keyId] = cell.innerText
+
+            if(keyId === 'title'){
+                if (CURRENT_TRACKINFO[keyId] !== cell.innerText) {
+                    editedObject[keyId] = cell.innerText
+                } 
+            }
+            else if(cell.innerText !== ''){
+                if(!editedObject.annotations){
+                    editedObject.annotations = []
+                }
+                editedObject.annotations.push({key:keyId, value:cell.innerText})
             }
         }
     })

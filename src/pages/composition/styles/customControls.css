@@ -49,9 +49,11 @@
 }
 
 .trackinfo-table th {
+    width: 40%;
     min-width: 75px;
 }
 
 .delete-row{
     cursor: pointer;
+    width: 10%;
 }
