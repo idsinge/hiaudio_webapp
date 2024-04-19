@@ -6,10 +6,10 @@ class DynamicModal {
         }
     }
 
-    dynamicModalDialog(message, idbtn, textBtn) {
+    dynamicModalDialog(message, idbtn, textBtnOK, textBtnCancel, popupTitle, backgroundHeader) {
         const html =
-            '<div class="modal-header bg-warning text-white">' +
-            '<h5 class="modal-title" id="dynamicModalLabel">Warning</h5>' +
+            '<div class="modal-header '+backgroundHeader+' text-white">' +
+            '<h5 class="modal-title" id="dynamicModalLabel">'+popupTitle+'</h5>' +
             '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
             '<span aria-hidden="true">&times;</span>' +
             '</button>' +
@@ -18,8 +18,8 @@ class DynamicModal {
             message +
             '</div>' +
             '<div class="modal-footer">' +
-            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>' +
-            '<button id=' + idbtn + ' type="button" class="btn btn-primary">' + textBtn + '</button>' +
+            '<button type="button" class="btn btn-secondary" data-dismiss="modal">'+textBtnCancel+'</button>' +
+            (idbtn!==null?'<button id=' + idbtn + ' type="button" class="btn btn-primary">' + textBtnOK + '</button>':'') +
             '</div>'
 
         this.setDynamicModalContent(html)

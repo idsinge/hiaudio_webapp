@@ -13,6 +13,7 @@ const editButton = document.getElementById('edittrackinfobutton')
 export const trackInfoHandler = () => {
     saveButtonHandler()
     cancelButtonHandler()
+    createNewAnnotationBtnHandler()
     editButton.addEventListener('click', clickEditButtonHandler, false)
 }
 
@@ -27,8 +28,40 @@ export const createTrackInfoTable = async (trackpos, trackname, trackid) => {
         CURRENT_TRACKINFO = data
         renderTable(data, null)
     } else {
-        alert('Error getting track info')
+        DynamicModal.dynamicModalDialog(
+            'Error getting track info', 
+            null, 
+            '',
+            'Close',
+            'Error',
+            'bg-danger'
+        )
         renderTable(null, trackname)
+    }
+}
+
+const createNewAnnotationBtnHandler = () => {
+    const buttonCreateNew = document.getElementById('btn-add-new-annot')
+    buttonCreateNew.onclick = () => {
+        const uniqueId = Date.now()
+        const tableContainer = document.getElementById('trackinfotablebody')
+        const html = `<tr class="linebreak"><th id='key-edit-${uniqueId}' contenteditable='true' scope='row'></th>
+        <td contenteditable='true' data-key=''></td>
+        <td id='btn-rem-${uniqueId}' class='delete-row' data-key=''>&nbsp;<i class="fa fa-trash text-danger"></i></td>
+        </tr>`
+        tableContainer.innerHTML += html
+        if(!EDIT_STATUS){
+            editButton.click()
+        }
+        const editKeyField = document.getElementById('key-edit-'+uniqueId)
+        editKeyField.addEventListener('input', function () {
+            const nextTD1 = editKeyField.parentNode.children[1]
+            nextTD1.dataset.key = editKeyField.innerText
+            const nextTD2 = editKeyField.parentNode.children[2]
+            nextTD2.dataset.key = editKeyField.innerText
+        })
+        const btnRmRow = document.getElementById('btn-rem-'+uniqueId)
+        btnRmRow.onclick = () => { deleteRow(btnRmRow) }
     }
 }
 
@@ -104,7 +137,14 @@ const createAnnotationsSection = (annnotations) => {
 }
 
 const deleteRow = (row) => {
-    DynamicModal.dynamicModalDialog('Delete: '+ '<b>'+row.dataset.key+'</b>'+ ' ?', 'btn-delete-row', 'Delete')
+    DynamicModal.dynamicModalDialog(
+        'Delete: '+ '<b>'+row.dataset.key+'</b>'+ ' ?', 
+        'btn-delete-row', 
+        'Delete',
+        'Cancel',
+        'Warning',
+        'bg-warning'
+    )
     document.getElementById('btn-delete-row').onclick = ()=>{
         doRowDeletion(row)
     }
@@ -119,7 +159,6 @@ const doRowDeletion = async (row) => {
         }
     }
     else {
-        console.log('NO UUID')
         row.parentNode.remove()
     }
     DynamicModal.closeDynamicModal()
@@ -174,7 +213,7 @@ const getEditedFields = () => {
                     editedObject[keyId] = cell.innerText
                 } 
             }
-            else if(cell.innerText !== ''){
+            else if(cell.innerText !== '' || (keyId !== '' && !RESERVED_KEYS.includes(keyId))){
                 if(!editedObject.annotations){
                     editedObject.annotations = []
                 }
@@ -211,8 +250,32 @@ const handleUpdatetrackInfo = (data, objEdited) => {
             const ee = playlist.getEventEmitter()
             ee.emit('updateview')
         }
+    } else if(data?.errors || typeof data === 'string'){
+        let messages = ''
+        if(data.errors){
+            data.errors.forEach(str => {
+                messages += str + '. '
+            })
+        } else {
+            messages = data
+        }        
+        DynamicModal.dynamicModalDialog(
+            'Error updating track info: ' + messages, 
+            null, 
+            '',
+            'Close',
+            'Error',
+            'bg-danger'
+        )
     } else {
-        alert('Error updating track info: ' + data)
+        DynamicModal.dynamicModalDialog(
+            'Unexpected error happened when updating track info', 
+            null, 
+            '',
+            'Close',
+            'Error',
+            'bg-danger'
+        )
     }
 }
 
