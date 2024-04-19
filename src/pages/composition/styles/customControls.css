@@ -41,3 +41,19 @@
 .italic {
    font-style: italic;
 }
+
+.trackinfo-table {
+    word-wrap: break-word;   
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.trackinfo-table th {
+    width: 40%;
+    min-width: 75px;
+}
+
+.delete-row{
+    cursor: pointer;
+    width: 10%;
+}

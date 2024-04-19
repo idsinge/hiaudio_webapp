@@ -4,7 +4,7 @@ import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, 
 import { setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
-import { trackInfoHandler } from './trackinfo'
+import { trackInfoHandler } from './trackinfo/trackinfo'
 
 export let CURRENT_USER_ID = null
 function Track(id, title, muted, soloed, gain, stereoPan, customClass) {
