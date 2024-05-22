@@ -2,7 +2,6 @@
   "name": "hiaudio",
   "version": "0.0.1",
   "description": "Simple Web DAW",
-  "main": "index.js",
   "author": "Telecom Paris",
   "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp",
   "scripts": {
