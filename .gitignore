@@ -2,4 +2,5 @@
 .DS_Store
 /dist
 /.cache
+/.parcel-cache
 src/common/js/config.js
