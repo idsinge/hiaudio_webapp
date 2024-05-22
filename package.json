@@ -6,7 +6,7 @@
   "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp",
   "scripts": {
     "dev": "parcel --no-cache src/*.html src/static/*.html --port 8000 --https --dist-dir ../public --public-url .",
-    "build": "parcel build src/*.html src/static/*.html --dist-dir ../public --public-url .",
+    "build": "parcel build 'src/*.html' 'src/static/*.html' --dist-dir ../public --public-url .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
