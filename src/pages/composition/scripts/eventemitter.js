@@ -490,6 +490,7 @@ ee.on('audiorenderingfinished', function (type, data, trackPos) {
 
 ee.on('finished', function () {
   console.log("The cursor has reached the end of the selection !");
+  $(".btn-group .btn-record").prop('disabled', false);
 
   if (isLooping) {
     playoutPromises.then(function() {
