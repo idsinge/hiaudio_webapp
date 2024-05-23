@@ -10071,6 +10071,7 @@ function init(options = {}, ee = event_emitter_default()()) {
   }
 
   const playlist = new Playlist();
+  const AudioContext = window.AudioContext || window.webkitAudioContext || false
   const ctx = config.ac || new AudioContext();
   playlist.setAudioContext(ctx);
   playlist.setSampleRate(config.sampleRate || ctx.sampleRate);
