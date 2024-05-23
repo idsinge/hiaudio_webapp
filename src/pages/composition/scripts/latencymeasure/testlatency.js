@@ -10,7 +10,9 @@ const warningMessageBeforeTest = `Please Make sure you are in a quiet place (so 
 
 export class TestLatency {
     
-    currentlatency = null
+    constructor() {
+        this.currentlatency = null
+    }
 
     static setCurrentLatency(latvalue){
         localStorage.setItem('latency', latvalue)
