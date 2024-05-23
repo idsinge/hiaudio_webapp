@@ -39,7 +39,7 @@ export class TestMic {
             console.log('MediaDevices.getUserMedia() not supported on your browser!')
         }
     }
-    getUserMediaOnSuccess = (stream) => {
+    getUserMediaOnSuccess(stream){
 
         const micGain = localStorage.getItem('micgain')
         this.CURRENT_GAIN_TEST_MIC = micGain ? parseInt(micGain) : this.CURRENT_GAIN_TEST_MIC
@@ -67,7 +67,7 @@ export class TestMic {
         this.mediaRecoderHandlers(mediaRecorder)
         this.uiHandlers()
     }
-    mediaRecoderHandlers = (mediaRecorder) => {
+    mediaRecoderHandlers(mediaRecorder){
         let chunks = []
         mediaRecorder.onstop = function (event) {
             const blob = new Blob(chunks, { type: mediaRecorder.mimeType })
@@ -79,7 +79,7 @@ export class TestMic {
             chunks.push(e.data)
         }
     }
-    draw = () => {
+    draw(){
         const me  = this
         const bufferLength = this.analyser.frequencyBinCount
         const dataArray = new Uint8Array(bufferLength)
