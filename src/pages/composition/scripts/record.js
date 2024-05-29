@@ -10,7 +10,7 @@ export class Recorder {
 
     init() {
         let userMediaStream
-        const constraints = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false }}
+        const constraints = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false, latency: 0 }}
         navigator.getUserMedia = (navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia ||

@@ -3,7 +3,7 @@ import { FileUploader } from './fileuploader'
 import WaveformPlaylist from './waveform-playlist.umd'
 import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
-import { TestLatency } from './latencymeasure/testlatency'
+import { TestLatencyMLS } from './latencymls/test'
 import { activateGoHomeLink, isSafari } from '../../../common/js/utils'
 
 const queryString = window.location.search
@@ -58,17 +58,22 @@ const testMicButtonForSafari  = () => {
     return ''
   }  
 }
+
+const newTestLatencyButton  = () => {
+  
+  return `<li class="nav-item">
+  <a class="nav-link" href="#" id="newtestlatency" data-toggle="modal" 
+    data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
+    Test Latency</a>`  
+}
+
 const createTestButtons = () => {
-  document.getElementById('useroptions').innerHTML = `<li class="nav-item">
-    <a class="nav-link" href="#" id="testlatency" data-toggle="modal" 
-      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-      Test Latency</a>
-  </li>${testMicButtonForSafari()}`
+  document.getElementById('useroptions').innerHTML = `${newTestLatencyButton()}${testMicButtonForSafari()}`
 }
 
 activateGoHomeLink()
 createTestButtons()
-TestLatency.initialize()
+TestLatencyMLS.initialize()
 
 if(compositionId === 'demopage'){ 
   alert(`WARNING: Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`)  

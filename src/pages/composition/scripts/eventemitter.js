@@ -5,7 +5,7 @@
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
 import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
 import { CURRENT_USER_ID } from './composition_helper'
-import { TestLatency } from './latencymeasure/testlatency'
+import { TestLatencyMLS } from './latencymls/test'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
 var ee = playlist.getEventEmitter();
@@ -176,11 +176,11 @@ const handleTestLatencyDialog = () => {
   $('#testLatencyModal').modal('show')
   document.getElementById('buttonOkTestLatency').onclick  = () => {
     $('#testLatencyModal').modal('hide')
-    TestLatency.start()
+    TestLatencyMLS.start()
   }
   document.getElementById('buttonNoTestLatency').onclick = () => {
       $('#testLatencyModal').modal('hide')
-      TestLatency.setCurrentLatency(0)
+      TestLatencyMLS.setCurrentLatency(0)
       startRecording(0)
   }  
 }
@@ -197,7 +197,7 @@ const startRecording = (currentLatency) => {
 
 $container.on("click", ".btn-record", function() {
   if(!isRecording){
-    const currentLatency = TestLatency.getCurrentLatency()
+    const currentLatency = TestLatencyMLS.getCurrentLatency()
     if(!currentLatency && currentLatency !== 0){
       handleTestLatencyDialog()
     } else {
