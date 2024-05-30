@@ -1,5 +1,7 @@
+import { isSafari } from '../../../../common/js/utils'
 import { drawResults, findPeak, clearCanvas, calculateCrossCorrelation } from './helper'
 import { generateMLS } from './mls'
+import { TestMic } from '../webdictaphone/webdictaphone'
 
 const CANVAS = `<div class="container" id="audio-area">
                     <p>
@@ -24,6 +26,35 @@ export class TestLatencyMLS {
         return TestLatencyMLS.currentlatency
     }
 
+    static getCorrectStreamForSafari(stream){
+        const safariVersionIndex = navigator.userAgent.indexOf('Version/')
+        const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
+        const safariVersion = parseFloat(versionString)        
+        if(isSafari && safariVersion > 16){
+            const micsource = TestLatencyMLS.audioContext.createMediaStreamSource(stream)
+            TestLatencyMLS.recordGainNode = TestLatencyMLS.audioContext.createGain()
+            micsource.connect(TestLatencyMLS.recordGainNode)
+            const micGain = localStorage.getItem('micgain')
+            const defaultGain = micGain ? parseInt(micGain) : 1
+            TestLatencyMLS.recordGainNode.gain.value = defaultGain
+            const dest = TestLatencyMLS.audioContext.createMediaStreamDestination()
+            TestLatencyMLS.recordGainNode.connect(dest)
+            return dest.stream
+        } else {
+            return stream
+        }
+    }
+    static setRecordGainNodeForTest(recordGainNode){
+        const safariVersionIndex = navigator.userAgent.indexOf('Version/')
+        const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
+        const safariVersion = parseFloat(versionString)        
+        if(isSafari && safariVersion > 16){
+          const testMic = new TestMic()
+          testMic.init(recordGainNode)
+        }
+    }
+
+
     static async initialize() {
 
         document.getElementById('page-header').insertAdjacentHTML('afterend', CANVAS)
@@ -39,7 +70,9 @@ export class TestLatencyMLS {
         TestLatencyMLS.audioContext = new AudioContext({latencyHint:0})
         const noisemls = generateMLS(16, 2)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate);
-        TestLatencyMLS.inputStream = inputStream
+        const userMediaStream =  TestLatencyMLS.getCorrectStreamForSafari(inputStream)
+        TestLatencyMLS.setRecordGainNodeForTest(TestLatencyMLS.recordGainNode)
+        TestLatencyMLS.inputStream = userMediaStream
         TestLatencyMLS.displayStart()
     }
 
