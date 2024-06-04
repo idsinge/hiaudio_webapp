@@ -129,26 +129,39 @@ export class TestLatencyMLS {
         noiseSource.buffer = TestLatencyMLS.noiseBuffer;
 
         noiseSource.connect(TestLatencyMLS.audioContext.destination);
+       
+        const doTheTest = () => {
+            const noiseSource = TestLatencyMLS.audioContext.createBufferSource();
 
-        TestLatencyMLS.audioContext.createMediaStreamSource(TestLatencyMLS.inputStream)
+            noiseSource.buffer = TestLatencyMLS.noiseBuffer;
 
-        let chunks = []
+            noiseSource.connect(TestLatencyMLS.audioContext.destination);
+            
+            TestLatencyMLS.audioContext.createMediaStreamSource(TestLatencyMLS.inputStream)
 
-        const mediaRecorder = new MediaRecorder(TestLatencyMLS.inputStream)
+            let chunks = []
 
-        mediaRecorder.ondataavailable = async (event) => {
-            chunks.push(event.data)
+            const mediaRecorder = new MediaRecorder(TestLatencyMLS.inputStream)
+
+            mediaRecorder.ondataavailable = async (event) => {
+                chunks.push(event.data)
+            }
+            mediaRecorder.onstop = async () => {
+                TestLatencyMLS.displayAudioTagElem(chunks, mediaRecorder.mimeType)
+            }
+
+            mediaRecorder.start()
+
+            noiseSource.start()
+            noiseSource.onended = function () {
+                mediaRecorder.stop()
+                TestLatencyMLS.finishTest()
+            }
         }
-        mediaRecorder.onstop = async () => {
-            TestLatencyMLS.displayAudioTagElem(chunks, mediaRecorder.mimeType)
-        }
-
-        mediaRecorder.start()
-
         noiseSource.start()
         noiseSource.onended = function () {
-            mediaRecorder.stop()
-            TestLatencyMLS.finishTest()
+            noiseSource.disconnect(TestLatencyMLS.audioContext.destination);
+            doTheTest()
         }
     }
 
@@ -180,6 +193,7 @@ export class TestLatencyMLS {
         const peak = findPeak(correlation)
         const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
         console.log('Latency = ', roundtriplatency + ' ms')
+        URL.revokeObjectURL(recordedAudio)
         TestLatencyMLS.setCurrentLatency(roundtriplatency)
         TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
         TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
