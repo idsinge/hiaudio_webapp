@@ -18,6 +18,9 @@ export class Recorder {
 
         const gotStream = (stream) => {            
             userMediaStream = this.getCorrectStreamForSafari(stream)  
+            userMediaStream.getTracks().forEach(async function(track) {                
+                console.log(track.getSettings());
+            })
             playlist.initRecorder(userMediaStream, undefined, "Voice Track");
             $(".btn-record").removeClass("disabled")
             this.setRecordGainNodeForTest(this.recordGainNode)

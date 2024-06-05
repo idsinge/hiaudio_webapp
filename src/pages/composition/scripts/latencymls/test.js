@@ -73,6 +73,9 @@ export class TestLatencyMLS {
         const userMediaStream =  TestLatencyMLS.getCorrectStreamForSafari(inputStream)
         TestLatencyMLS.setRecordGainNodeForTest(TestLatencyMLS.recordGainNode)
         TestLatencyMLS.inputStream = userMediaStream
+        userMediaStream.getTracks().forEach(async function(track) {
+            console.log(track.getSettings());
+        })
         TestLatencyMLS.displayStart()
     }
 
