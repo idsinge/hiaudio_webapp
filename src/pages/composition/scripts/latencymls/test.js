@@ -1,14 +1,13 @@
 import { isSafari } from '../../../../common/js/utils'
+import detectBrowser from '../../../../common/js/detect-browser.js'
 import { drawResults, findPeak, clearCanvas, calculateCrossCorrelation } from './helper'
 import { generateMLS } from './mls'
 import { TestMic } from '../webdictaphone/webdictaphone'
 
 const CANVAS = `<div class="container" id="audio-area">
-                    <p>
-                        <audio id="recordedaudio" preload="auto" controls="controls"></audio>
-                        <a id="downloadableaudio" class="btn btn-outline-primary" href="" role="button" download disabled  onKeyPress="">Download recording</a>
-                    </p>
                     <canvas id="leftChannelCanvas" width="800" height="100" style="border:1px solid #000000;"></canvas>
+                    <canvas id="rightChannelCanvas" width="800" height="100" style="border:1px solid #000000;"></canvas>
+                    <canvas id="autocorrelationCanvas1" style="border:1px solid #000000;"></canvas>
                     <canvas id="autocorrelationCanvas2" style="border:1px solid #000000;"></canvas>
                 </div>`
 
@@ -74,7 +73,7 @@ export class TestLatencyMLS {
         TestLatencyMLS.setRecordGainNodeForTest(TestLatencyMLS.recordGainNode)
         TestLatencyMLS.inputStream = userMediaStream
         userMediaStream.getTracks().forEach(async function(track) {
-            console.log(track.getSettings());
+            console.log('getSettings', track.getSettings())
         })
         TestLatencyMLS.displayStart()
     }
@@ -82,7 +81,13 @@ export class TestLatencyMLS {
     static start() {
 
         $('#testlatency').popover('hide')
-        const constraints = { audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, latency: 0 } }
+        const resultsDefault = detectBrowser()
+        console.log(resultsDefault)
+        let echoCancel = false
+        // if((resultsDefault.os === 'linux' || resultsDefault.os === 'windows') && (resultsDefault.browser === 'chrome')){
+        //     echoCancel = true
+        // }
+        const constraints = { audio: { echoCancellation: echoCancel, noiseSuppression: false, autoGainControl: false, latency: 0, channelCount: 1 } }
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(constraints).then(TestLatencyMLS.onAudioPermissionGranted).catch(TestLatencyMLS.onAudioInputPermissionDenied)
         }
@@ -182,16 +187,16 @@ export class TestLatencyMLS {
     static async displayAudioTagElem(chunks, mimeType) {
 
         const recordedAudio = new Blob(chunks, { type: mimeType })
-        const recordedAudioURL = URL.createObjectURL(recordedAudio)
+       //const recordedAudioURL = URL.createObjectURL(recordedAudio)
         //const signalrecorded = await fetchAudioContext(recordedAudioURL, TestLatencyMLS.audioContext)
         const signalrecorded = await TestLatencyMLS.blobToAudioBuffer(TestLatencyMLS.audioContext, recordedAudio)
         let mlssignal = TestLatencyMLS.noiseBuffer
 
-        //console.log('signalrecorded', signalrecorded)
-        //console.log('mlssignal', mlssignal)        
+        console.log('signalrecorded', signalrecorded)
+        console.log('mlssignal', mlssignal)        
         const maxDelayExpected = 0.300
         const maxLag = maxDelayExpected * TestLatencyMLS.audioContext.sampleRate
-        const correlation = calculateCrossCorrelation(signalrecorded, mlssignal, maxLag)
+        const correlation = calculateCrossCorrelation(signalrecorded.getChannelData(0), mlssignal.getChannelData(0), maxLag)
 
         const peak = findPeak(correlation)
         const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
@@ -201,7 +206,15 @@ export class TestLatencyMLS {
         TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
         TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
         TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
-        drawResults(signalrecorded, recordedAudioURL, correlation)
+        drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
+        console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
+        if(signalrecorded.numberOfChannels>1){
+            const correlation2 = calculateCrossCorrelation(signalrecorded.getChannelData(1), mlssignal.getChannelData(0), maxLag)
+            drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', correlation2)
+            const peak2 = findPeak(correlation2)
+            const roundtriplatency2 = peak2.peakIndex / mlssignal.sampleRate * 1000
+            console.log('Latency 2 = ', roundtriplatency2 + ' ms')
+        }
     }
 
     /* White Noise Mozilla: https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode*/

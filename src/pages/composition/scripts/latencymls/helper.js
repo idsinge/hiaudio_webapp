@@ -62,21 +62,6 @@ export function drawAutocorrelation(autocorrelation, idcanvas) {
         const y = (1 - (i / 5)) * (height - padding) + padding / 2
         ctx.fillText(value, padding / 2 - 10, y)
     }
-
-    // Add a mouse click event listener to the canvas
-    canvas.addEventListener('click', function (event) {
-        const rect = canvas.getBoundingClientRect()
-        const x = event.clientX - rect.left
-        const y = event.clientY - rect.top
-
-        // Check if the click is near the bottom (where the X axis is)
-        if (y >= height - padding) {
-            const index = Math.floor((x - padding / 2) / ((width - padding) / autocorrelation.length))
-            if (index >= 0 && index < autocorrelation.length) {
-                alert(`X value: ${index}`)
-            }
-        }
-    })
 }
 
 
@@ -95,6 +80,12 @@ export function findPeak(autocorrelation) {
 }
 
 export const clearCanvas = () => {
+    const canvas1 = document.getElementById('autocorrelationCanvas1')
+    canvas1.width = window.innerWidth / 2
+    canvas1.height = window.innerHeight / 2
+    const ctx1 = canvas1.getContext('2d')
+    ctx1.clearRect(0, 0, canvas1.width, canvas1.height)
+
     const canvas2 = document.getElementById('autocorrelationCanvas2')
     canvas2.width = window.innerWidth / 2
     canvas2.height = window.innerHeight / 2
@@ -104,6 +95,10 @@ export const clearCanvas = () => {
     const canvasLeft = document.getElementById('leftChannelCanvas')
     const ctxLeft = canvasLeft.getContext('2d')
     ctxLeft.clearRect(0, 0, canvasLeft.width, canvasLeft.height)
+
+    const canvasRight = document.getElementById('rightChannelCanvas')
+    const ctxRight = canvasRight.getContext('2d')
+    ctxRight.clearRect(0, 0, canvasRight.width, canvasRight.height)
 }
 
 export async function fetchAudioContext(url, audioContext) {
@@ -113,9 +108,7 @@ export async function fetchAudioContext(url, audioContext) {
     return decodeAudioData
 }
 
-export function calculateCrossCorrelation(inputDataBuffer1, inputDataBuffer2, maxLag) {
-    let data1 = inputDataBuffer1.getChannelData(0)
-    let data2 = inputDataBuffer2.getChannelData(0)
+export function calculateCrossCorrelation(data1, data2, maxLag) {
     const n1 = data1.length, n2 = data2.length
 
     let crossCorrelations = new Array(maxLag + 1).fill(0)
@@ -131,12 +124,8 @@ export function calculateCrossCorrelation(inputDataBuffer1, inputDataBuffer2, ma
     return crossCorrelations
 }
 
-export const drawResults = (signalrecorded, recordedAudioURL, correlation) => {
-    const canvasLeft = document.getElementById('leftChannelCanvas')
-    drawBuffer(canvasLeft.width, canvasLeft.height, canvasLeft.getContext('2d'), signalrecorded.getChannelData(0))
-    drawAutocorrelation(correlation, 'autocorrelationCanvas2')
-
-    document.getElementById('recordedaudio').src = recordedAudioURL
-    document.getElementById('downloadableaudio').href = recordedAudioURL
-    document.getElementById('downloadableaudio').disabled = false
+export const drawResults = (signalrecorded, audioCanvasId, corrCanvasId, correlation) => {
+    const canvasSide = document.getElementById(audioCanvasId)
+    drawBuffer(canvasSide.width, canvasSide.height, canvasSide.getContext('2d'), signalrecorded)
+    drawAutocorrelation(correlation, corrCanvasId)
 }

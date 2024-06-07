@@ -1,6 +1,7 @@
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/record.js */
 import { playlist } from './composition'
 import { isSafari } from '../../../common/js/utils'
+import detectBrowser from '../../../common/js/detect-browser.js'
 import { TestMic } from './webdictaphone/webdictaphone'
 
 export class Recorder {
@@ -10,7 +11,13 @@ export class Recorder {
 
     init() {
         let userMediaStream
-        const constraints = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false, latency: 0 }}
+        //const resultsDefault = detectBrowser()
+        //console.log(resultsDefault)
+        let echoCancel = false
+        // if((resultsDefault.os === 'linux' || resultsDefault.os === 'windows') && (resultsDefault.browser === 'chrome')){
+        //     echoCancel = true
+        // }
+        const constraints = { audio: {echoCancellation:echoCancel, noiseSuppression:false, autoGainControl:false, latency: 0, channelCount: 1 }}
         navigator.getUserMedia = (navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia ||
@@ -19,7 +26,7 @@ export class Recorder {
         const gotStream = (stream) => {            
             userMediaStream = this.getCorrectStreamForSafari(stream)  
             userMediaStream.getTracks().forEach(async function(track) {                
-                console.log(track.getSettings());
+                console.log('getSettings', track.getSettings())
             })
             playlist.initRecorder(userMediaStream, undefined, "Voice Track");
             $(".btn-record").removeClass("disabled")
