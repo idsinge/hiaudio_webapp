@@ -19,6 +19,8 @@ export class TestLatencyMLS {
 
     silenceBuffer = null
 
+    debugCanvas = false
+
     static setCurrentLatency(latvalue) {
         localStorage.setItem('latency', latvalue)
         TestLatencyMLS.currentlatency = latvalue
@@ -58,7 +60,12 @@ export class TestLatencyMLS {
 
     static async initialize() {
 
-        document.getElementById('page-header').insertAdjacentHTML('afterend', CANVAS)
+        const debugCanvas = document.location.search.indexOf('debug') !== -1
+         
+        if(debugCanvas){
+            TestLatencyMLS.debugCanvas = debugCanvas
+            document.getElementById('page-header').insertAdjacentHTML('afterend', CANVAS)
+        }        
         const currentlatency = localStorage.getItem('latency')
         TestLatencyMLS.currentlatency = currentlatency ? parseInt(currentlatency) : null
         TestLatencyMLS.audioContext = TestLatencyMLS.audioNode = null
@@ -70,14 +77,16 @@ export class TestLatencyMLS {
         let AudioContext = window.AudioContext || window.webkitAudioContext || false
         TestLatencyMLS.audioContext = new AudioContext({latencyHint:0})
         const noisemls = generateMLS(16, 2)
-        TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate);
-        TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate);
+        TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
+        TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
         const userMediaStream =  TestLatencyMLS.getCorrectStreamForSafari(inputStream)
         TestLatencyMLS.setRecordGainNodeForTest(TestLatencyMLS.recordGainNode)
         TestLatencyMLS.inputStream = userMediaStream
-        userMediaStream.getTracks().forEach(async function(track) {
-            console.log('getSettings', track.getSettings())
-        })
+        if(TestLatencyMLS.debugCanvas){
+            userMediaStream.getTracks().forEach(async function(track) {
+                console.log('getSettings', track.getSettings())
+            })
+        }
         TestLatencyMLS.displayStart()
     }
 
@@ -112,7 +121,10 @@ export class TestLatencyMLS {
         $('#testlatency').popover({
             trigger: 'focus'
         })
-        clearCanvas()
+
+        if(TestLatencyMLS.debugCanvas){
+            clearCanvas()
+        }
     }
 
     static onAudioInputPermissionDenied(error) {
@@ -153,7 +165,7 @@ export class TestLatencyMLS {
             splitter.connect(merger, 0, 0); // Connect only the left channel to the right output
             merger.connect(TestLatencyMLS.audioContext.destination);
 
-            //noiseSource.connect(TestLatencyMLS.audioContext.destination);
+            //noiseSource.connect(TestLatencyMLS.audioContext.destination)
             
             TestLatencyMLS.audioContext.createMediaStreamSource(TestLatencyMLS.inputStream)
 
@@ -178,7 +190,7 @@ export class TestLatencyMLS {
         }
         silenceSource.start()
         silenceSource.onended = function () {
-            silenceSource.disconnect(TestLatencyMLS.audioContext.destination);
+            silenceSource.disconnect(TestLatencyMLS.audioContext.destination)
             doTheTest()
         }
     }
@@ -201,9 +213,10 @@ export class TestLatencyMLS {
         //const signalrecorded = await fetchAudioContext(recordedAudioURL, TestLatencyMLS.audioContext)
         const signalrecorded = await TestLatencyMLS.blobToAudioBuffer(TestLatencyMLS.audioContext, recordedAudio)
         let mlssignal = TestLatencyMLS.noiseBuffer
-
-        console.log('signalrecorded', signalrecorded)
-        console.log('mlssignal', mlssignal)        
+        if(TestLatencyMLS.debugCanvas){
+            console.log('signalrecorded', signalrecorded)
+            console.log('mlssignal', mlssignal)
+        }
         const maxDelayExpected = 0.500
         const maxLag = maxDelayExpected * TestLatencyMLS.audioContext.sampleRate
         const correlation = calculateCrossCorrelation(signalrecorded.getChannelData(0), mlssignal.getChannelData(0), maxLag)
@@ -216,14 +229,16 @@ export class TestLatencyMLS {
         TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
         TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
         TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
-        drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
-        console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
-        if(signalrecorded.numberOfChannels>1){
-            const correlation2 = calculateCrossCorrelation(signalrecorded.getChannelData(1), mlssignal.getChannelData(0), maxLag)
-            drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', correlation2)
-            const peak2 = findPeak(correlation2)
-            const roundtriplatency2 = peak2.peakIndex / mlssignal.sampleRate * 1000
-            console.log('Latency 2 = ', roundtriplatency2 + ' ms')
+        if(TestLatencyMLS.debugCanvas) {
+            drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
+            console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
+            if(signalrecorded.numberOfChannels>1){
+                const correlation2 = calculateCrossCorrelation(signalrecorded.getChannelData(1), mlssignal.getChannelData(0), maxLag)
+                drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', correlation2)
+                const peak2 = findPeak(correlation2)
+                const roundtriplatency2 = peak2.peakIndex / mlssignal.sampleRate * 1000
+                console.log('Latency 2 = ', roundtriplatency2 + ' ms')
+            }
         }
     }
 
@@ -232,29 +247,23 @@ export class TestLatencyMLS {
 
         // IMPORTANT: Check the frequency of the system if different from 44100
 
-        const audioBuffer = TestLatencyMLS.audioContext.createBuffer(1, mlsSequence.length, frequency);
-
-        let bufferData = audioBuffer.getChannelData(0);
-
+        const audioBuffer = TestLatencyMLS.audioContext.createBuffer(1, mlsSequence.length, frequency)
+        let bufferData = audioBuffer.getChannelData(0)
         for (let i = 0; i < mlsSequence.length; i++) {
             // Convert binary sequence to audio signal
-            bufferData[i] = mlsSequence[i] === 1 ? 1.0 : -1.0;  // Map 1 to 1.0 and 0 to -1.0
+            bufferData[i] = mlsSequence[i] === 1 ? 1.0 : -1.0  // Map 1 to 1.0 and 0 to -1.0
         }
-
         return audioBuffer
     }
 
     static generateSilence(mlsSequence, frequency = 44100) {  
 
-        const audioBuffer = TestLatencyMLS.audioContext.createBuffer(1, mlsSequence.length, frequency);
-
-        let bufferData = audioBuffer.getChannelData(0);
-        console.log(mlsSequence.length/4)
-        const silenght = Math.trunc(mlsSequence.length/4)
+        const audioBuffer = TestLatencyMLS.audioContext.createBuffer(1, mlsSequence.length, frequency)
+        let bufferData = audioBuffer.getChannelData(0)        
+        const silenght = Math.trunc(mlsSequence.length/8)
         for (let i = 0; i < silenght ; i++) {
             bufferData[i] = 0
         }
-
         return audioBuffer
     }
 }
