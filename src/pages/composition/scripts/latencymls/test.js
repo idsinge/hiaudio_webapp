@@ -17,6 +17,8 @@ export class TestLatencyMLS {
 
     noiseBuffer = null
 
+    silenceBuffer = null
+
     static setCurrentLatency(latvalue) {
         localStorage.setItem('latency', latvalue)
         TestLatencyMLS.currentlatency = latvalue
@@ -69,6 +71,7 @@ export class TestLatencyMLS {
         TestLatencyMLS.audioContext = new AudioContext({latencyHint:0})
         const noisemls = generateMLS(16, 2)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate);
+        TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate);
         const userMediaStream =  TestLatencyMLS.getCorrectStreamForSafari(inputStream)
         TestLatencyMLS.setRecordGainNodeForTest(TestLatencyMLS.recordGainNode)
         TestLatencyMLS.inputStream = userMediaStream
@@ -132,11 +135,11 @@ export class TestLatencyMLS {
 
     static prepareAudioToPlayAndrecord() {
 
-        const noiseSource = TestLatencyMLS.audioContext.createBufferSource();
+        const silenceSource = TestLatencyMLS.audioContext.createBufferSource();
 
-        noiseSource.buffer = TestLatencyMLS.noiseBuffer;
+        silenceSource.buffer = TestLatencyMLS.silenceBuffer;
 
-        noiseSource.connect(TestLatencyMLS.audioContext.destination);
+        silenceSource.connect(TestLatencyMLS.audioContext.destination);
        
         const doTheTest = () => {
             const noiseSource = TestLatencyMLS.audioContext.createBufferSource();
@@ -166,9 +169,9 @@ export class TestLatencyMLS {
                 TestLatencyMLS.finishTest()
             }
         }
-        noiseSource.start()
-        noiseSource.onended = function () {
-            noiseSource.disconnect(TestLatencyMLS.audioContext.destination);
+        silenceSource.start()
+        silenceSource.onended = function () {
+            silenceSource.disconnect(TestLatencyMLS.audioContext.destination);
             doTheTest()
         }
     }
@@ -229,6 +232,20 @@ export class TestLatencyMLS {
         for (let i = 0; i < mlsSequence.length; i++) {
             // Convert binary sequence to audio signal
             bufferData[i] = mlsSequence[i] === 1 ? 1.0 : -1.0;  // Map 1 to 1.0 and 0 to -1.0
+        }
+
+        return audioBuffer
+    }
+
+    static generateSilence(mlsSequence, frequency = 44100) {  
+
+        const audioBuffer = TestLatencyMLS.audioContext.createBuffer(1, mlsSequence.length, frequency);
+
+        let bufferData = audioBuffer.getChannelData(0);
+        console.log(mlsSequence.length/4)
+        const silenght = Math.trunc(mlsSequence.length/4)
+        for (let i = 0; i < silenght ; i++) {
+            bufferData[i] = 0
         }
 
         return audioBuffer
