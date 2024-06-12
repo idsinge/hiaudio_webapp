@@ -146,7 +146,14 @@ export class TestLatencyMLS {
 
             noiseSource.buffer = TestLatencyMLS.noiseBuffer;
 
-            noiseSource.connect(TestLatencyMLS.audioContext.destination);
+            const splitter = TestLatencyMLS.audioContext.createChannelSplitter(2);
+            const merger = TestLatencyMLS.audioContext.createChannelMerger(2);
+
+            noiseSource.connect(splitter);
+            splitter.connect(merger, 0, 0); // Connect only the left channel to the right output
+            merger.connect(TestLatencyMLS.audioContext.destination);
+
+            //noiseSource.connect(TestLatencyMLS.audioContext.destination);
             
             TestLatencyMLS.audioContext.createMediaStreamSource(TestLatencyMLS.inputStream)
 
@@ -197,7 +204,7 @@ export class TestLatencyMLS {
 
         console.log('signalrecorded', signalrecorded)
         console.log('mlssignal', mlssignal)        
-        const maxDelayExpected = 0.300
+        const maxDelayExpected = 0.500
         const maxLag = maxDelayExpected * TestLatencyMLS.audioContext.sampleRate
         const correlation = calculateCrossCorrelation(signalrecorded.getChannelData(0), mlssignal.getChannelData(0), maxLag)
 
