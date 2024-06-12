@@ -76,7 +76,7 @@ export class TestLatencyMLS {
     static onAudioPermissionGranted(inputStream) {
         let AudioContext = window.AudioContext || window.webkitAudioContext || false
         TestLatencyMLS.audioContext = new AudioContext({latencyHint:0})
-        const noisemls = generateMLS(16, 2)
+        const noisemls = generateMLS(15)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
         TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
         const userMediaStream =  TestLatencyMLS.getCorrectStreamForSafari(inputStream)
