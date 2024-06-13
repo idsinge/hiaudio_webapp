@@ -73,7 +73,7 @@ const createTestButtons = () => {
 
 activateGoHomeLink()
 createTestButtons()
-TestLatencyMLS.initialize()
+TestLatencyMLS.initialize(playlist.ac)
 
 if(compositionId === 'demopage'){ 
   alert(`WARNING: Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`)  
