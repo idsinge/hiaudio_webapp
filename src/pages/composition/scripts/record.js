@@ -1,7 +1,6 @@
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/record.js */
 import { playlist } from './composition'
-import { isSafari } from '../../../common/js/utils'
-import detectBrowser from '../../../common/js/detect-browser.js'
+import { isSafari, MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 import { TestMic } from './webdictaphone/webdictaphone'
 
 export class Recorder {
@@ -11,13 +10,6 @@ export class Recorder {
 
     init() {
         let userMediaStream
-        //const resultsDefault = detectBrowser()
-        //console.log(resultsDefault)
-        let echoCancel = false
-        // if((resultsDefault.os === 'linux' || resultsDefault.os === 'windows') && (resultsDefault.browser === 'chrome')){
-        //     echoCancel = true
-        // }
-        const constraints = { audio: {echoCancellation:echoCancel, noiseSuppression:false, autoGainControl:false, latency: 0, channelCount: 1 }}
         navigator.getUserMedia = (navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia ||
@@ -38,12 +30,12 @@ export class Recorder {
         }
 
         if (navigator.mediaDevices) {            
-            navigator.mediaDevices.getUserMedia(constraints)            
+            navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS)            
                 .then(gotStream)
                 .catch(logError)
         } else if (navigator.getUserMedia && 'MediaRecorder' in window) {
             navigator.getUserMedia(
-                constraints,
+                MEDIA_CONSTRAINTS,
                 gotStream,
                 logError
             )

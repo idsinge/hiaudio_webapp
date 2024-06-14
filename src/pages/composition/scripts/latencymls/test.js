@@ -1,4 +1,4 @@
-import { isSafari } from '../../../../common/js/utils'
+import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
 import detectBrowser from '../../../../common/js/detect-browser.js'
 import { drawResults, findPeak, clearCanvas, calculateCrossCorrelation } from './helper'
 import { generateMLS } from './mls'
@@ -61,7 +61,7 @@ export class TestLatencyMLS {
 
 
     static async initialize(playlistaudctxt) {
-        console.log(playlistaudctxt)
+        console.log('AudioContext', playlistaudctxt)
         const debugCanvas = document.location.search.indexOf('debug') !== -1
          
         if(debugCanvas){
@@ -77,8 +77,6 @@ export class TestLatencyMLS {
     }
 
     static onAudioPermissionGranted(inputStream) {
-        let AudioContext = window.AudioContext || window.webkitAudioContext || false
-        //TestLatencyMLS.audioContext = new AudioContext({latencyHint:0})
         TestLatencyMLS.audioContext = TestLatencyMLS.playlistAudCtxt
         const noisemls = generateMLS(15)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
@@ -97,15 +95,10 @@ export class TestLatencyMLS {
     static start() {
 
         $('#testlatency').popover('hide')
-        const resultsDefault = detectBrowser()
-        console.log(resultsDefault)
-        let echoCancel = false
-        // if((resultsDefault.os === 'linux' || resultsDefault.os === 'windows') && (resultsDefault.browser === 'chrome')){
-        //     echoCancel = true
-        // }
-        const constraints = { audio: { echoCancellation: echoCancel, noiseSuppression: false, autoGainControl: false, latency: 0, channelCount: 1 } }
+        const browserId = detectBrowser()
+        console.log(browserId)
         if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia(constraints).then(TestLatencyMLS.onAudioPermissionGranted).catch(TestLatencyMLS.onAudioInputPermissionDenied)
+            navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatencyMLS.onAudioPermissionGranted).catch(TestLatencyMLS.onAudioInputPermissionDenied)
         }
         else {
             TestLatencyMLS.onAudioInputPermissionDenied(`Can't access getUserMedia.`)

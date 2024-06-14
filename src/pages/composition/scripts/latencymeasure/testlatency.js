@@ -1,6 +1,6 @@
 /* Source: https://github.com/superpoweredSDK/WebBrowserAudioLatencyMeasurement */
 import { latencyMeasurer } from './latencyMeasurer.js'
-import { isSafari } from '../../../../common/js/utils'
+import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
 import { playlist } from '../composition'
 
 export const NUMBER_TRIALS = 4
@@ -134,9 +134,9 @@ export class TestLatency {
         let AudioContext = window.AudioContext || window.webkitAudioContext || false
         TestLatency.audioContext = new AudioContext({ latencyHint: 0 })
         TestLatency.data.samplerate = TestLatency.audioContext.sampleRate
-        const constraints = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false }}
+        
         if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia(constraints).then(TestLatency.onAudioPermissionGranted).catch(TestLatency.onAudioInputPermissionDenied)
+            navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatency.onAudioPermissionGranted).catch(TestLatency.onAudioInputPermissionDenied)
         }
         else {
             TestLatency.onAudioInputPermissionDenied(`Can't access getUserMedia.`)
