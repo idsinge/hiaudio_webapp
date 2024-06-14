@@ -5,7 +5,6 @@
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
 import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
 import { CURRENT_USER_ID } from './composition_helper'
-import { TestLatencyMLS } from './latencymls/test'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
 var ee = playlist.getEventEmitter();
@@ -172,19 +171,6 @@ $container.on("click", ".btn-clear", function() {
   ee.emit("clear");
 });
 
-const handleTestLatencyDialog = () => {  
-  $('#testLatencyModal').modal('show')
-  document.getElementById('buttonOkTestLatency').onclick  = () => {
-    $('#testLatencyModal').modal('hide')
-    TestLatencyMLS.start()
-  }
-  document.getElementById('buttonNoTestLatency').onclick = () => {
-      $('#testLatencyModal').modal('hide')
-      TestLatencyMLS.setCurrentLatency(0)
-      startRecording(0)
-  }  
-}
-
 const startRecording = (currentLatency) => {
   if(!isRecording){
     isRecording = true;  
@@ -197,12 +183,10 @@ const startRecording = (currentLatency) => {
 
 $container.on("click", ".btn-record", function() {
   if(!isRecording){
-    const currentLatency = TestLatencyMLS.getCurrentLatency()
-    if(!currentLatency && currentLatency !== 0){
-      handleTestLatencyDialog()
-    } else {
-      startRecording(currentLatency)
-    }
+    let currentLatency = localStorage.getItem('latency')
+    currentLatency = currentLatency? parseInt(currentLatency):0
+    console.log('current latency: ', currentLatency)
+    startRecording(currentLatency)
   }
 });
 

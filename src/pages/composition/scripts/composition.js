@@ -4,6 +4,8 @@ import WaveformPlaylist from './waveform-playlist.umd'
 import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
 import { TestLatencyMLS } from './latencymls/test'
+import { TestLatency } from './latencymeasure/testlatency'
+import detectBrowser from '../../../common/js/detect-browser.js'
 import { activateGoHomeLink, isSafari } from '../../../common/js/utils'
 
 const queryString = window.location.search
@@ -42,6 +44,8 @@ export const trackHandler = new TrackHandler()
 export const fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
 export const recorder = new Recorder()
 
+export const TEST_LAT_BTN_ID = 'testlatencybtn'
+
 const compositionId = COMPOSITION_ID
 
 const testMicButtonForSafari  = () => {
@@ -62,9 +66,11 @@ const testMicButtonForSafari  = () => {
 const newTestLatencyButton  = () => {
   
   return `<li class="nav-item">
-  <a class="nav-link" href="#" id="newtestlatency" data-toggle="modal" 
+  <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
     data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-    Test Latency</a>`  
+    Test Latency</a>
+</li>
+`  
 }
 
 const createTestButtons = () => {
@@ -73,7 +79,13 @@ const createTestButtons = () => {
 
 activateGoHomeLink()
 createTestButtons()
-TestLatencyMLS.initialize(playlist.ac)
+const browserId = detectBrowser()
+console.log(browserId)
+if(browserId.os === 'iphone' || browserId.os === 'ipad' || browserId.os === 'android'){
+  TestLatency.initialize()
+} else {
+  TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
+}
 
 if(compositionId === 'demopage'){ 
   alert(`WARNING: Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`)  

@@ -1,7 +1,7 @@
 /* Source: https://github.com/superpoweredSDK/WebBrowserAudioLatencyMeasurement */
 import { latencyMeasurer } from './latencyMeasurer.js'
 import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
-import { playlist } from '../composition'
+import { playlist, TEST_LAT_BTN_ID } from '../composition'
 
 export const NUMBER_TRIALS = 4
 const TOTAL_TRIALS = NUMBER_TRIALS - 1
@@ -29,7 +29,7 @@ export class TestLatency {
 
         TestLatency.audioContext = TestLatency.audioNode = null
 
-        TestLatency.content = document.getElementById('testlatency')
+        TestLatency.content = document.getElementById(TEST_LAT_BTN_ID)        
         
         let audioWorklet = (typeof AudioWorkletNode === 'function') ? 1 : 0
         TestLatency.data = {
@@ -50,8 +50,8 @@ export class TestLatency {
         TestLatency.startbutton.classList.add('btn-outline-success')
         TestLatency.startbutton.onclick = TestLatency.start
         TestLatency.content.appendChild(TestLatency.startbutton)
-        $('#testlatency').popover('hide')
-        $('#testlatency').popover({
+        $('#'+TEST_LAT_BTN_ID).popover('hide')
+        $('#'+TEST_LAT_BTN_ID).popover({
             trigger: 'focus'            
         })
     }
@@ -64,11 +64,11 @@ export class TestLatency {
         if (message.latency > 0) {
             TestLatency.setCurrentLatency(message.latency)
             const trialNum = message.state - 1
-            $('#testlatency').attr('data-content', trialNum + '/' + TOTAL_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
-            $('#testlatency').popover('show')
+            $('#'+TEST_LAT_BTN_ID).attr('data-content', trialNum + '/' + TOTAL_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
+            $('#'+TEST_LAT_BTN_ID).popover('show')
         } else {
-            $('#testlatency').attr('data-content', 'No input detected')
-            $('#testlatency').popover('show')
+            $('#'+TEST_LAT_BTN_ID).attr('data-content', 'No input detected')
+            $('#'+TEST_LAT_BTN_ID).popover('show')
         }
        
         if (message.state >= NUMBER_TRIALS) {
@@ -94,7 +94,7 @@ export class TestLatency {
         TestLatency.startbutton.classList.remove('btn-outline-danger')
         TestLatency.startbutton.classList.add('btn-outline-primary')
         TestLatency.startbutton.onclick = TestLatency.displayStart
-        $('#testlatency').popover('hide') 
+        $('#'+TEST_LAT_BTN_ID).popover('hide') 
     }
 
     static onAudioPermissionGranted(inputStream) {
@@ -120,8 +120,8 @@ export class TestLatency {
         TestLatency.onAudioSetupFinished()     
     }
 
-    static start() {
-        $('#testlatency').popover('hide')
+    static async start() {
+        $('#'+TEST_LAT_BTN_ID).popover('hide')
         if(!TestLatency.getCurrentLatency()){
             const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
             if(isSafari){

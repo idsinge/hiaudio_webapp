@@ -1,8 +1,9 @@
 import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
-import detectBrowser from '../../../../common/js/detect-browser.js'
 import { drawResults, findPeak, clearCanvas, calculateCrossCorrelation } from './helper'
 import { generateMLS } from './mls'
 import { TestMic } from '../webdictaphone/webdictaphone'
+
+const warningMessageBeforeTest = `Please, be careful as a noise will be played through the speakers, so don't put the volume to the max. `
 
 const CANVAS = `<div class="container" id="audio-area">
                     <canvas id="leftChannelCanvas" width="800" height="100" style="border:1px solid #000000;"></canvas>
@@ -21,7 +22,7 @@ export class TestLatencyMLS {
 
     debugCanvas = false
 
-    playlistAudCtxt = null
+    playlist = null
 
     static setCurrentLatency(latvalue) {
         localStorage.setItem('latency', latvalue)
@@ -60,8 +61,8 @@ export class TestLatencyMLS {
     }
 
 
-    static async initialize(playlistaudctxt) {
-        console.log('AudioContext', playlistaudctxt)
+    static async initialize(playlist, btnId) {
+        console.log('AudioContext', playlist.ac)
         const debugCanvas = document.location.search.indexOf('debug') !== -1
          
         if(debugCanvas){
@@ -70,14 +71,14 @@ export class TestLatencyMLS {
         }        
         const currentlatency = localStorage.getItem('latency')
         TestLatencyMLS.currentlatency = currentlatency ? parseInt(currentlatency) : null
-        TestLatencyMLS.playlistAudCtxt = playlistaudctxt
+        TestLatencyMLS.playlist = playlist
         TestLatencyMLS.audioContext = TestLatencyMLS.audioNode = null
-        TestLatencyMLS.content = document.getElementById('newtestlatency')
+        TestLatencyMLS.content = document.getElementById(btnId)
         TestLatencyMLS.start()
     }
 
     static onAudioPermissionGranted(inputStream) {
-        TestLatencyMLS.audioContext = TestLatencyMLS.playlistAudCtxt
+        TestLatencyMLS.audioContext = TestLatencyMLS.playlist.ac
         const noisemls = generateMLS(15)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
         TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
@@ -94,9 +95,7 @@ export class TestLatencyMLS {
 
     static start() {
 
-        $('#testlatency').popover('hide')
-        const browserId = detectBrowser()
-        console.log(browserId)
+        $('#testlatency').popover('hide')        
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatencyMLS.onAudioPermissionGranted).catch(TestLatencyMLS.onAudioInputPermissionDenied)
         }
@@ -132,6 +131,15 @@ export class TestLatencyMLS {
         // workaround for Safari in case alert is displayed for detleting a track
         if (TestLatencyMLS.audioContext.state === 'suspended') {
             await TestLatencyMLS.audioContext.resume()
+        }
+        if(!TestLatencyMLS.getCurrentLatency()){
+            const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
+            if(isSafari){
+                TestLatencyMLS.playlist.getEventEmitter().emit('resume')
+            } 
+            if (!doTestLatency) {     
+              return 
+            }
         }
         TestLatencyMLS.startbutton.innerText = 'STOP'
         TestLatencyMLS.startbutton.classList.remove('btn-outline-success')
