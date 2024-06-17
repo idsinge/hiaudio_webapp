@@ -229,8 +229,8 @@ export class TestLatencyMLS {
         const peak = findPeakAndMean(correlation)
         const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
         console.log('Latency = ', roundtriplatency + ' ms')
-        const ratioIs = peak.peakValue / peak.mean
-        console.log('Corr Ratio',ratioIs)
+        const ratioIs = Math.abs(peak.peakValue / peak.mean)
+        console.log('Corr Ratio', ratioIs)
      
         URL.revokeObjectURL(recordedAudio)
         TestLatencyMLS.setCurrentLatency(roundtriplatency)
