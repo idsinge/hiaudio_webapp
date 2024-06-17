@@ -81,11 +81,11 @@ activateGoHomeLink()
 createTestButtons()
 const browserId = detectBrowser()
 console.log(browserId)
-if(browserId.os === 'iphone' || browserId.os === 'ipad' || browserId.os === 'android'){
-  TestLatency.initialize()
-} else {
+//if(browserId.os === 'iphone' || browserId.os === 'ipad' || browserId.os === 'android'){
+//  TestLatency.initialize()
+//} else {
   TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
-}
+//}
 
 if(compositionId === 'demopage'){ 
   alert(`WARNING: Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`)  

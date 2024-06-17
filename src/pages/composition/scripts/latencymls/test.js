@@ -1,5 +1,5 @@
 import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
-import { drawResults, findPeak, clearCanvas, calculateCrossCorrelation } from './helper'
+import { drawResults, findPeakAndMean, clearCanvas, calculateCrossCorrelation } from './helper'
 import { generateMLS } from './mls'
 import { TestMic } from '../webdictaphone/webdictaphone'
 
@@ -226,9 +226,12 @@ export class TestLatencyMLS {
         const maxLag = maxDelayExpected * TestLatencyMLS.audioContext.sampleRate
         const correlation = calculateCrossCorrelation(signalrecorded.getChannelData(0), mlssignal.getChannelData(0), maxLag)
 
-        const peak = findPeak(correlation)
+        const peak = findPeakAndMean(correlation)
         const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
         console.log('Latency = ', roundtriplatency + ' ms')
+        const ratioIs = peak.peakValue / peak.mean
+        console.log('Corr Ratio',ratioIs)
+     
         URL.revokeObjectURL(recordedAudio)
         TestLatencyMLS.setCurrentLatency(roundtriplatency)
         TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
@@ -240,7 +243,7 @@ export class TestLatencyMLS {
             if(signalrecorded.numberOfChannels>1){
                 const correlation2 = calculateCrossCorrelation(signalrecorded.getChannelData(1), mlssignal.getChannelData(0), maxLag)
                 drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', correlation2)
-                const peak2 = findPeak(correlation2)
+                const peak2 = findPeakAndMean(correlation2)
                 const roundtriplatency2 = peak2.peakIndex / mlssignal.sampleRate * 1000
                 console.log('Latency 2 = ', roundtriplatency2 + ' ms')
             }

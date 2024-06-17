@@ -65,18 +65,21 @@ export function drawAutocorrelation(autocorrelation, idcanvas) {
 }
 
 
-export function findPeak(autocorrelation) {
-    let peakValue = autocorrelation[0]
+export function findPeakAndMean(array) {
+    let peakValue = array[0]
     let peakIndex = 0
+    let sum = 0
 
-    for (let i = 1; i < autocorrelation.length; i++) {
-        if (autocorrelation[i] > peakValue) {
-            peakValue = autocorrelation[i]
+    for (let i = 1; i < array.length; i++) {
+        if (array[i] > peakValue) {
+            peakValue = array[i]
             peakIndex = i
         }
+        sum += array[i]
     }
+    const mean = sum / array.length
 
-    return { peakValue, peakIndex }
+    return { peakValue, peakIndex, mean }
 }
 
 export const clearCanvas = () => {
