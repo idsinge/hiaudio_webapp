@@ -223,7 +223,7 @@ export class TestLatencyMLS {
             console.log('signalrecorded', signalrecorded)
             console.log('mlssignal', mlssignal)
         }
-        const maxDelayExpected = 0.500
+        const maxDelayExpected = 0.600
         const maxLag = maxDelayExpected * TestLatencyMLS.audioContext.sampleRate
         const correlation = calculateCrossCorrelation(signalrecorded.getChannelData(0), mlssignal.getChannelData(0), maxLag)
 
