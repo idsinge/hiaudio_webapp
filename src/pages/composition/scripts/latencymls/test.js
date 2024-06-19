@@ -40,8 +40,9 @@ export class TestLatencyMLS {
             const micsource = TestLatencyMLS.audioContext.createMediaStreamSource(stream)
             TestLatencyMLS.recordGainNode = TestLatencyMLS.audioContext.createGain()
             micsource.connect(TestLatencyMLS.recordGainNode)
-            const micGain = localStorage.getItem('micgain')
-            const defaultGain = micGain ? parseInt(micGain) : 1
+            //const micGain = localStorage.getItem('micgain')
+            //const defaultGain = micGain ? parseInt(micGain) : 1
+            const defaultGain = 50 // force the gain to be 50 so it does not depend on manual control
             TestLatencyMLS.recordGainNode.gain.value = defaultGain
             const dest = TestLatencyMLS.audioContext.createMediaStreamDestination()
             TestLatencyMLS.recordGainNode.connect(dest)
@@ -229,9 +230,10 @@ export class TestLatencyMLS {
         const peak = findPeakAndMean(correlation)
         const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
         console.log('Latency = ', roundtriplatency + ' ms')
-        const ratioIs = Math.abs(peak.peakValue / peak.mean)
+        const ratioIs = peak.peakValue / peak.mean
         console.log('Corr Ratio', ratioIs)
-     
+        console.log('Corr ABS(Ratio)', Math.abs(ratioIs))
+
         URL.revokeObjectURL(recordedAudio)
         TestLatencyMLS.setCurrentLatency(roundtriplatency)
         TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
