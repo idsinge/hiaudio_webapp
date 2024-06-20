@@ -80,6 +80,7 @@ export class TestLatencyMLS {
 
     static onAudioPermissionGranted(inputStream) {
         TestLatencyMLS.audioContext = TestLatencyMLS.playlist.ac
+        // TestLatencyMLS.audioContext = new AudioContext({ latencyHint: 0 })
         const noisemls = generateMLS(15)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
         TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
@@ -130,18 +131,18 @@ export class TestLatencyMLS {
 
     static async onAudioSetupFinished() {
         // workaround for Safari in case alert is displayed for detleting a track
-        if (TestLatencyMLS.audioContext.state === 'suspended') {
-            await TestLatencyMLS.audioContext.resume()
-        }
-        if(!TestLatencyMLS.getCurrentLatency()){
-            const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
-            if(isSafari){
-                TestLatencyMLS.playlist.getEventEmitter().emit('resume')
-            } 
-            if (!doTestLatency) {     
-              return 
-            }
-        }
+        // if ((isSafari && TestLatencyMLS.audioContext.state === 'suspended') {
+        //     await TestLatencyMLS.audioContext.resume()
+        // }
+        // if(!TestLatencyMLS.getCurrentLatency()){
+        //     const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
+        //     if(isSafari){
+        //         TestLatencyMLS.playlist.getEventEmitter().emit('resume')
+        //     } 
+        //     if (!doTestLatency) {     
+        //       return 
+        //     }
+        // }
         TestLatencyMLS.startbutton.innerText = 'STOP'
         TestLatencyMLS.startbutton.classList.remove('btn-outline-success')
         TestLatencyMLS.startbutton.classList.add('btn-outline-danger')
@@ -153,23 +154,23 @@ export class TestLatencyMLS {
 
     static prepareAudioToPlayAndrecord() {
 
-        const silenceSource = TestLatencyMLS.audioContext.createBufferSource();
+        const silenceSource = TestLatencyMLS.audioContext.createBufferSource()
 
-        silenceSource.buffer = TestLatencyMLS.silenceBuffer;
+        silenceSource.buffer = TestLatencyMLS.silenceBuffer
 
-        silenceSource.connect(TestLatencyMLS.audioContext.destination);
+        silenceSource.connect(TestLatencyMLS.audioContext.destination)
        
         const doTheTest = () => {
-            const noiseSource = TestLatencyMLS.audioContext.createBufferSource();
+            const noiseSource = TestLatencyMLS.audioContext.createBufferSource()
 
-            noiseSource.buffer = TestLatencyMLS.noiseBuffer;
+            noiseSource.buffer = TestLatencyMLS.noiseBuffer
 
-            const splitter = TestLatencyMLS.audioContext.createChannelSplitter(2);
-            const merger = TestLatencyMLS.audioContext.createChannelMerger(2);
+            const splitter = TestLatencyMLS.audioContext.createChannelSplitter(2)
+            const merger = TestLatencyMLS.audioContext.createChannelMerger(2)
 
-            noiseSource.connect(splitter);
-            splitter.connect(merger, 0, 0); // Connect only the left channel to the right output
-            merger.connect(TestLatencyMLS.audioContext.destination);
+            noiseSource.connect(splitter)
+            splitter.connect(merger, 0, 0) // Connect only the left channel to the right output
+            merger.connect(TestLatencyMLS.audioContext.destination)
 
             //noiseSource.connect(TestLatencyMLS.audioContext.destination)
             
@@ -183,6 +184,9 @@ export class TestLatencyMLS {
                 chunks.push(event.data)
             }
             mediaRecorder.onstop = async () => {
+                noiseSource.disconnect(splitter)
+                splitter.disconnect(merger, 0, 0)
+                merger.disconnect(TestLatencyMLS.audioContext.destination)
                 TestLatencyMLS.displayAudioTagElem(chunks, mediaRecorder.mimeType)
             }
 
@@ -209,8 +213,8 @@ export class TestLatencyMLS {
         $('#testlatency').popover('hide')
     }
     static async blobToAudioBuffer(audioContext, blob) {
-        const arrayBuffer = await blob.arrayBuffer();
-        return await audioContext.decodeAudioData(arrayBuffer);
+        const arrayBuffer = await blob.arrayBuffer()
+        return await audioContext.decodeAudioData(arrayBuffer)
     }
     static async displayAudioTagElem(chunks, mimeType) {
 
