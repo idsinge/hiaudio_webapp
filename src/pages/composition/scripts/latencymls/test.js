@@ -73,7 +73,7 @@ export class TestLatencyMLS {
         const currentlatency = localStorage.getItem('latency')
         TestLatencyMLS.currentlatency = currentlatency ? parseInt(currentlatency) : null
         TestLatencyMLS.playlist = playlist
-        TestLatencyMLS.audioContext = TestLatencyMLS.audioNode = null
+        TestLatencyMLS.audioContext = null
         TestLatencyMLS.content = document.getElementById(btnId)
         TestLatencyMLS.start()
     }

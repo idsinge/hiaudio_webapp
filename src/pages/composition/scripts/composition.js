@@ -4,9 +4,10 @@ import WaveformPlaylist from './waveform-playlist.umd'
 import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
 import { TestLatencyMLS } from './latencymls/test'
-import { TestLatency } from './latencymeasure/testlatency'
+//import { TestLatency } from './latencymeasure/testlatency'
+import { TestLatency } from './latencyadenot/testlatency'
 import detectBrowser from '../../../common/js/detect-browser.js'
-import { activateGoHomeLink, isSafari } from '../../../common/js/utils'
+import { activateGoHomeLink, isSafari, MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
@@ -63,12 +64,24 @@ const testMicButtonForSafari  = () => {
   }  
 }
 
+// const newTestLatencyButton  = () => {
+  
+//   return `<li class="nav-item">
+//   <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
+//     data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
+//     Test Latency</a>
+// </li>
+// `  
+// }
+
 const newTestLatencyButton  = () => {
   
   return `<li class="nav-item">
-  <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
-    data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-    Test Latency</a>
+  <div id=latency-ui>
+        <button id=btn-start>Start measure</button>
+        <button id=btn-stop>Stop measure</button>
+        <p>Measured rountrip: <span id=roundtriplatency-val hidden>...</span></p>
+      </div>
 </li>
 `  
 }
@@ -82,9 +95,9 @@ createTestButtons()
 const browserId = detectBrowser()
 console.log(browserId)
 //if(browserId.os === 'iphone' || browserId.os === 'ipad' || browserId.os === 'android'){
-//  TestLatency.initialize()
+  TestLatency.initialize(MEDIA_CONSTRAINTS)
 //} else {
-  TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
+  //TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
 //}
 
 if(compositionId === 'demopage'){ 
