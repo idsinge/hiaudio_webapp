@@ -17,8 +17,8 @@ export class TestLatency {
 
     latval = null
 
-    static async initialize(constraints) {
-
+    static async initialize(audioContext, constraints) {
+               
         TestLatency.buttonHandlers()
 
         try {
@@ -26,6 +26,7 @@ export class TestLatency {
             let stream = await navigator.mediaDevices.getUserMedia(constraints)
 
             TestLatency.ac = new AudioContext()
+            //TestLatency.ac = audioContext
             
             await TestLatency.ac.audioWorklet.addModule(MeasureProcessor)
 
@@ -71,6 +72,10 @@ export class TestLatency {
     }
 
     static async startTest() {
+        console.log(TestLatency.ac.state)
+        // if(TestLatency.ac.state === 'suspended'){
+        //     await TestLatency.ac.resume()
+        // }
         TestLatency.worklet_node.connect(TestLatency.ac.destination)
         document.getElementById('roundtriplatency-val').hidden = false        
         TestLatency.btnstop.disabled = false

@@ -64,27 +64,21 @@ const testMicButtonForSafari  = () => {
   }  
 }
 
-// const newTestLatencyButton  = () => {
-  
+// const newTestLatencyButton  = () => {  
 //   return `<li class="nav-item">
 //   <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
 //     data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
 //     Test Latency</a>
-// </li>
-// `  
-// }
+// </li>`}
 
-const newTestLatencyButton  = () => {
-  
+const newTestLatencyButton  = () => {  
   return `<li class="nav-item">
   <div id=latency-ui>
         <button id=btn-start>Start measure</button>
         <button id=btn-stop>Stop measure</button>
         <p>Measured rountrip: <span id=roundtriplatency-val hidden>...</span></p>
       </div>
-</li>
-`  
-}
+</li>`}
 
 const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `${newTestLatencyButton()}${testMicButtonForSafari()}`
@@ -95,7 +89,7 @@ createTestButtons()
 const browserId = detectBrowser()
 console.log(browserId)
 //if(browserId.os === 'iphone' || browserId.os === 'ipad' || browserId.os === 'android'){
-  TestLatency.initialize(MEDIA_CONSTRAINTS)
+  TestLatency.initialize(playlist.ac, MEDIA_CONSTRAINTS)
 //} else {
   //TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
 //}
