@@ -5,7 +5,7 @@ import WaveformPlaylist from './waveform-playlist.umd'
 import { Recorder } from './record'
 import { TestLatencyMLS } from './latencymls/test'
 //import { TestLatency } from './latencymeasure/testlatency'
-//import { TestLatency } from './latencyadenot/testlatency'
+import { TestLatency } from './latencyadenot/testlatency'
 import detectBrowser from '../../../common/js/detect-browser.js'
 import { activateGoHomeLink, isSafari, MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 
@@ -49,7 +49,8 @@ export const createWaveformPlaylist = (audCtxt) => {
   })
   trackHandler = new TrackHandler()
   fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
-  TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
+  //TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
+  TestLatency.initialize(playlist.ac, MEDIA_CONSTRAINTS)
 }
 
 export const getWaveformPlaylist = () => {
@@ -77,21 +78,21 @@ const testMicButtonForSafari  = () => {
   }  
 }
 
-const newTestLatencyButton  = () => {  
-  return `<li class="nav-item">
-  <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
-    data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-    Test Latency</a>
-</li>`}
-
 // const newTestLatencyButton  = () => {  
 //   return `<li class="nav-item">
-//   <div id=latency-ui>
-//         <button id=btn-start>Start measure</button>
-//         <button id=btn-stop>Stop measure</button>
-//         <p>Measured rountrip: <span id=roundtriplatency-val hidden>...</span></p>
-//       </div>
+//   <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
+//     data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
+//     Test Latency</a>
 // </li>`}
+
+const newTestLatencyButton  = () => {  
+  return `<li class="nav-item">
+  <div id=latency-ui>
+        <button id=btn-start>Start measure</button>
+        <button id=btn-stop>Stop measure</button>
+        <p>Measured rountrip: <span id=roundtriplatency-val hidden>...</span></p>
+      </div>
+</li>`}
 
 const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `${newTestLatencyButton()}${testMicButtonForSafari()}`

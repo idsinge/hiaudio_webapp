@@ -25,8 +25,8 @@ export class TestLatency {
             
             let stream = await navigator.mediaDevices.getUserMedia(constraints)
 
-            TestLatency.ac = new AudioContext()
-            //TestLatency.ac = audioContext
+            //TestLatency.ac = new AudioContext()
+            TestLatency.ac = audioContext
             
             await TestLatency.ac.audioWorklet.addModule(MeasureProcessor)
 
