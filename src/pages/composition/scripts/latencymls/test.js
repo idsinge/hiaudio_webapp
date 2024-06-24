@@ -143,6 +143,7 @@ export class TestLatencyMLS {
         //       return 
         //     }
         // }
+        console.log('TestLatencyMLS.audioContext.state', TestLatencyMLS.audioContext.state)
         TestLatencyMLS.startbutton.innerText = 'STOP'
         TestLatencyMLS.startbutton.classList.remove('btn-outline-success')
         TestLatencyMLS.startbutton.classList.add('btn-outline-danger')
