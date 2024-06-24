@@ -72,7 +72,7 @@ export class TestLatency {
     }
 
     static async startTest() {
-        console.log(TestLatency.ac.state)
+        console.log('TestLatency.ac.state', TestLatency.ac.state)
         // if(TestLatency.ac.state === 'suspended'){
         //     await TestLatency.ac.resume()
         // }
