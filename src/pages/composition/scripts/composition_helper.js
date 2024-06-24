@@ -1,7 +1,7 @@
 import { ENDPOINT } from '../../../common/js/config'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
 import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
-import { setUserPermission, trackHandler, fileUploader, playlist, recorder } from './composition'
+import { setUserPermission, trackHandler, fileUploader, playlist } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
 import { trackInfoHandler } from './trackinfo/trackinfo'
@@ -128,7 +128,7 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     } else {
         cancelLoader(LOADER_ELEM_ID)
         playlist.initExporter()
-        recorder.init()
+        //recorder.init()
     }
 }
 
@@ -144,7 +144,7 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
         if (errorIs) {
             alert(errorIs)
         } else {
-            recorder.init()
+            //recorder.init()
             if (canUpload) {
                 trackInfoHandler()
                 trackHandler.detectClickOutsideMenuOpt()

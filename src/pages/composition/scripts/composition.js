@@ -1,11 +1,11 @@
 import { TrackHandler } from './track_handler'
 import { FileUploader } from './fileuploader'
 import WaveformPlaylist from './waveform-playlist.umd'
-import { getComposition, doAfterCompositionFetched } from './composition_helper'
+//import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
 import { TestLatencyMLS } from './latencymls/test'
 //import { TestLatency } from './latencymeasure/testlatency'
-import { TestLatency } from './latencyadenot/testlatency'
+//import { TestLatency } from './latencyadenot/testlatency'
 import detectBrowser from '../../../common/js/detect-browser.js'
 import { activateGoHomeLink, isSafari, MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 
@@ -17,32 +17,45 @@ export const setUserPermission = (permission) => {
   USER_PERMISSION = permission
 }
 
-export const playlist = WaveformPlaylist({
-  samplesPerPixel: 3000,
-  waveHeight: 100,
-  container: document.getElementById('playlist'),
-  state: 'cursor',
-  colors: {
-    waveOutlineColor: '#E0EFF1',
-    timeColor: 'grey',
-    fadeColor: 'black'
-  },
-  controls: {
-    show: true,
-    width:200,
-    widgets: {
-      stereoPan: true,
-      collapse:false,      
-      remove: true,
-    },
-  },
-  zoomLevels: [500, 1000, 3000, 5000],
-  isAutomaticScroll: true,
-  timescale: true
-})
+export let playlist = null
 
-export const trackHandler = new TrackHandler()
-export const fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
+export let trackHandler = null
+export let fileUploader = null
+
+export const createWaveformPlaylist = (audCtxt) => {
+  playlist = WaveformPlaylist({
+    samplesPerPixel: 3000,
+    waveHeight: 100,
+    container: document.getElementById('playlist'),
+    state: 'cursor',
+    colors: {
+      waveOutlineColor: '#E0EFF1',
+      timeColor: 'grey',
+      fadeColor: 'black'
+    },
+    controls: {
+      show: true,
+      width:200,
+      widgets: {
+        stereoPan: true,
+        collapse:false,      
+        remove: true,
+      },
+    },
+    zoomLevels: [500, 1000, 3000, 5000],
+    isAutomaticScroll: true,
+    timescale: true,
+    ac: audCtxt
+  })
+  trackHandler = new TrackHandler()
+  fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
+  TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
+}
+
+export const getWaveformPlaylist = () => {
+  return playlist
+}
+
 export const recorder = new Recorder()
 
 export const TEST_LAT_BTN_ID = 'testlatencybtn'
@@ -91,11 +104,14 @@ console.log(browserId)
 //if(browserId.os === 'iphone' || browserId.os === 'ipad' || browserId.os === 'android'){
   //TestLatency.initialize(playlist.ac, MEDIA_CONSTRAINTS)
 //} else {
-  TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
+  //TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
 //}
 
-if(compositionId === 'demopage'){ 
-  alert(`WARNING: Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`)  
-}
-getComposition(compositionId, doAfterCompositionFetched)
+// if(compositionId === 'demopage'){ 
+//   alert(`WARNING: Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`)  
+// }
+
+recorder.init(compositionId)
+
+//getComposition(compositionId, doAfterCompositionFetched)
 
