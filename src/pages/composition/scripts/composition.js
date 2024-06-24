@@ -53,10 +53,6 @@ export const createWaveformPlaylist = (audCtxt) => {
   //TestLatency.initialize(playlist.ac, MEDIA_CONSTRAINTS)
 }
 
-export const getWaveformPlaylist = () => {
-  return playlist
-}
-
 export const recorder = new Recorder()
 
 export const TEST_LAT_BTN_ID = 'testlatencybtn'

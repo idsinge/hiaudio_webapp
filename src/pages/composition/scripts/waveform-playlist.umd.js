@@ -10076,7 +10076,6 @@ function init(options = {}, ee = event_emitter_default()()) {
 
   const playlist = new Playlist();
   const AudioContext = window.AudioContext || window.webkitAudioContext || false
-  console.log('config.ac', config.ac)
   const ctx = config.ac || new AudioContext({ latencyHint: 0 });
   playlist.setAudioContext(ctx);
   playlist.setSampleRate(config.sampleRate || ctx.sampleRate);
