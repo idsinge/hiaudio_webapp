@@ -50,7 +50,7 @@ export const createWaveformPlaylist = (audCtxt) => {
   trackHandler = new TrackHandler()
   fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
   TestLatencyMLS.initialize(playlist, TEST_LAT_BTN_ID)
-  //TestLatency.initialize(playlist.ac, MEDIA_CONSTRAINTS)
+  //TestLatency.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
 }
 
 export const recorder = new Recorder()

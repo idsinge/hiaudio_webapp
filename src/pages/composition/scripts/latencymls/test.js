@@ -5,11 +5,11 @@ import { TestMic } from '../webdictaphone/webdictaphone'
 
 const warningMessageBeforeTest = `Please, be careful as a noise will be played through the speakers, so don't put the volume to the max. `
 
-const CANVAS = `<div class="container" id="audio-area">
-                    <canvas id="leftChannelCanvas" width="800" height="100" style="border:1px solid #000000;"></canvas>
-                    <canvas id="rightChannelCanvas" width="800" height="100" style="border:1px solid #000000;" hidden></canvas>
-                    <canvas id="autocorrelationCanvas1" style="border:1px solid #000000;"></canvas>
-                    <canvas id="autocorrelationCanvas2" style="border:1px solid #000000;" hidden></canvas>
+const CANVAS = `<div class='container' id='audio-area'>
+                    <canvas id='leftChannelCanvas' width='800' height='100' style='border:1px solid #000000;'></canvas>
+                    <canvas id='rightChannelCanvas' width='800' height='100' style='border:1px solid #000000;'></canvas>
+                    <canvas id='autocorrelationCanvas1' style='border:1px solid #000000;'></canvas>
+                    <canvas id='autocorrelationCanvas2' style='border:1px solid #000000;'></canvas>
                 </div>`
 
 export class TestLatencyMLS {
@@ -26,6 +26,8 @@ export class TestLatencyMLS {
 
     worker = null
 
+    signalrecorded = null
+    
     static setCurrentLatency(latvalue) {
         localStorage.setItem('latency', latvalue)
         TestLatencyMLS.currentlatency = latvalue
@@ -71,6 +73,9 @@ export class TestLatencyMLS {
             new URL('worker.js', import.meta.url),
             {type: 'module'}
         )
+        TestLatencyMLS.worker.addEventListener('message', (message) => {
+            TestLatencyMLS.workerMessageHanlder(message)
+        })
         //const debugCanvas = document.location.search.indexOf('debug') !== -1
         const debugCanvas = true
          
@@ -163,6 +168,8 @@ export class TestLatencyMLS {
 
     static prepareAudioToPlayAndrecord() {
 
+        TestLatencyMLS.signalrecorded = null
+
         const silenceSource = TestLatencyMLS.audioContext.createBufferSource()
 
         silenceSource.buffer = TestLatencyMLS.silenceBuffer
@@ -226,42 +233,41 @@ export class TestLatencyMLS {
         const arrayBuffer = await blob.arrayBuffer()
         return await audioContext.decodeAudioData(arrayBuffer)
     }
+
+    static workerMessageHanlder(message){
+        if(message.data.correlation){
+            TestLatencyMLS.correlation = message.data.correlation
+            TestLatencyMLS.worker.postMessage({
+                command: 'findpeak',
+                array: TestLatencyMLS.correlation,
+                channel: message.data.channel
+            })
+        }
+        if(message.data.peakValue){                
+            TestLatencyMLS.displayresults(message.data, TestLatencyMLS.signalrecorded, TestLatencyMLS.noiseBuffer, TestLatencyMLS.correlation)
+        }
+    }
     static async displayAudioTagElem(chunks, mimeType) {
         
         const recordedAudio = new Blob(chunks, { type: mimeType })
        //const recordedAudioURL = URL.createObjectURL(recordedAudio)
         //const signalrecorded = await fetchAudioContext(recordedAudioURL, TestLatencyMLS.audioContext)
-        const signalrecorded = await TestLatencyMLS.blobToAudioBuffer(TestLatencyMLS.audioContext, recordedAudio)
-        let mlssignal = TestLatencyMLS.noiseBuffer
+        TestLatencyMLS.signalrecorded = await TestLatencyMLS.blobToAudioBuffer(TestLatencyMLS.audioContext, recordedAudio)
+        //let mlssignal = TestLatencyMLS.noiseBuffer
         if(TestLatencyMLS.debugCanvas){
-            console.log('signalrecorded', signalrecorded)
-            console.log('mlssignal', mlssignal)
+            console.log('signalrecorded', TestLatencyMLS.signalrecorded)
+            console.log('mlssignal', TestLatencyMLS.noiseBuffer)
         }
-        const maxDelayExpected = 0.600
-        const maxLag = maxDelayExpected * TestLatencyMLS.audioContext.sampleRate
         //const correlation = calculateCrossCorrelation(signalrecorded.getChannelData(0), mlssignal.getChannelData(0), maxLag)
-        let correlation = null
+        TestLatencyMLS.correlation = null
         TestLatencyMLS.worker.postMessage({
-            command: "correlation",
-            data1:signalrecorded.getChannelData(0), 
-            data2:mlssignal.getChannelData(0), 
-            maxLag: maxLag
+            command: 'correlation',
+            data1: TestLatencyMLS.signalrecorded.getChannelData(0), 
+            data2: TestLatencyMLS.noiseBuffer.getChannelData(0), 
+            maxLag: (0.600 * TestLatencyMLS.audioContext.sampleRate),
+            channel: 0
         })
-        TestLatencyMLS.worker.addEventListener("message", (message) => {
-            if(message.data.correlation){
-                correlation = message.data.correlation
-                TestLatencyMLS.worker.postMessage({
-                    command: "findpeak",
-                    array:correlation,
-                })
-            }
-            if(message.data.peakValue){                
-                TestLatencyMLS.displayresults(message.data, signalrecorded, mlssignal, correlation)
-            }
-        })     
-
         URL.revokeObjectURL(recordedAudio)
-        
     }
 
     /* White Noise Mozilla: https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode*/
@@ -289,27 +295,40 @@ export class TestLatencyMLS {
         return audioBuffer
     }
 
-    static displayresults(peak, signalrecorded, mlssignal, correlation) {
+    static displayresults(peak, signalrecorded, mlssignal, correlation, channel) {
        //const peak = findPeakAndMean(correlation)
-        const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
-        console.log('Latency = ', roundtriplatency + ' ms')
-        const ratioIs = peak.peakValue / peak.mean
-        console.log('Corr Ratio', ratioIs)
-        TestLatencyMLS.setCurrentLatency(roundtriplatency)
-        TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
-        TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
-        TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
-        //console.log('Corr ABS(Ratio)', Math.abs(ratioIs))
-        drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
-        console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
-        if(TestLatencyMLS.debugCanvas) {
-            // if(signalrecorded.numberOfChannels>1){
-            //     const correlation2 = calculateCrossCorrelation(signalrecorded.getChannelData(1), mlssignal.getChannelData(0), maxLag)
-            //     drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', correlation2)
-            //     const peak2 = findPeakAndMean(correlation2)
-            //     const roundtriplatency2 = peak2.peakIndex / mlssignal.sampleRate * 1000
-            //     console.log('Latency 2 = ', roundtriplatency2 + ' ms')
-            // }
-        }
+        if(peak.channel === 0){
+            console.log('Channel', peak.channel )
+            const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
+            console.log('Latency = ', roundtriplatency + ' ms')
+            const ratioIs = peak.peakValue / peak.mean
+            console.log('Corr Ratio', ratioIs)
+            TestLatencyMLS.setCurrentLatency(roundtriplatency)
+            TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
+            TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
+            TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
+            //console.log('Corr ABS(Ratio)', Math.abs(ratioIs))
+            drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
+            console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
+            if(TestLatencyMLS.debugCanvas) {
+                if(signalrecorded.numberOfChannels>1){
+                    TestLatencyMLS.correlation = null
+                    TestLatencyMLS.worker.postMessage({
+                        command: 'correlation',
+                        data1: TestLatencyMLS.signalrecorded.getChannelData(1), 
+                        data2: TestLatencyMLS.noiseBuffer.getChannelData(0), 
+                        maxLag: (0.600 * TestLatencyMLS.audioContext.sampleRate),
+                        channel: 1
+                    })
+                }
+            }
+        } else{
+            console.log('Channel', peak.channel )
+            const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
+            console.log('Latency = ', roundtriplatency + ' ms')
+            const ratioIs = peak.peakValue / peak.mean
+            console.log('Corr Ratio', ratioIs)
+            drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', TestLatencyMLS.correlation)
+        }      
     }
 }
