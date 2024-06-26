@@ -67,7 +67,7 @@ const testLatFinishCallback = () => {
     TestLatRingBuf.stopTest()
   }
   if(TestLatency.startbutton.innerText === 'STOP'){
-    TestLatency.finishTest(0)
+    TestLatency.finishTest()
   }  
 }
 

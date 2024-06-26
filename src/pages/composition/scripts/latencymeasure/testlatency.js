@@ -34,13 +34,13 @@ export class TestLatency {
 
         //TestLatency.content = document.getElementById(TEST_LAT_BTN_ID)        
         
-        let audioWorklet = (typeof AudioWorkletNode === 'function') ? 1 : 0
-        TestLatency.data = {
-            buffersize: audioWorklet ? 128 : 512,
-            samplerate: '?',
-            audioWorklet: audioWorklet
-        }
-        TestLatency.runningon = '?'
+        // let audioWorklet = (typeof AudioWorkletNode === 'function') ? 1 : 0
+        // TestLatency.data = {
+        //     buffersize: audioWorklet ? 128 : 512,
+        //     samplerate: TestLatency.audioContext.samplerate,
+        //     audioWorklet: audioWorklet
+        // }
+        // /TestLatency.runningon = '?'
         TestLatency.displayStart()        
     }
 
@@ -88,19 +88,28 @@ export class TestLatency {
         TestLatency.startbutton.innerText = 'STOP'
         TestLatency.startbutton.classList.remove('btn-outline-warning')
         TestLatency.startbutton.classList.add('btn-outline-danger')
-        TestLatency.startbutton.onclick = TestLatency.displayStart
+        TestLatency.startbutton.onclick = TestLatency.finishTest
     }
 
+    static displayResultLatency(latency) {        
+        TestLatency.startbutton.innerText = 'TEST AGAIN '
+        if(typeof latency !== 'object'){
+            TestLatency.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
+        }        
+        TestLatency.startbutton.classList.remove('btn-outline-danger')
+        TestLatency.startbutton.classList.add('btn-outline-primary')
+    }
     static finishTest(latency) {
         //if (TestLatency.audioContext != null) TestLatency.audioContext.close()
         //TestLatency.audioContext = TestLatency.audioNode = null        
         TestLatency.audioInput.disconnect(TestLatency.audioNode)
         TestLatency.audioNode.disconnect(TestLatency.audioContext.destination)
         TestLatency.audioNode = null
-        TestLatency.startbutton.innerText = 'TEST AGAIN '
-        TestLatency.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
-        TestLatency.startbutton.classList.remove('btn-outline-danger')
-        TestLatency.startbutton.classList.add('btn-outline-primary')
+        TestLatency.displayResultLatency(latency)
+        // TestLatency.startbutton.innerText = 'TEST AGAIN '
+        // TestLatency.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
+        // TestLatency.startbutton.classList.remove('btn-outline-danger')
+        // TestLatency.startbutton.classList.add('btn-outline-primary')
         TestLatency.startbutton.onclick = TestLatency.displayStart
         $('#'+TEST_LAT_BTN_ID).popover('hide') 
     }
@@ -116,7 +125,7 @@ export class TestLatency {
 
         TestLatency.audioNode.onaudioprocess = function (e) {
 
-            TestLatency.latencyMeasurer.processInput(e.inputBuffer.getChannelData(0), e.inputBuffer.getChannelData(1), TestLatency.data.samplerate, e.inputBuffer.length)
+            TestLatency.latencyMeasurer.processInput(e.inputBuffer.getChannelData(0), e.inputBuffer.getChannelData(1), TestLatency.audioContext.sampleRate, e.inputBuffer.length)
             TestLatency.latencyMeasurer.processOutput(e.outputBuffer.getChannelData(0), e.outputBuffer.getChannelData(1))
 
             if (TestLatency.lastState != TestLatency.latencyMeasurer.state) {
@@ -130,9 +139,9 @@ export class TestLatency {
 
     static async start() {
         $('#'+TEST_LAT_BTN_ID).popover('hide')
-        let AudioContext = window.AudioContext || window.webkitAudioContext || false
-        TestLatency.audioContext = new AudioContext({ latencyHint: 0 })
-        TestLatency.data.samplerate = TestLatency.audioContext.sampleRate
+        //let AudioContext = window.AudioContext || window.webkitAudioContext || false
+        //TestLatency.audioContext = new AudioContext({ latencyHint: 0 })
+        //TestLatency.data.samplerate = TestLatency.audioContext.sampleRate
         
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatency.onAudioPermissionGranted).catch(TestLatency.onAudioInputPermissionDenied)
