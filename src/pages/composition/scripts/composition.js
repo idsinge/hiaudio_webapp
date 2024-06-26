@@ -36,10 +36,10 @@ export const createWaveformPlaylist = (audCtxt) => {
     },
     controls: {
       show: true,
-      width:200,
+      width: 200,
       widgets: {
         stereoPan: true,
-        collapse:false,      
+        collapse: false,
         remove: true,
       },
     },
@@ -62,17 +62,17 @@ export const TEST_LAT_MLS_BTN_ID = 'testlatencymlsbtn'
 const compositionId = COMPOSITION_ID
 
 const testLatFinishCallback = () => {
-  if(TestLatRingBuf.running){
+  if (TestLatRingBuf.running) {
     console.log('Adenot Test Running')
     TestLatRingBuf.stopTest()
   }
-  if(TestLatency.startbutton.innerText === 'STOP'){
+  if (TestLatency.startbutton.innerText === 'STOP') {
     TestLatency.finishTest()
-  }  
+  }
 }
 
 const openLatencyTestDialog = () => {
-  
+
   DynamicModal.dynamicModalDialog(
     `<p>Place your mic as close as possible to the speakers/headphones.</p><br>
     <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
@@ -90,7 +90,7 @@ const openLatencyTestDialog = () => {
     'bg-success',
     testLatFinishCallback
   )
-  if(!TestLatencyMLS.audioContext){
+  if (!TestLatencyMLS.audioContext) {
     TestLatencyMLS.initialize(playlist, TEST_LAT_MLS_BTN_ID)
     TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
     TestLatency.initialize(playlist.ac)
@@ -107,9 +107,9 @@ const triggerLatencyTestHandler = () => {
 }
 const testMicButtonForSafari = () => {
   const safariVersionIndex = navigator.userAgent.indexOf('Version/')
-  const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
+  const versionString = navigator.userAgent.substring(safariVersionIndex + 8)
   const safariVersion = parseFloat(versionString)
-  if(isSafari && safariVersion > 16){   
+  if (isSafari && safariVersion > 16) {
     return `<li class="nav-item">
               <a class="nav-link" href="#" id="testmicrophone" data-toggle="modal" data-target="#testMicrophoneModal">
                 <i class="fa-solid fa-microphone"></i> TEST MIC
@@ -117,7 +117,7 @@ const testMicButtonForSafari = () => {
             </li>`
   } else {
     return ''
-  }  
+  }
 }
 
 const triggerTestLatencyButton = () => {
@@ -137,8 +137,15 @@ createTestButtons()
 const browserId = detectBrowser()
 console.log(browserId)
 
-// if(compositionId === 'demopage'){ 
-//   alert(`WARNING: Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`)  
-// }
+if (compositionId === 'demopage') {
+  DynamicModal.dynamicModalDialog(
+    `Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`,
+    null,
+    '',
+    'Close',
+    'Warning!',
+    'bg-warning'
+  )
+}
 
 recorder.init(compositionId)
