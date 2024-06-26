@@ -1,14 +1,11 @@
 import { TrackHandler } from './track_handler'
 import { FileUploader } from './fileuploader'
 import WaveformPlaylist from './waveform-playlist.umd'
-//import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
-import { TestLatencyMLS } from './latencymls/test'
-import { TestLatScriptProc } from './latencymeasure/testlatency'
-import { TestLatRingBuf } from './latencyadenot/testlatency'
+import { triggerTestLatencyButton, triggerLatencyTestHandler } from './latencytesthandler'
 import detectBrowser from '../../../common/js/detect-browser.js'
 import DynamicModal from '../../../common/js/modaldialog'
-import { activateGoHomeLink, isSafari, MEDIA_CONSTRAINTS } from '../../../common/js/utils'
+import { activateGoHomeLink, isSafari } from '../../../common/js/utils'
 
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
@@ -55,54 +52,8 @@ export const createWaveformPlaylist = (audCtxt) => {
 
 export const recorder = new Recorder()
 
-export const TEST_LAT_BTN_ID = 'testlatencybtn'
-
-export const TEST_LAT_MLS_BTN_ID = 'testlatencymlsbtn'
-
 const compositionId = COMPOSITION_ID
 
-const testLatFinishCallback = () => {
-  if (TestLatRingBuf.running) {
-    TestLatRingBuf.stopTest()
-  }
-  if (TestLatScriptProc.startbutton.innerText === 'STOP') {
-    TestLatScriptProc.finishTest()
-  }
-}
-
-const openLatencyTestDialog = () => {
-
-  DynamicModal.dynamicModalDialog(
-    `<p>Place your mic as close as possible to the speakers/headphones.</p><br>
-    <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
-      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-      Test Latency</a><br>
-    <a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
-      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>    
-    <a id="btn-start" class="nav-link" href="#">TEST LATENCY
-      
-      </a><br>`,
-    null,
-    '',
-    'Close',
-    'Latency Test',
-    'bg-success',
-    testLatFinishCallback
-  )
-  if (!TestLatencyMLS.audioContext) {
-    TestLatencyMLS.initialize(playlist, TEST_LAT_MLS_BTN_ID)
-    TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
-    TestLatScriptProc.initialize(playlist.ac)
-  } else {
-    TestLatencyMLS.displayStart()
-    TestLatScriptProc.displayStart()
-    TestLatRingBuf.buttonHandlers()
-  }
-}
-
-const triggerLatencyTestHandler = () => {
-  document.getElementById('trigger-lat-test-btn').onclick = openLatencyTestDialog
-}
 const testMicButtonForSafari = () => {
   const safariVersionIndex = navigator.userAgent.indexOf('Version/')
   const versionString = navigator.userAgent.substring(safariVersionIndex + 8)
@@ -117,14 +68,6 @@ const testMicButtonForSafari = () => {
     return ''
   }
 }
-
-const triggerTestLatencyButton = () => {
-  return `<li class="nav-item">
-  <a class="nav-link" href="#" id="trigger-lat-test-btn" data-toggle="modal" 
-    data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-    LATENCY TEST</a>
-</li>`}
-
 
 const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `${triggerTestLatencyButton()}${testMicButtonForSafari()}`

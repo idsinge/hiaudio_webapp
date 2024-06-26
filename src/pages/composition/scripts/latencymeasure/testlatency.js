@@ -1,12 +1,10 @@
 /* Source: https://github.com/superpoweredSDK/WebBrowserAudioLatencyMeasurement */
 import { latencyMeasurer } from './latencyMeasurer.js'
-import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
-import { playlist, TEST_LAT_BTN_ID } from '../composition'
+import { MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
+import { TEST_LAT_BTN_ID } from '../latencytesthandler'
 
 export const NUMBER_TRIALS = 6
 const TOTAL_TRIALS = NUMBER_TRIALS - 1
-
-const warningMessageBeforeTest = `Please Make sure you are in a quiet place (so the browser can hear itself). Set both input and output audio volume to near maximum. This may be LOUD. Note: not all browsers on all devices will allow the browser permission to the speakers and microphone. If they don't, the test will not function.`
 
 export class TestLatScriptProc {
     

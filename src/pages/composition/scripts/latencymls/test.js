@@ -22,7 +22,7 @@ export class TestLatencyMLS {
 
     debugCanvas = false
     
-    playlist = null
+    audioContext = null
 
     worker = null
 
@@ -68,8 +68,8 @@ export class TestLatencyMLS {
     }
 
 
-    static async initialize(playlist, btnId) {
-        console.log('AudioContext', playlist.ac)
+    static async initialize(ac, btnId) {
+        console.log('AudioContext', ac)
 
         TestLatencyMLS.btnId = btnId
 
@@ -89,14 +89,15 @@ export class TestLatencyMLS {
         }        
         const currentlatency = localStorage.getItem('latency')
         TestLatencyMLS.currentlatency = currentlatency ? parseInt(currentlatency) : null
-        TestLatencyMLS.playlist = playlist
-        TestLatencyMLS.audioContext = null
+        //TestLatencyMLS.playlist = playlist
+        //TestLatencyMLS.audioContext = null
+        TestLatencyMLS.audioContext = ac
         //TestLatencyMLS.content = document.getElementById(btnId)
         TestLatencyMLS.start()
     }
 
     static onAudioPermissionGranted(inputStream) {
-        TestLatencyMLS.audioContext = TestLatencyMLS.playlist.ac
+        //TestLatencyMLS.audioContext = TestLatencyMLS.playlist.ac
         // TestLatencyMLS.audioContext = new AudioContext({ latencyHint: 0 })
         const noisemls = generateMLS(15)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
