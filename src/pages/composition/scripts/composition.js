@@ -4,7 +4,7 @@ import WaveformPlaylist from './waveform-playlist.umd'
 //import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { Recorder } from './record'
 import { TestLatencyMLS } from './latencymls/test'
-import { TestLatency } from './latencymeasure/testlatency'
+import { TestLatScriptProc } from './latencymeasure/testlatency'
 import { TestLatRingBuf } from './latencyadenot/testlatency'
 import detectBrowser from '../../../common/js/detect-browser.js'
 import DynamicModal from '../../../common/js/modaldialog'
@@ -63,11 +63,10 @@ const compositionId = COMPOSITION_ID
 
 const testLatFinishCallback = () => {
   if (TestLatRingBuf.running) {
-    console.log('Adenot Test Running')
     TestLatRingBuf.stopTest()
   }
-  if (TestLatency.startbutton.innerText === 'STOP') {
-    TestLatency.finishTest()
+  if (TestLatScriptProc.startbutton.innerText === 'STOP') {
+    TestLatScriptProc.finishTest()
   }
 }
 
@@ -93,11 +92,10 @@ const openLatencyTestDialog = () => {
   if (!TestLatencyMLS.audioContext) {
     TestLatencyMLS.initialize(playlist, TEST_LAT_MLS_BTN_ID)
     TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
-    TestLatency.initialize(playlist.ac)
+    TestLatScriptProc.initialize(playlist.ac)
   } else {
-    console.log('here')
     TestLatencyMLS.displayStart()
-    TestLatency.displayStart()
+    TestLatScriptProc.displayStart()
     TestLatRingBuf.buttonHandlers()
   }
 }
