@@ -12,6 +12,7 @@ export class TestLatency {
     
     constructor() {
         this.currentlatency = null
+        this.audioInput = null
     }
 
     static setCurrentLatency(latvalue){
@@ -22,14 +23,16 @@ export class TestLatency {
         return TestLatency.currentlatency
     }
 
-    static initialize() {
+    static initialize(ac) {
 
         const currentlatency = localStorage.getItem('latency')
         TestLatency.currentlatency = currentlatency ? parseInt(currentlatency):null
 
         TestLatency.audioContext = TestLatency.audioNode = null
 
-        TestLatency.content = document.getElementById(TEST_LAT_BTN_ID)        
+        TestLatency.audioContext = ac
+
+        //TestLatency.content = document.getElementById(TEST_LAT_BTN_ID)        
         
         let audioWorklet = (typeof AudioWorkletNode === 'function') ? 1 : 0
         TestLatency.data = {
@@ -42,8 +45,10 @@ export class TestLatency {
     }
 
     static displayStart() {
-        if (TestLatency.audioContext != null) TestLatency.audioContext.close()
-        TestLatency.audioContext = TestLatency.audioNode = null
+        //if (TestLatency.audioContext != null) TestLatency.audioContext.close()
+        //TestLatency.audioContext = TestLatency.audioNode = null
+        TestLatency.audioNode = null
+        TestLatency.content = document.getElementById(TEST_LAT_BTN_ID)
         TestLatency.content.innerHTML = ''
         TestLatency.startbutton = document.createElement('a')
         TestLatency.startbutton.innerText = 'TEST LATENCY'
@@ -77,8 +82,8 @@ export class TestLatency {
     }
 
     static onAudioSetupFinished() {
-        let audioInput = TestLatency.audioContext.createMediaStreamSource(TestLatency.inputStream)
-        audioInput.connect(TestLatency.audioNode)
+        TestLatency.audioInput = TestLatency.audioContext.createMediaStreamSource(TestLatency.inputStream)
+        TestLatency.audioInput.connect(TestLatency.audioNode)
         TestLatency.audioNode.connect(TestLatency.audioContext.destination)
         TestLatency.startbutton.innerText = 'STOP'
         TestLatency.startbutton.classList.remove('btn-outline-warning')
@@ -87,8 +92,11 @@ export class TestLatency {
     }
 
     static finishTest(latency) {
-        if (TestLatency.audioContext != null) TestLatency.audioContext.close()
-        TestLatency.audioContext = TestLatency.audioNode = null
+        //if (TestLatency.audioContext != null) TestLatency.audioContext.close()
+        //TestLatency.audioContext = TestLatency.audioNode = null        
+        TestLatency.audioInput.disconnect(TestLatency.audioNode)
+        TestLatency.audioNode.disconnect(TestLatency.audioContext.destination)
+        TestLatency.audioNode = null
         TestLatency.startbutton.innerText = 'TEST AGAIN '
         TestLatency.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
         TestLatency.startbutton.classList.remove('btn-outline-danger')

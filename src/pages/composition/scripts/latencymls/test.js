@@ -28,6 +28,8 @@ export class TestLatencyMLS {
 
     signalrecorded = null
     
+    btnId = null
+
     static setCurrentLatency(latvalue) {
         localStorage.setItem('latency', latvalue)
         TestLatencyMLS.currentlatency = latvalue
@@ -69,6 +71,8 @@ export class TestLatencyMLS {
     static async initialize(playlist, btnId) {
         console.log('AudioContext', playlist.ac)
 
+        TestLatencyMLS.btnId = btnId
+
         TestLatencyMLS.worker = new Worker(
             new URL('worker.js', import.meta.url),
             {type: 'module'}
@@ -87,7 +91,7 @@ export class TestLatencyMLS {
         TestLatencyMLS.currentlatency = currentlatency ? parseInt(currentlatency) : null
         TestLatencyMLS.playlist = playlist
         TestLatencyMLS.audioContext = null
-        TestLatencyMLS.content = document.getElementById(btnId)
+        //TestLatencyMLS.content = document.getElementById(btnId)
         TestLatencyMLS.start()
     }
 
@@ -121,7 +125,9 @@ export class TestLatencyMLS {
 
     static displayStart() {
 
-        TestLatencyMLS.content.innerHTML = ''
+        //TestLatencyMLS.content = null
+        TestLatencyMLS.content = document.getElementById(TestLatencyMLS.btnId)
+        TestLatencyMLS.content.innerHTML = ''        
         TestLatencyMLS.startbutton = document.createElement('a')
         TestLatencyMLS.startbutton.innerText = 'TEST LATENCY'
         TestLatencyMLS.startbutton.classList.add('btn-outline-success')

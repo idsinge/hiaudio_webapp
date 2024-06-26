@@ -61,12 +61,22 @@ export const TEST_LAT_MLS_BTN_ID = 'testlatencymlsbtn'
 
 const compositionId = COMPOSITION_ID
 
+const testLatFinishCallback = () => {
+  if(TestLatRingBuf.btnstart.disabled){
+    console.log('Adenot Test Running')
+    TestLatRingBuf.stopTest()
+  }
+  if(TestLatency.startbutton.innerText === 'STOP'){
+    TestLatency.finishTest(0)
+  }  
+}
+
 const openLatencyTestDialog = () => {
+  
   DynamicModal.dynamicModalDialog(
     `<p>Place your mic as close as possible to the speakers/headphones.</p><br>
     <a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
-      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-      Test Latency</a><br>
+      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>
     <button id=btn-start>Start measure</button>
     <button id=btn-stop>Stop measure</button>
     <p>Measured rountrip: <span id=roundtriplatency-val hidden>...</span></p>
@@ -77,11 +87,18 @@ const openLatencyTestDialog = () => {
     '',
     'Close',
     'Latency Test',
-    'bg-success'
+    'bg-success',
+    testLatFinishCallback
   )
-  TestLatencyMLS.initialize(playlist, TEST_LAT_MLS_BTN_ID)
-  TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
-  TestLatency.initialize()
+  if(!TestLatencyMLS.audioContext){
+    TestLatencyMLS.initialize(playlist, TEST_LAT_MLS_BTN_ID)
+    TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
+    TestLatency.initialize(playlist.ac)
+  } else {
+    console.log('here')
+    TestLatencyMLS.displayStart()
+    TestLatency.displayStart()
+  }
 }
 
 const triggerLatencyTestHandler = () => {
