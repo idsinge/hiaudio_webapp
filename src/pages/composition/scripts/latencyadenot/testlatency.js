@@ -5,7 +5,7 @@ const versionString = navigator.userAgent.substring(safariVersionIndex + 8)
 const safariVersion = parseFloat(versionString)
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
-export class TestLatency {
+export class TestLatRingBuf {
 
     ac = null
 
@@ -19,21 +19,21 @@ export class TestLatency {
 
     static async initialize(audioContext, constraints) {
                
-        TestLatency.buttonHandlers()
+        TestLatRingBuf.buttonHandlers()
 
         try {
             
             let stream = await navigator.mediaDevices.getUserMedia(constraints)
 
-            //TestLatency.ac = new AudioContext()
-            TestLatency.ac = audioContext
+            //TestLatRingBuf.ac = new AudioContext()
+            TestLatRingBuf.ac = audioContext
             
-            await TestLatency.ac.audioWorklet.addModule(MeasureProcessor)
+            await TestLatRingBuf.ac.audioWorklet.addModule(MeasureProcessor)
 
-            var mic_source = TestLatency.ac.createMediaStreamSource(stream)
+            var mic_source = TestLatRingBuf.ac.createMediaStreamSource(stream)
 
-            TestLatency.worklet_node = new AudioWorkletNode(TestLatency.ac, 'measure-processor', { outputChannelCount: [1] });
-            TestLatency.worklet_node.channelCount = 1;
+            TestLatRingBuf.worklet_node = new AudioWorkletNode(TestLatRingBuf.ac, 'measure-processor', { outputChannelCount: [1] });
+            TestLatRingBuf.worklet_node.channelCount = 1;
 
             // For Safari 16 and above when using echocancellation to false
             // the input is dramatically reduced
@@ -41,15 +41,15 @@ export class TestLatency {
             if (isSafari && safariVersion > 16) {
                 defaultGain = 50
             }
-            const gainNode = TestLatency.ac.createGain()
+            const gainNode = TestLatRingBuf.ac.createGain()
             gainNode.gain.value = defaultGain
 
             mic_source.connect(gainNode)
 
-            gainNode.connect(TestLatency.worklet_node)            
+            gainNode.connect(TestLatRingBuf.worklet_node)            
 
-            TestLatency.worklet_node.port.onmessage = function (e) {
-                TestLatency.displayResults(e)
+            TestLatRingBuf.worklet_node.port.onmessage = function (e) {
+                TestLatRingBuf.displayResults(e)
             }
 
         } catch (e) {
@@ -58,36 +58,36 @@ export class TestLatency {
     }
 
     static buttonHandlers() {
-        TestLatency.btnstart = document.getElementById('btn-start')
-        TestLatency.btnstop = document.getElementById('btn-stop')
-        TestLatency.btnstart.onclick = TestLatency.startTest;
-        TestLatency.btnstop.onclick = TestLatency.stopTest;
-        TestLatency.btnstop.disabled = true;
+        TestLatRingBuf.btnstart = document.getElementById('btn-start')
+        TestLatRingBuf.btnstop = document.getElementById('btn-stop')
+        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.startTest;
+        TestLatRingBuf.btnstop.onclick = TestLatRingBuf.stopTest;
+        TestLatRingBuf.btnstop.disabled = true;
     }
 
     static displayResults(e){
-        TestLatency.latvalue = (e.data.latency * 1000)
-        document.getElementById('roundtriplatency-val').innerText = TestLatency.latvalue + " ms"
-        //document.getElementById('outputlatency-val').innerText = (TestLatency.ac.outputLatency * 1000) + "ms"
+        TestLatRingBuf.latvalue = (e.data.latency * 1000)
+        document.getElementById('roundtriplatency-val').innerText = TestLatRingBuf.latvalue + " ms"
+        //document.getElementById('outputlatency-val').innerText = (TestLatRingBuf.ac.outputLatency * 1000) + "ms"
     }
 
     static async startTest() {
-        console.log('TestLatency.ac.state', TestLatency.ac.state)
-        // if(TestLatency.ac.state === 'suspended'){
-        //     await TestLatency.ac.resume()
+        console.log('TestLatRingBuf.ac.state', TestLatRingBuf.ac.state)
+        // if(TestLatRingBuf.ac.state === 'suspended'){
+        //     await TestLatRingBuf.ac.resume()
         // }
-        TestLatency.worklet_node.connect(TestLatency.ac.destination)
+        TestLatRingBuf.worklet_node.connect(TestLatRingBuf.ac.destination)
         document.getElementById('roundtriplatency-val').hidden = false        
-        TestLatency.btnstop.disabled = false
-        TestLatency.btnstart.disabled = true
+        TestLatRingBuf.btnstop.disabled = false
+        TestLatRingBuf.btnstart.disabled = true
     }
 
     static async stopTest() {
-        localStorage.setItem('latency', TestLatency.latvalue)
+        localStorage.setItem('latency', TestLatRingBuf.latvalue)
         document.getElementById('roundtriplatency-val').hidden = true
-        TestLatency.worklet_node.disconnect(TestLatency.ac.destination)
-        TestLatency.btnstop.disabled = true
-        TestLatency.btnstart.disabled = false
+        TestLatRingBuf.worklet_node.disconnect(TestLatRingBuf.ac.destination)
+        TestLatRingBuf.btnstop.disabled = true
+        TestLatRingBuf.btnstart.disabled = false
     }
 
 }

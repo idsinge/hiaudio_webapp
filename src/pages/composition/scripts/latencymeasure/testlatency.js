@@ -3,7 +3,7 @@ import { latencyMeasurer } from './latencyMeasurer.js'
 import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
 import { playlist, TEST_LAT_BTN_ID } from '../composition'
 
-export const NUMBER_TRIALS = 4
+export const NUMBER_TRIALS = 6
 const TOTAL_TRIALS = NUMBER_TRIALS - 1
 
 const warningMessageBeforeTest = `Please Make sure you are in a quiet place (so the browser can hear itself). Set both input and output audio volume to near maximum. This may be LOUD. Note: not all browsers on all devices will allow the browser permission to the speakers and microphone. If they don't, the test will not function.`
@@ -47,7 +47,7 @@ export class TestLatency {
         TestLatency.content.innerHTML = ''
         TestLatency.startbutton = document.createElement('a')
         TestLatency.startbutton.innerText = 'TEST LATENCY'
-        TestLatency.startbutton.classList.add('btn-outline-success')
+        TestLatency.startbutton.classList.add('btn-outline-warning')
         TestLatency.startbutton.onclick = TestLatency.start
         TestLatency.content.appendChild(TestLatency.startbutton)
         $('#'+TEST_LAT_BTN_ID).popover('hide')
@@ -81,7 +81,7 @@ export class TestLatency {
         audioInput.connect(TestLatency.audioNode)
         TestLatency.audioNode.connect(TestLatency.audioContext.destination)
         TestLatency.startbutton.innerText = 'STOP'
-        TestLatency.startbutton.classList.remove('btn-outline-success')
+        TestLatency.startbutton.classList.remove('btn-outline-warning')
         TestLatency.startbutton.classList.add('btn-outline-danger')
         TestLatency.startbutton.onclick = TestLatency.displayStart
     }
@@ -103,8 +103,8 @@ export class TestLatency {
         TestLatency.latencyMeasurer = new latencyMeasurer()
         TestLatency.latencyMeasurer.toggle()
         TestLatency.lastState = 0        
-        // TODO: bufferSize (512) needs to be reviewed
-        TestLatency.audioNode = TestLatency.audioContext.createScriptProcessor(512, 2, 2)
+        // TODO: bufferSize 256 for ScriptProcessor works better to estimate the latency rather than 512
+        TestLatency.audioNode = TestLatency.audioContext.createScriptProcessor(256, 2, 2)
 
         TestLatency.audioNode.onaudioprocess = function (e) {
 
@@ -122,15 +122,6 @@ export class TestLatency {
 
     static async start() {
         $('#'+TEST_LAT_BTN_ID).popover('hide')
-        if(!TestLatency.getCurrentLatency()){
-            const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
-            if(isSafari){
-                playlist.getEventEmitter().emit('resume')
-            } 
-            if (!doTestLatency) {     
-              return 
-            }
-        }
         let AudioContext = window.AudioContext || window.webkitAudioContext || false
         TestLatency.audioContext = new AudioContext({ latencyHint: 0 })
         TestLatency.data.samplerate = TestLatency.audioContext.sampleRate
