@@ -13,7 +13,7 @@ export class TestLatRingBuf {
 
     btnstart = null
 
-    btnstop = null
+    running = false
 
     latval = null
 
@@ -59,35 +59,44 @@ export class TestLatRingBuf {
 
     static buttonHandlers() {
         TestLatRingBuf.btnstart = document.getElementById('btn-start')
-        TestLatRingBuf.btnstop = document.getElementById('btn-stop')
+        //TestLatRingBuf.btnstop = document.getElementById('btn-stop')
         TestLatRingBuf.btnstart.onclick = TestLatRingBuf.startTest;
-        TestLatRingBuf.btnstop.onclick = TestLatRingBuf.stopTest;
-        TestLatRingBuf.btnstop.disabled = true;
+        //TestLatRingBuf.btnstop.onclick = TestLatRingBuf.stopTest;
+        //TestLatRingBuf.btnstop.disabled = true;
     }
 
     static displayResults(e){
-        TestLatRingBuf.latvalue = (e.data.latency * 1000)
-        document.getElementById('roundtriplatency-val').innerText = TestLatRingBuf.latvalue + " ms"
+        if(TestLatRingBuf.running){
+            TestLatRingBuf.latvalue = Number(e.data.latency * 1000).toFixed(2)
+            //TestLatRingBuf.btnstart.innerHTML += `<span class='badge badge-info'>lat: ${TestLatRingBuf.latvalue} ms.</span>`
+            document.getElementById('roundtriplatency-val').innerText = TestLatRingBuf.latvalue + " ms"
+        }        
         //document.getElementById('outputlatency-val').innerText = (TestLatRingBuf.ac.outputLatency * 1000) + "ms"
     }
 
     static async startTest() {
-        console.log('TestLatRingBuf.ac.state', TestLatRingBuf.ac.state)
+        // /console.log('TestLatRingBuf.ac.state', TestLatRingBuf.ac.state)
         // if(TestLatRingBuf.ac.state === 'suspended'){
         //     await TestLatRingBuf.ac.resume()
         // }
         TestLatRingBuf.worklet_node.connect(TestLatRingBuf.ac.destination)
-        document.getElementById('roundtriplatency-val').hidden = false        
-        TestLatRingBuf.btnstop.disabled = false
-        TestLatRingBuf.btnstart.disabled = true
+        //document.getElementById('roundtriplatency-val').hidden = false
+        TestLatRingBuf.btnstart.innerText = 'STOP'
+        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.stopTest;
+        TestLatRingBuf.running = true
+        //TestLatRingBuf.btnstop.disabled = false
+        //TestLatRingBuf.btnstart.disabled = true
     }
 
     static async stopTest() {
         localStorage.setItem('latency', TestLatRingBuf.latvalue)
-        document.getElementById('roundtriplatency-val').hidden = true
+        //document.getElementById('roundtriplatency-val').hidden = true
         TestLatRingBuf.worklet_node.disconnect(TestLatRingBuf.ac.destination)
-        TestLatRingBuf.btnstop.disabled = true
-        TestLatRingBuf.btnstart.disabled = false
+        //TestLatRingBuf.btnstop.disabled = true
+        //TestLatRingBuf.btnstart.disabled = false
+        TestLatRingBuf.btnstart.innerText = 'START'
+        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.startTest;
+        TestLatRingBuf.running = false
     }
 
 }

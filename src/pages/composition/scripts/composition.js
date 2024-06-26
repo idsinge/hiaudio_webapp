@@ -62,7 +62,7 @@ export const TEST_LAT_MLS_BTN_ID = 'testlatencymlsbtn'
 const compositionId = COMPOSITION_ID
 
 const testLatFinishCallback = () => {
-  if(TestLatRingBuf.btnstart.disabled){
+  if(TestLatRingBuf.running){
     console.log('Adenot Test Running')
     TestLatRingBuf.stopTest()
   }
@@ -76,10 +76,9 @@ const openLatencyTestDialog = () => {
   DynamicModal.dynamicModalDialog(
     `<p>Place your mic as close as possible to the speakers/headphones.</p><br>
     <a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
-      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>
-    <button id=btn-start>Start measure</button>
-    <button id=btn-stop>Stop measure</button>
-    <p>Measured rountrip: <span id=roundtriplatency-val hidden>...</span></p>
+      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>    
+    <a class="nav-link" href="#" id="btn-start">
+      TEST LATENCY</a><span id="roundtriplatency-val" class="badge badge-info"></span><br>
     <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
       data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
       Test Latency</a><br>`,

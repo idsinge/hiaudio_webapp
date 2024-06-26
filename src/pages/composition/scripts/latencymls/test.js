@@ -114,7 +114,7 @@ export class TestLatencyMLS {
 
     static start() {
 
-        $('#testlatency').popover('hide')        
+        //$('#testlatency').popover('hide')        
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatencyMLS.onAudioPermissionGranted).catch(TestLatencyMLS.onAudioInputPermissionDenied)
         }
@@ -134,10 +134,10 @@ export class TestLatencyMLS {
         TestLatencyMLS.startbutton.onclick = TestLatencyMLS.onAudioSetupFinished
 
         TestLatencyMLS.content.appendChild(TestLatencyMLS.startbutton)
-        $('#testlatency').popover('hide')
-        $('#testlatency').popover({
-            trigger: 'focus'
-        })
+        // $('#testlatency').popover('hide')
+        // $('#testlatency').popover({
+        //     trigger: 'focus'
+        // })
 
         if(TestLatencyMLS.debugCanvas){
             clearCanvas()
@@ -233,7 +233,7 @@ export class TestLatencyMLS {
         TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
         TestLatencyMLS.startbutton.classList.add('btn-outline-primary')
         TestLatencyMLS.startbutton.onclick = TestLatencyMLS.displayStart
-        $('#testlatency').popover('hide')
+        //$('#testlatency').popover('hide')
     }
     static async blobToAudioBuffer(audioContext, blob) {
         const arrayBuffer = await blob.arrayBuffer()
