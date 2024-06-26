@@ -97,6 +97,7 @@ const openLatencyTestDialog = () => {
     console.log('here')
     TestLatencyMLS.displayStart()
     TestLatency.displayStart()
+    TestLatRingBuf.buttonHandlers()
   }
 }
 
