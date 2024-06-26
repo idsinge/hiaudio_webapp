@@ -3,7 +3,6 @@ import { FileUploader } from './fileuploader'
 import WaveformPlaylist from './waveform-playlist.umd'
 import { Recorder } from './record'
 import { triggerTestLatencyButton, triggerLatencyTestHandler } from './latencytesthandler'
-import detectBrowser from '../../../common/js/detect-browser.js'
 import DynamicModal from '../../../common/js/modaldialog'
 import { activateGoHomeLink, isSafari } from '../../../common/js/utils'
 
@@ -75,8 +74,6 @@ const createTestButtons = () => {
 
 activateGoHomeLink()
 createTestButtons()
-const browserId = detectBrowser()
-console.log(browserId)
 
 if (compositionId === 'demopage') {
   DynamicModal.dynamicModalDialog(

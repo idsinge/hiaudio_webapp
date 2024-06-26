@@ -3,6 +3,7 @@ import { TestLatScriptProc } from './latencymeasure/testlatency'
 import { TestLatRingBuf } from './latencyadenot/testlatency'
 import { MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 import DynamicModal from '../../../common/js/modaldialog'
+import detectBrowser from '../../../common/js/detect-browser.js'
 import { playlist } from './composition'
 
 export const TEST_LAT_BTN_ID = 'testlatencybtn'
@@ -16,12 +17,13 @@ export const triggerTestLatencyButton = () => {
       LATENCY TEST</a>
   </li>`}
 
+const active_lat_test = {mls:true,ringbuf:true,scrptprc:false}
 
 const testLatFinishCallback = () => {
     if (TestLatRingBuf.running) {
         TestLatRingBuf.stopTest()
     }
-    if (TestLatScriptProc.startbutton.innerText === 'STOP') {
+    if (active_lat_test.scrptprc && TestLatScriptProc.startbutton.innerText === 'STOP') {
         TestLatScriptProc.finishTest()
     }
 }
@@ -30,14 +32,12 @@ const openLatencyTestDialog = () => {
 
     DynamicModal.dynamicModalDialog(
         `<p>Place your mic as close as possible to the speakers/headphones.</p><br>
-      <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
+        ${active_lat_test.scrptprc ? `<a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
         data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-        Test Latency</a><br>
-      <a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
-        data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>    
-      <a id="btn-start" class="nav-link" href="#">TEST LATENCY
-        
-        </a><br>`,
+        Test Latency</a><br>`: ''}      
+        ${active_lat_test.mls ? `<a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
+        data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>`: ''}
+        ${active_lat_test.mls ? `<a id="btn-start" class="nav-link" href="#">TEST LATENCY</a><br>` : ''}`,
         null,
         '',
         'Close',
@@ -48,14 +48,16 @@ const openLatencyTestDialog = () => {
     if (!TestLatencyMLS.audioContext) {
         TestLatencyMLS.initialize(playlist.ac, TEST_LAT_MLS_BTN_ID)
         TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
-        TestLatScriptProc.initialize(playlist.ac)
+        active_lat_test.scrptprc && TestLatScriptProc.initialize(playlist.ac)
     } else {
         TestLatencyMLS.displayStart()
-        TestLatScriptProc.displayStart()
+        active_lat_test.scrptprc && TestLatScriptProc.displayStart()
         TestLatRingBuf.buttonHandlers()
     }
 }
 
 export const triggerLatencyTestHandler = () => {
+    const browserId = detectBrowser()
+    console.log(browserId)
     document.getElementById('trigger-lat-test-btn').onclick = openLatencyTestDialog
 }
