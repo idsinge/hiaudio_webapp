@@ -75,13 +75,14 @@ const openLatencyTestDialog = () => {
   
   DynamicModal.dynamicModalDialog(
     `<p>Place your mic as close as possible to the speakers/headphones.</p><br>
-    <a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
-      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>    
-    <a class="nav-link" href="#" id="btn-start">
-      TEST LATENCY</a><span id="roundtriplatency-val" class="badge badge-info"></span><br>
     <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
       data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-      Test Latency</a><br>`,
+      Test Latency</a><br>
+    <a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
+      data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>    
+    <a id="btn-start" class="nav-link" href="#">TEST LATENCY
+      
+      </a><br>`,
     null,
     '',
     'Close',

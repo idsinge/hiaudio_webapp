@@ -68,8 +68,7 @@ export class TestLatRingBuf {
     static displayResults(e){
         if(TestLatRingBuf.running){
             TestLatRingBuf.latvalue = Number(e.data.latency * 1000).toFixed(2)
-            //TestLatRingBuf.btnstart.innerHTML += `<span class='badge badge-info'>lat: ${TestLatRingBuf.latvalue} ms.</span>`
-            document.getElementById('roundtriplatency-val').innerText = TestLatRingBuf.latvalue + " ms"
+            TestLatRingBuf.btnstart.innerHTML = `STOP <span class='badge badge-info'>lat: ${TestLatRingBuf.latvalue} ms.</span>`
         }        
         //document.getElementById('outputlatency-val').innerText = (TestLatRingBuf.ac.outputLatency * 1000) + "ms"
     }
@@ -93,8 +92,8 @@ export class TestLatRingBuf {
         //document.getElementById('roundtriplatency-val').hidden = true
         TestLatRingBuf.worklet_node.disconnect(TestLatRingBuf.ac.destination)
         //TestLatRingBuf.btnstop.disabled = true
-        //TestLatRingBuf.btnstart.disabled = false
-        TestLatRingBuf.btnstart.innerText = 'START'
+        //TestLatRingBuf.btnstart.disabled = false        
+        TestLatRingBuf.btnstart.innerHTML = `START <span class='badge badge-info'>lat: ${TestLatRingBuf.latvalue} ms.</span>`
         TestLatRingBuf.btnstart.onclick = TestLatRingBuf.startTest;
         TestLatRingBuf.running = false
     }

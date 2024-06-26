@@ -305,7 +305,7 @@ export class TestLatencyMLS {
        //const peak = findPeakAndMean(correlation)
         if(peak.channel === 0){
             console.log('Channel', peak.channel )
-            const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
+            const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
             console.log('Latency = ', roundtriplatency + ' ms')
             const ratioIs = peak.peakValue / peak.mean
             console.log('Corr Ratio', ratioIs)
