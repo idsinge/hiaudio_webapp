@@ -17,10 +17,10 @@ export const triggerTestLatencyButton = () => {
       LATENCY TEST</a>
   </li>`}
 
-const active_lat_test = {mls:true,ringbuf:true,scrptprc:false}
+const active_lat_test = {mls:true,ringbuf:false,scrptprc:false}
 
 const testLatFinishCallback = () => {
-    if (TestLatRingBuf.running) {
+    if (active_lat_test.ringbuf && TestLatRingBuf.running) {
         TestLatRingBuf.stopTest()
     }
     if (active_lat_test.scrptprc && TestLatScriptProc.startbutton.innerText === 'STOP') {
@@ -37,7 +37,7 @@ const openLatencyTestDialog = () => {
         Test Latency</a><br>`: ''}      
         ${active_lat_test.mls ? `<a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
         data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>`: ''}
-        ${active_lat_test.mls ? `<a id="btn-start" class="nav-link" href="#">TEST LATENCY</a><br>` : ''}`,
+        ${active_lat_test.ringbuf ? `<a id="btn-start" class="nav-link" href="#">TEST LATENCY</a><br>` : ''}`,
         null,
         '',
         'Close',
@@ -45,14 +45,15 @@ const openLatencyTestDialog = () => {
         'bg-success',
         testLatFinishCallback
     )
+    // TODO: improve the way to check the test are initialized
     if (!TestLatencyMLS.audioContext) {
-        TestLatencyMLS.initialize(playlist.ac, TEST_LAT_MLS_BTN_ID)
-        TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
+        active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, TEST_LAT_MLS_BTN_ID)
+        active_lat_test.ringbuf && TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS) // Adenot
         active_lat_test.scrptprc && TestLatScriptProc.initialize(playlist.ac)
     } else {
-        TestLatencyMLS.displayStart()
+        active_lat_test.mls && TestLatencyMLS.displayStart()
         active_lat_test.scrptprc && TestLatScriptProc.displayStart()
-        TestLatRingBuf.buttonHandlers()
+        active_lat_test.ringbuf && TestLatRingBuf.buttonHandlers()
     }
 }
 
