@@ -10,6 +10,11 @@ export const TEST_LAT_BTN_ID = 'testlatencybtn'
 
 export const TEST_LAT_MLS_BTN_ID = 'testlatencymlsbtn'
 
+const imageUrl = new URL(
+    '../../../common/img/imgtestlatdemo.webp',
+    import.meta.url
+  );
+
 export const triggerTestLatencyButton = () => {
     return `<li class="nav-item">
     <a class="nav-link" href="#" id="trigger-lat-test-btn" data-toggle="modal" 
@@ -17,7 +22,7 @@ export const triggerTestLatencyButton = () => {
       LATENCY TEST</a>
   </li>`}
 
-const active_lat_test = {mls:true,ringbuf:false,scrptprc:false}
+const active_lat_test = {mls:true,ringbuf:true,scrptprc:true}
 
 const testLatFinishCallback = () => {
     if (active_lat_test.ringbuf && TestLatRingBuf.running) {
@@ -28,16 +33,40 @@ const testLatFinishCallback = () => {
     }
 }
 
+const manualSetLatencyHandler = () => {
+    document.getElementById('latencyslider').onchange = (event) =>{
+        localStorage.setItem('latency', event.target.value) 
+        document.getElementById('latinputval').value = event.target.value
+    }
+    document.getElementById('latinputval').onchange = (event) =>{
+        localStorage.setItem('latency', event.target.value)
+        document.getElementById('latencyslider').value = event.target.value
+    }
+}
 const openLatencyTestDialog = () => {
-
+    const currentLat = localStorage.getItem('latency')    
     DynamicModal.dynamicModalDialog(
-        `<p>Place your mic as close as possible to the speakers/headphones.</p><br>
-        ${active_lat_test.scrptprc ? `<a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
-        data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
-        Test Latency</a><br>`: ''}      
+        `<img src="${imageUrl}" class="img-fluid" alt="...">
+        <p>Place your mic as close as possible to the speakers/headphones.</p><br>
         ${active_lat_test.mls ? `<a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
-        data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>`: ''}
-        ${active_lat_test.ringbuf ? `<a id="btn-start" class="nav-link" href="#">TEST LATENCY</a><br>` : ''}`,
+        data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>`: ''}       
+        <details>
+            <summary>Advanced</summary>
+            <br/>
+             ${active_lat_test.ringbuf ? `<label for="">Via AudioWorklet: </label>
+             <a id="btn-start" class="nav-link" href="#">TEST LATENCY</a><br>` : ''}
+             ${active_lat_test.scrptprc ? `<label for="">Via ScriptProcessor: </label>
+             <a class="nav-link" href="#" id="${TEST_LAT_BTN_ID}" data-toggle="modal" 
+                data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected">
+                Test Latency</a><br>`: ''}
+            <p><label for="formControlLatRange">Set the value manually (ms): </label>
+                <div class="form-group col-md-5">
+                <input id="latinputval" type="number" min="0" max="500" class="form-control" placeholder="${currentLat  || 0}">
+                </div>
+                <input type="range" min="0" max="500" class="form-control-range" id="latencyslider" value="${currentLat || 0}">
+            </p>
+        </details>
+       `,
         null,
         '',
         'Close',
@@ -45,6 +74,7 @@ const openLatencyTestDialog = () => {
         'bg-success',
         testLatFinishCallback
     )
+    manualSetLatencyHandler()
     // TODO: improve the way to check the test are initialized
     if (!TestLatencyMLS.audioContext) {
         active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, TEST_LAT_MLS_BTN_ID)

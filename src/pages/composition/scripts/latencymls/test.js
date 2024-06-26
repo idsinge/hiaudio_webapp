@@ -80,8 +80,8 @@ export class TestLatencyMLS {
         TestLatencyMLS.worker.addEventListener('message', (message) => {
             TestLatencyMLS.workerMessageHanlder(message)
         })
-        //const debugCanvas = document.location.search.indexOf('debug') !== -1
-        const debugCanvas = true
+        const debugCanvas = document.location.search.indexOf('debug') !== -1
+        //const debugCanvas = true
          
         if(debugCanvas){
             TestLatencyMLS.debugCanvas = debugCanvas
@@ -305,7 +305,7 @@ export class TestLatencyMLS {
     static displayresults(peak, signalrecorded, mlssignal, correlation, channel) {
        //const peak = findPeakAndMean(correlation)
         if(peak.channel === 0){
-            console.log('Channel', peak.channel )
+            //console.log('Channel', peak.channel )
             const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
             console.log('Latency = ', roundtriplatency + ' ms')
             const ratioIs = peak.peakValue / peak.mean
@@ -314,10 +314,10 @@ export class TestLatencyMLS {
             TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
             TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
             TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
-            //console.log('Corr ABS(Ratio)', Math.abs(ratioIs))
-            drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
-            console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
+            //console.log('Corr ABS(Ratio)', Math.abs(ratioIs))            
             if(TestLatencyMLS.debugCanvas) {
+                drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
+                console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
                 if(signalrecorded.numberOfChannels>1){
                     TestLatencyMLS.correlation = null
                     TestLatencyMLS.worker.postMessage({
