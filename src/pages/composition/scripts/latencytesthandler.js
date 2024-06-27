@@ -11,7 +11,7 @@ export const TEST_LAT_BTN_ID = 'testlatencybtn'
 export const TEST_LAT_MLS_BTN_ID = 'testlatencymlsbtn'
 
 const imageUrl = new URL(
-    '../../../common/img/imgtestlatdemo.webp',
+    '../../../common/img/imgtestlatdemo.jpg?as=webp',
     import.meta.url
   );
 
@@ -47,7 +47,9 @@ const openLatencyTestDialog = () => {
     const currentLat = localStorage.getItem('latency')    
     DynamicModal.dynamicModalDialog(
         `<img src="${imageUrl}" class="img-fluid" alt="...">
-        <p>Place your mic as close as possible to the speakers/headphones.</p><br>
+        <p>Place your mic as close as possible to the speakers/headphones.</p>
+        <p><b>WARNING!</b> Be careful with the volume as a noise will be played through left speaker.</p>
+        <p id="current-lat-val">${currentLat ? '<i>Current latency: ' + currentLat + ' ms.</i>': ''}</p>
         ${active_lat_test.mls ? `<a class="nav-link" href="#" id="${TEST_LAT_MLS_BTN_ID}" data-toggle="modal" 
         data-toggle="popover" data-placement="bottom"  title="Testing ..." data-content="No input detected"></a><br>`: ''}       
         <details>
