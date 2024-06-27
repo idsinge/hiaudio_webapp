@@ -22,7 +22,7 @@ export const triggerTestLatencyButton = () => {
       LATENCY TEST</a>
   </li>`}
 
-const active_lat_test = {mls:true,ringbuf:true,scrptprc:true}
+let active_lat_test = {mls:true,ringbuf:true,scrptprc:true}
 
 const testLatFinishCallback = () => {
     if (active_lat_test.ringbuf && TestLatRingBuf.running) {
@@ -92,5 +92,9 @@ const openLatencyTestDialog = () => {
 export const triggerLatencyTestHandler = () => {
     const browserId = detectBrowser()
     console.log(browserId)
+    if(browserId.os === 'ipad' || browserId.os === 'iphone') {
+        active_lat_test.ringbuf = false
+        active_lat_test.scrptprc = false
+    }
     document.getElementById('trigger-lat-test-btn').onclick = openLatencyTestDialog
 }
