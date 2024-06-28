@@ -51,7 +51,7 @@ const manualSetLatencyHandler = () => {
         displayLatencyUI(event.target.value)
     }
 }
-const openLatencyTestDialog = () => {
+const openLatencyTestDialog = (stream) => {
     const currentLat = localStorage.getItem('latency')    
     DynamicModal.dynamicModalDialog(
         `<img src='${imageUrl}' class='img-fluid' alt='...'>
@@ -88,7 +88,7 @@ const openLatencyTestDialog = () => {
     
     if (!latencyTestInitialized) {
         latencyTestInitialized = true
-        active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, TEST_LAT_MLS_BTN_ID)
+        active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, stream, TEST_LAT_MLS_BTN_ID)
         active_lat_test.ringbuf && TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS)
         active_lat_test.scrptprc && TestLatScriptProc.initialize(playlist.ac)
     } else {
@@ -98,14 +98,13 @@ const openLatencyTestDialog = () => {
     }
 }
 
-export const triggerLatencyTestHandler = () => {
+export const triggerLatencyTestHandler = (stream) => {
     const browserId = detectBrowser()
     console.log(browserId)
     if(browserId.os === 'ipad' || browserId.os === 'iphone' || browserId.os === 'mac') {
         active_lat_test.ringbuf = false
-    } else if (browserId.os === 'android'){
-        active_lat_test.mls = false
-        active_lat_test.ringbuf = true
     }
-    document.getElementById('trigger-lat-test-btn').onclick = openLatencyTestDialog
+    document.getElementById('trigger-lat-test-btn').onclick = () => {
+        openLatencyTestDialog(stream)
+    } 
 }

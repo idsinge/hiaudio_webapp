@@ -1,4 +1,4 @@
-import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
+import { isSafari } from '../../../../common/js/utils'
 import { drawResults, clearCanvas } from './helper'
 import { generateMLS } from './mls'
 import { TestMic } from '../webdictaphone/webdictaphone'
@@ -28,6 +28,8 @@ export class TestLatencyMLS {
     signalrecorded = null
     
     btnId = null
+
+    inputStream = null
 
     static setCurrentLatency(latvalue) {
         localStorage.setItem('latency', latvalue)
@@ -65,7 +67,7 @@ export class TestLatencyMLS {
         }
     }
 
-    static async initialize(ac, btnId) {
+    static async initialize(ac, stream, btnId) {
 
         TestLatencyMLS.btnId = btnId
 
@@ -87,7 +89,7 @@ export class TestLatencyMLS {
         const currentlatency = localStorage.getItem('latency')
         TestLatencyMLS.currentlatency = currentlatency ? parseInt(currentlatency) : null        
         TestLatencyMLS.audioContext = ac
-        TestLatencyMLS.start()
+        TestLatencyMLS.onAudioPermissionGranted(stream)
     }
 
     static onAudioPermissionGranted(inputStream) {
@@ -106,15 +108,6 @@ export class TestLatencyMLS {
         TestLatencyMLS.displayStart()
     }
 
-    static start() {
-
-        if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatencyMLS.onAudioPermissionGranted).catch(TestLatencyMLS.onAudioInputPermissionDenied)
-        }
-        else {
-            TestLatencyMLS.onAudioInputPermissionDenied(`Can't access getUserMedia.`)
-        }
-    }
 
     static displayStart() {
 
@@ -129,10 +122,6 @@ export class TestLatencyMLS {
         if(TestLatencyMLS.debugCanvas){
             clearCanvas()
         }
-    }
-
-    static onAudioInputPermissionDenied(error) {
-        console.log(error)
     }
 
     static async onAudioSetupFinished() {

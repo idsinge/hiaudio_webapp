@@ -19,7 +19,7 @@ export class Recorder {
 
         const gotStream = (stream) => {
             const audCtxt = new AudioContext({ latencyHint: 0 })
-            createWaveformPlaylist(audCtxt)
+            createWaveformPlaylist(audCtxt, stream)
             userMediaStream = this.getCorrectStreamForSafari(stream)  
             // userMediaStream.getTracks().forEach(async function(track) {                
             //     console.log('Record Track Settings', track.getSettings())

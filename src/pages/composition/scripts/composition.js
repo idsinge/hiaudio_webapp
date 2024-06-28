@@ -19,7 +19,7 @@ export let playlist = null
 export let trackHandler = null
 export let fileUploader = null
 
-export const createWaveformPlaylist = (audCtxt) => {
+export const createWaveformPlaylist = (audCtxt, stream) => {
   playlist = WaveformPlaylist({
     samplesPerPixel: 3000,
     waveHeight: 100,
@@ -46,7 +46,7 @@ export const createWaveformPlaylist = (audCtxt) => {
   })
   trackHandler = new TrackHandler()
   fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
-  triggerLatencyTestHandler()
+  triggerLatencyTestHandler(stream)
 }
 
 export const recorder = new Recorder()
