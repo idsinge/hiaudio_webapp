@@ -103,6 +103,9 @@ export const triggerLatencyTestHandler = () => {
     console.log(browserId)
     if(browserId.os === 'ipad' || browserId.os === 'iphone' || browserId.os === 'mac') {
         active_lat_test.ringbuf = false
+    } else if (browserId.os === 'android'){
+        active_lat_test.mls = false
+        active_lat_test.ringbuf = true
     }
     document.getElementById('trigger-lat-test-btn').onclick = openLatencyTestDialog
 }
