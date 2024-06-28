@@ -1,4 +1,5 @@
 import MeasureProcessor from 'worklet:./processor.js'
+import { displayLatencyUI } from '../latencytesthandler'
 
 const safariVersionIndex = navigator.userAgent.indexOf('Version/')
 const versionString = navigator.userAgent.substring(safariVersionIndex + 8)
@@ -15,25 +16,24 @@ export class TestLatRingBuf {
 
     running = false
 
-    latval = null
-
+    latvalue = 0
+    
     static async initialize(audioContext, constraints) {
-               
+
         TestLatRingBuf.buttonHandlers()
 
         try {
             
             let stream = await navigator.mediaDevices.getUserMedia(constraints)
 
-            //TestLatRingBuf.ac = new AudioContext()
             TestLatRingBuf.ac = audioContext
             
             await TestLatRingBuf.ac.audioWorklet.addModule(MeasureProcessor)
 
-            var mic_source = TestLatRingBuf.ac.createMediaStreamSource(stream)
+            const mic_source = TestLatRingBuf.ac.createMediaStreamSource(stream)
 
-            TestLatRingBuf.worklet_node = new AudioWorkletNode(TestLatRingBuf.ac, 'measure-processor', { outputChannelCount: [1] });
-            TestLatRingBuf.worklet_node.channelCount = 1;
+            TestLatRingBuf.worklet_node = new AudioWorkletNode(TestLatRingBuf.ac, 'measure-processor', { outputChannelCount: [1] })
+            TestLatRingBuf.worklet_node.channelCount = 1
 
             // For Safari 16 and above when using echocancellation to false
             // the input is dramatically reduced
@@ -59,43 +59,34 @@ export class TestLatRingBuf {
 
     static buttonHandlers() {
         TestLatRingBuf.btnstart = document.getElementById('btn-start')
-        //TestLatRingBuf.btnstop = document.getElementById('btn-stop')
-        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.startTest;
-        //TestLatRingBuf.btnstop.onclick = TestLatRingBuf.stopTest;
-        //TestLatRingBuf.btnstop.disabled = true;
+        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.startTest
     }
 
     static displayResults(e){
-        if(TestLatRingBuf.running){
+        if(TestLatRingBuf.running && e.data.latency){
             TestLatRingBuf.latvalue = Number(e.data.latency * 1000).toFixed(2)
             TestLatRingBuf.btnstart.innerHTML = `STOP <span class='badge badge-info'>lat: ${TestLatRingBuf.latvalue} ms.</span>`
+            displayLatencyUI(TestLatRingBuf.latvalue)
         }        
-        //document.getElementById('outputlatency-val').innerText = (TestLatRingBuf.ac.outputLatency * 1000) + "ms"
     }
 
-    static async startTest() {
-        // /console.log('TestLatRingBuf.ac.state', TestLatRingBuf.ac.state)
-        // if(TestLatRingBuf.ac.state === 'suspended'){
-        //     await TestLatRingBuf.ac.resume()
-        // }
+    static startTest() {
+        TestLatRingBuf.latvalue = 0
         TestLatRingBuf.worklet_node.connect(TestLatRingBuf.ac.destination)
-        //document.getElementById('roundtriplatency-val').hidden = false
         TestLatRingBuf.btnstart.innerText = 'STOP'
-        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.stopTest;
+        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.stopTest
         TestLatRingBuf.running = true
-        //TestLatRingBuf.btnstop.disabled = false
-        //TestLatRingBuf.btnstart.disabled = true
     }
 
     static async stopTest() {
-        localStorage.setItem('latency', TestLatRingBuf.latvalue)
-        //document.getElementById('roundtriplatency-val').hidden = true
+        if(TestLatRingBuf.latvalue && TestLatRingBuf.latvalue !== 0){
+            localStorage.setItem('latency', TestLatRingBuf.latvalue)
+            TestLatRingBuf.btnstart.innerHTML = `START <span class='badge badge-info'>lat: ${TestLatRingBuf.latvalue} ms.</span>`
+        } else {
+            TestLatRingBuf.btnstart.innerHTML = 'START'
+        }
         TestLatRingBuf.worklet_node.disconnect(TestLatRingBuf.ac.destination)
-        //TestLatRingBuf.btnstop.disabled = true
-        //TestLatRingBuf.btnstart.disabled = false        
-        TestLatRingBuf.btnstart.innerHTML = `START <span class='badge badge-info'>lat: ${TestLatRingBuf.latvalue} ms.</span>`
-        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.startTest;
+        TestLatRingBuf.btnstart.onclick = TestLatRingBuf.startTest
         TestLatRingBuf.running = false
     }
-
 }

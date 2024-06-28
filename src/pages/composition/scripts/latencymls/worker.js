@@ -12,7 +12,6 @@ addEventListener('message', (message) => {
 
 function calculateCrossCorrelation(data1, data2, maxLag, channel) {
   const n1 = data1.length, n2 = data2.length
-  //console.log(maxLag)
   let crossCorrelations = new Array(maxLag + 1).fill(0)
 
   for (let lag = 0; lag <= maxLag; lag++) {

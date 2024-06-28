@@ -1,15 +1,14 @@
 import { isSafari, MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
-import { drawResults, findPeakAndMean, clearCanvas, calculateCrossCorrelation } from './helper'
+import { drawResults, clearCanvas } from './helper'
 import { generateMLS } from './mls'
 import { TestMic } from '../webdictaphone/webdictaphone'
-
-const warningMessageBeforeTest = `Please, be careful as a noise will be played through the speakers, so don't put the volume to the max. `
+import { displayLatencyUI } from '../latencytesthandler'
 
 const CANVAS = `<div class='container' id='audio-area'>
                     <canvas id='leftChannelCanvas' width='800' height='100' style='border:1px solid #000000;'></canvas>
-                    <canvas id='rightChannelCanvas' width='800' height='100' style='border:1px solid #000000;'></canvas>
+                    <canvas id='rightChannelCanvas' width='800' height='100' style='border:1px solid #000000;' hidden></canvas>
                     <canvas id='autocorrelationCanvas1' style='border:1px solid #000000;'></canvas>
-                    <canvas id='autocorrelationCanvas2' style='border:1px solid #000000;'></canvas>
+                    <canvas id='autocorrelationCanvas2' style='border:1px solid #000000;' hidden></canvas>
                 </div>`
 
 export class TestLatencyMLS {
@@ -32,6 +31,7 @@ export class TestLatencyMLS {
 
     static setCurrentLatency(latvalue) {
         localStorage.setItem('latency', latvalue)
+        displayLatencyUI(latvalue)
         TestLatencyMLS.currentlatency = latvalue
     }
     static getCurrentLatency() {
@@ -46,8 +46,6 @@ export class TestLatencyMLS {
             const micsource = TestLatencyMLS.audioContext.createMediaStreamSource(stream)
             TestLatencyMLS.recordGainNode = TestLatencyMLS.audioContext.createGain()
             micsource.connect(TestLatencyMLS.recordGainNode)
-            //const micGain = localStorage.getItem('micgain')
-            //const defaultGain = micGain ? parseInt(micGain) : 1
             const defaultGain = 50 // force the gain to be 50 so it does not depend on manual control
             TestLatencyMLS.recordGainNode.gain.value = defaultGain
             const dest = TestLatencyMLS.audioContext.createMediaStreamDestination()
@@ -67,9 +65,7 @@ export class TestLatencyMLS {
         }
     }
 
-
     static async initialize(ac, btnId) {
-        console.log('AudioContext', ac)
 
         TestLatencyMLS.btnId = btnId
 
@@ -80,25 +76,22 @@ export class TestLatencyMLS {
         TestLatencyMLS.worker.addEventListener('message', (message) => {
             TestLatencyMLS.workerMessageHanlder(message)
         })
+
         const debugCanvas = document.location.search.indexOf('debug') !== -1
-        //const debugCanvas = true
-         
+                 
         if(debugCanvas){
+            console.log('AudioContext', ac)
             TestLatencyMLS.debugCanvas = debugCanvas
             document.getElementById('page-header').insertAdjacentHTML('afterend', CANVAS)
         }        
         const currentlatency = localStorage.getItem('latency')
-        TestLatencyMLS.currentlatency = currentlatency ? parseInt(currentlatency) : null
-        //TestLatencyMLS.playlist = playlist
-        //TestLatencyMLS.audioContext = null
+        TestLatencyMLS.currentlatency = currentlatency ? parseInt(currentlatency) : null        
         TestLatencyMLS.audioContext = ac
-        //TestLatencyMLS.content = document.getElementById(btnId)
         TestLatencyMLS.start()
     }
 
     static onAudioPermissionGranted(inputStream) {
-        //TestLatencyMLS.audioContext = TestLatencyMLS.playlist.ac
-        // TestLatencyMLS.audioContext = new AudioContext({ latencyHint: 0 })
+        
         const noisemls = generateMLS(15)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
         TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
@@ -115,7 +108,6 @@ export class TestLatencyMLS {
 
     static start() {
 
-        //$('#testlatency').popover('hide')        
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatencyMLS.onAudioPermissionGranted).catch(TestLatencyMLS.onAudioInputPermissionDenied)
         }
@@ -126,20 +118,14 @@ export class TestLatencyMLS {
 
     static displayStart() {
 
-        //TestLatencyMLS.content = null
         TestLatencyMLS.content = document.getElementById(TestLatencyMLS.btnId)
         TestLatencyMLS.content.innerHTML = ''        
         TestLatencyMLS.startbutton = document.createElement('a')
         TestLatencyMLS.startbutton.innerText = 'TEST LATENCY'
         TestLatencyMLS.startbutton.classList.add('btn-outline-success')
         TestLatencyMLS.startbutton.onclick = TestLatencyMLS.onAudioSetupFinished
-
         TestLatencyMLS.content.appendChild(TestLatencyMLS.startbutton)
-        // $('#testlatency').popover('hide')
-        // $('#testlatency').popover({
-        //     trigger: 'focus'
-        // })
-
+    
         if(TestLatencyMLS.debugCanvas){
             clearCanvas()
         }
@@ -150,27 +136,11 @@ export class TestLatencyMLS {
     }
 
     static async onAudioSetupFinished() {
-        // workaround for Safari in case alert is displayed for detleting a track
-        // if ((isSafari && TestLatencyMLS.audioContext.state === 'suspended') {
-        //     await TestLatencyMLS.audioContext.resume()
-        // }
-        // if(!TestLatencyMLS.getCurrentLatency()){
-        //     const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
-        //     if(isSafari){
-        //         TestLatencyMLS.playlist.getEventEmitter().emit('resume')
-        //     } 
-        //     if (!doTestLatency) {     
-        //       return 
-        //     }
-        // }
-        //console.log('TestLatencyMLS.audioContext.state', TestLatencyMLS.audioContext.state)
         TestLatencyMLS.startbutton.innerText = 'STOP'
         TestLatencyMLS.startbutton.classList.remove('btn-outline-success')
         TestLatencyMLS.startbutton.classList.add('btn-outline-danger')
         TestLatencyMLS.startbutton.onclick = TestLatencyMLS.displayStart
-
         TestLatencyMLS.prepareAudioToPlayAndrecord()
-
     }
 
     static prepareAudioToPlayAndrecord() {
@@ -184,18 +154,16 @@ export class TestLatencyMLS {
         silenceSource.connect(TestLatencyMLS.audioContext.destination)
        
         const doTheTest = () => {
-            const noiseSource = TestLatencyMLS.audioContext.createBufferSource()
 
+            const noiseSource = TestLatencyMLS.audioContext.createBufferSource()
             noiseSource.buffer = TestLatencyMLS.noiseBuffer
 
             const splitter = TestLatencyMLS.audioContext.createChannelSplitter(2)
             const merger = TestLatencyMLS.audioContext.createChannelMerger(2)
 
             noiseSource.connect(splitter)
-            splitter.connect(merger, 0, 0) // Connect only the left channel to the right output
-            merger.connect(TestLatencyMLS.audioContext.destination)
-
-            //noiseSource.connect(TestLatencyMLS.audioContext.destination)
+            splitter.connect(merger, 0, 0) // Connect only the left channel
+            merger.connect(TestLatencyMLS.audioContext.destination)            
             
             TestLatencyMLS.audioContext.createMediaStreamSource(TestLatencyMLS.inputStream)
 
@@ -229,13 +197,12 @@ export class TestLatencyMLS {
     }
 
     static finishTest() {
-       
         TestLatencyMLS.startbutton.innerText = 'PROCESSING... '
         TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
         TestLatencyMLS.startbutton.classList.add('btn-outline-primary')
-        TestLatencyMLS.startbutton.onclick = TestLatencyMLS.displayStart
-        //$('#testlatency').popover('hide')
+        TestLatencyMLS.startbutton.onclick = TestLatencyMLS.displayStart        
     }
+
     static async blobToAudioBuffer(audioContext, blob) {
         const arrayBuffer = await blob.arrayBuffer()
         return await audioContext.decodeAudioData(arrayBuffer)
@@ -257,15 +224,14 @@ export class TestLatencyMLS {
     static async displayAudioTagElem(chunks, mimeType) {
         
         const recordedAudio = new Blob(chunks, { type: mimeType })
-       //const recordedAudioURL = URL.createObjectURL(recordedAudio)
-        //const signalrecorded = await fetchAudioContext(recordedAudioURL, TestLatencyMLS.audioContext)
+        
         TestLatencyMLS.signalrecorded = await TestLatencyMLS.blobToAudioBuffer(TestLatencyMLS.audioContext, recordedAudio)
-        //let mlssignal = TestLatencyMLS.noiseBuffer
+        
         if(TestLatencyMLS.debugCanvas){
             console.log('signalrecorded', TestLatencyMLS.signalrecorded)
             console.log('mlssignal', TestLatencyMLS.noiseBuffer)
         }
-        //const correlation = calculateCrossCorrelation(signalrecorded.getChannelData(0), mlssignal.getChannelData(0), maxLag)
+        
         TestLatencyMLS.correlation = null
         TestLatencyMLS.worker.postMessage({
             command: 'correlation',
@@ -277,10 +243,7 @@ export class TestLatencyMLS {
         URL.revokeObjectURL(recordedAudio)
     }
 
-    /* White Noise Mozilla: https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode*/
-    static generateAudio(mlsSequence, frequency = 44100) {
-
-        // IMPORTANT: Check the frequency of the system if different from 44100
+    static generateAudio(mlsSequence, frequency) {        
 
         const audioBuffer = TestLatencyMLS.audioContext.createBuffer(1, mlsSequence.length, frequency)
         let bufferData = audioBuffer.getChannelData(0)
@@ -291,7 +254,7 @@ export class TestLatencyMLS {
         return audioBuffer
     }
 
-    static generateSilence(mlsSequence, frequency = 44100) {  
+    static generateSilence(mlsSequence, frequency) {  
 
         const audioBuffer = TestLatencyMLS.audioContext.createBuffer(1, mlsSequence.length, frequency)
         let bufferData = audioBuffer.getChannelData(0)        
@@ -303,22 +266,23 @@ export class TestLatencyMLS {
     }
 
     static displayresults(peak, signalrecorded, mlssignal, correlation, channel) {
-       //const peak = findPeakAndMean(correlation)
+       
         if(peak.channel === 0){
-            //console.log('Channel', peak.channel )
             const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
-            console.log('Latency = ', roundtriplatency + ' ms')
             const ratioIs = peak.peakValue / peak.mean
             console.log('Corr Ratio', ratioIs)
+            //console.log('Corr ABS(Ratio)', Math.abs(ratioIs))
             TestLatencyMLS.setCurrentLatency(roundtriplatency)
             TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
             TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
             TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
-            //console.log('Corr ABS(Ratio)', Math.abs(ratioIs))            
             if(TestLatencyMLS.debugCanvas) {
+                console.log('Latency = ', roundtriplatency + ' ms')
                 drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
                 console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
                 if(signalrecorded.numberOfChannels>1){
+                    document.getElementById('rightChannelCanvas').hidden = false
+                    document.getElementById('autocorrelationCanvas2').hidden = false
                     TestLatencyMLS.correlation = null
                     TestLatencyMLS.worker.postMessage({
                         command: 'correlation',

@@ -128,7 +128,6 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     } else {
         cancelLoader(LOADER_ELEM_ID)
         playlist.initExporter()
-        //recorder.init()
     }
 }
 
@@ -144,7 +143,6 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
         if (errorIs) {
             alert(errorIs)
         } else {
-            //recorder.init()
             if (canUpload) {
                 trackInfoHandler()
                 trackHandler.detectClickOutsideMenuOpt()

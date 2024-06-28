@@ -58,9 +58,9 @@ const testMicButtonForSafari = () => {
   const versionString = navigator.userAgent.substring(safariVersionIndex + 8)
   const safariVersion = parseFloat(versionString)
   if (isSafari && safariVersion > 16) {
-    return `<li class="nav-item">
-              <a class="nav-link" href="#" id="testmicrophone" data-toggle="modal" data-target="#testMicrophoneModal">
-                <i class="fa-solid fa-microphone"></i> TEST MIC
+    return `<li class='nav-item'>
+              <a class='nav-link' href='#' id='testmicrophone' data-toggle='modal' data-target='#testMicrophoneModal'>
+                <i class='fa-solid fa-microphone'></i> TEST MIC
               </a>
             </li>`
   } else {

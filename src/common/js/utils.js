@@ -80,4 +80,3 @@ export const activateGoHomeLink = () => {
 export const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
 export const MEDIA_CONSTRAINTS = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false, latency: 0, channelCount: 1 }}
-//export const MEDIA_CONSTRAINTS = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false, channelCount: 1 }}

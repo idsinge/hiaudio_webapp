@@ -178,7 +178,6 @@ const startRecording = (currentLatency) => {
     const latencyInSeconds = currentLatency/1000;
     $(".btn-group button").prop('disabled', true);
     $(".btn-group .btn-stop").prop('disabled', false);
-    console.log('playlist.ac.state', playlist.ac.state)
     ee.emit("record", latencyInSeconds);
   } 
 }
@@ -187,7 +186,6 @@ $container.on("click", ".btn-record", function() {
   if(!isRecording){
     let currentLatency = localStorage.getItem('latency')
     currentLatency = currentLatency? parseInt(currentLatency):0
-    console.log('current latency: ', currentLatency)
     startRecording(currentLatency)
   }
 });

@@ -1,7 +1,7 @@
 /* Source: https://github.com/superpoweredSDK/WebBrowserAudioLatencyMeasurement */
 import { latencyMeasurer } from './latencyMeasurer.js'
 import { MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
-import { TEST_LAT_BTN_ID } from '../latencytesthandler'
+import { displayLatencyUI, TEST_LAT_BTN_ID } from '../latencytesthandler'
 
 export const NUMBER_TRIALS = 6
 const TOTAL_TRIALS = NUMBER_TRIALS - 1
@@ -24,27 +24,18 @@ export class TestLatScriptProc {
     static initialize(ac) {
 
         const currentlatency = localStorage.getItem('latency')
+
         TestLatScriptProc.currentlatency = currentlatency ? parseInt(currentlatency):null
 
         TestLatScriptProc.audioContext = TestLatScriptProc.audioNode = null
 
         TestLatScriptProc.audioContext = ac
 
-        //TestLatScriptProc.content = document.getElementById(TEST_LAT_BTN_ID)        
-        
-        // let audioWorklet = (typeof AudioWorkletNode === 'function') ? 1 : 0
-        // TestLatScriptProc.data = {
-        //     buffersize: audioWorklet ? 128 : 512,
-        //     samplerate: TestLatScriptProc.audioContext.samplerate,
-        //     audioWorklet: audioWorklet
-        // }
-        // /TestLatScriptProc.runningon = '?'
         TestLatScriptProc.displayStart()        
     }
 
     static displayStart() {
-        //if (TestLatScriptProc.audioContext != null) TestLatScriptProc.audioContext.close()
-        //TestLatScriptProc.audioContext = TestLatScriptProc.audioNode = null
+       
         TestLatScriptProc.audioNode = null
         TestLatScriptProc.content = document.getElementById(TEST_LAT_BTN_ID)
         TestLatScriptProc.content.innerHTML = ''
@@ -65,6 +56,7 @@ export class TestLatScriptProc {
 
     static onMessageFromAudioScope(message) {
         if (message.latency > 0) {
+            displayLatencyUI(message.latency)
             TestLatScriptProc.setCurrentLatency(message.latency)
             const trialNum = message.state - 1
             $('#'+TEST_LAT_BTN_ID).attr('data-content', trialNum + '/' + TOTAL_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
@@ -89,27 +81,24 @@ export class TestLatScriptProc {
         TestLatScriptProc.startbutton.onclick = TestLatScriptProc.finishTest
     }
 
-    static displayResultLatency(latency) {        
-        TestLatScriptProc.startbutton.innerText = 'TEST AGAIN '
-        if(typeof latency !== 'object'){
-            TestLatScriptProc.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
-        }        
-        TestLatScriptProc.startbutton.classList.remove('btn-outline-danger')
-        TestLatScriptProc.startbutton.classList.add('btn-outline-primary')
+    static displayResultLatency(latency) {
+        if(latency && latency > 0){
+            TestLatScriptProc.startbutton.innerText = 'TEST AGAIN '
+            if(typeof latency !== 'object'){
+                TestLatScriptProc.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
+            }
+            TestLatScriptProc.startbutton.classList.remove('btn-outline-danger')
+            TestLatScriptProc.startbutton.classList.add('btn-outline-primary')
+        }
     }
-    static finishTest(latency) {
-        //if (TestLatScriptProc.audioContext != null) TestLatScriptProc.audioContext.close()
-        //TestLatScriptProc.audioContext = TestLatScriptProc.audioNode = null        
+    
+    static finishTest(latency) {                
         TestLatScriptProc.audioInput.disconnect(TestLatScriptProc.audioNode)
         TestLatScriptProc.audioNode.disconnect(TestLatScriptProc.audioContext.destination)
         TestLatScriptProc.audioNode = null
         TestLatScriptProc.displayResultLatency(latency)
-        // TestLatScriptProc.startbutton.innerText = 'TEST AGAIN '
-        // TestLatScriptProc.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
-        // TestLatScriptProc.startbutton.classList.remove('btn-outline-danger')
-        // TestLatScriptProc.startbutton.classList.add('btn-outline-primary')
         TestLatScriptProc.startbutton.onclick = TestLatScriptProc.displayStart
-        $('#'+TEST_LAT_BTN_ID).popover('hide') 
+        $('#'+TEST_LAT_BTN_ID).popover('hide')
     }
 
     static onAudioPermissionGranted(inputStream) {
@@ -136,11 +125,7 @@ export class TestLatScriptProc {
     }
 
     static async start() {
-        $('#'+TEST_LAT_BTN_ID).popover('hide')
-        //let AudioContext = window.AudioContext || window.webkitAudioContext || false
-        //TestLatScriptProc.audioContext = new AudioContext({ latencyHint: 0 })
-        //TestLatScriptProc.data.samplerate = TestLatScriptProc.audioContext.sampleRate
-        
+        $('#'+TEST_LAT_BTN_ID).popover('hide') 
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatScriptProc.onAudioPermissionGranted).catch(TestLatScriptProc.onAudioInputPermissionDenied)
         }

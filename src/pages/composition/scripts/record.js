@@ -19,12 +19,11 @@ export class Recorder {
 
         const gotStream = (stream) => {
             const audCtxt = new AudioContext({ latencyHint: 0 })
-            //const audCtxt = new AudioContext()
             createWaveformPlaylist(audCtxt)
             userMediaStream = this.getCorrectStreamForSafari(stream)  
-            userMediaStream.getTracks().forEach(async function(track) {                
-                console.log('Record Track Settings', track.getSettings())
-            })
+            // userMediaStream.getTracks().forEach(async function(track) {                
+            //     console.log('Record Track Settings', track.getSettings())
+            // })
             playlist.initRecorder(userMediaStream, undefined, "Voice Track")
             $(".btn-record").removeClass("disabled")
             this.setRecordGainNodeForTest(this.recordGainNode)
