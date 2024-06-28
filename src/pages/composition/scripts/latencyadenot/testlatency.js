@@ -18,13 +18,11 @@ export class TestLatRingBuf {
 
     latvalue = 0
     
-    static async initialize(audioContext, constraints) {
+    static async initialize(audioContext, stream) {
 
         TestLatRingBuf.buttonHandlers()
 
         try {
-            
-            let stream = await navigator.mediaDevices.getUserMedia(constraints)
 
             TestLatRingBuf.ac = audioContext
             
@@ -63,6 +61,8 @@ export class TestLatRingBuf {
     }
 
     static displayResults(e){
+        // TODO: find a way to avoid having the worklet running in the background
+        // ideally the track from stream should be stopped afer the test and created each time by requesting permission
         if(TestLatRingBuf.running && e.data.latency){
             TestLatRingBuf.latvalue = Number(e.data.latency * 1000).toFixed(2)
             TestLatRingBuf.btnstart.innerHTML = `STOP <span class='badge badge-info'>lat: ${TestLatRingBuf.latvalue} ms.</span>`

@@ -1,7 +1,6 @@
 import { TestLatencyMLS } from './latencymls/test'
 import { TestLatScriptProc } from './latencymeasure/testlatency'
 import { TestLatRingBuf } from './latencyadenot/testlatency'
-import { MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 import DynamicModal from '../../../common/js/modaldialog'
 import detectBrowser from '../../../common/js/detect-browser.js'
 import { playlist } from './composition'
@@ -28,7 +27,7 @@ export const triggerTestLatencyButton = () => {
       LATENCY TEST</a>
   </li>`}
 
-let active_lat_test = {mls:true,ringbuf:false,scrptprc:false}
+let active_lat_test = {mls:true,ringbuf:true,scrptprc:false}
 
 const testLatFinishCallback = () => {
     if (active_lat_test.ringbuf && TestLatRingBuf.running) {
@@ -89,7 +88,7 @@ const openLatencyTestDialog = (stream) => {
     if (!latencyTestInitialized) {
         latencyTestInitialized = true
         active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, stream, TEST_LAT_MLS_BTN_ID)
-        active_lat_test.ringbuf && TestLatRingBuf.initialize(playlist.ac, MEDIA_CONSTRAINTS)
+        active_lat_test.ringbuf && TestLatRingBuf.initialize(playlist.ac, stream)
         active_lat_test.scrptprc && TestLatScriptProc.initialize(playlist.ac)
     } else {
         active_lat_test.mls && TestLatencyMLS.displayStart()
@@ -101,7 +100,7 @@ const openLatencyTestDialog = (stream) => {
 export const triggerLatencyTestHandler = (stream) => {
     const browserId = detectBrowser()
     console.log(browserId)
-    if(browserId.os === 'ipad' || browserId.os === 'iphone' || browserId.os === 'mac') {
+    if(browserId.os === 'ipad' || browserId.os === 'iphone' || browserId.browsers === 'safari') {
         active_lat_test.ringbuf = false
     }
     document.getElementById('trigger-lat-test-btn').onclick = () => {
