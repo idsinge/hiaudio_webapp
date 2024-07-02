@@ -67,7 +67,7 @@ export class TestLatencyMLS {
         }
     }
 
-    static async initialize(ac, stream, btnId) {
+    static async initialize(ac, stream, btnId, debugCanvas) {
 
         TestLatencyMLS.btnId = btnId
 
@@ -78,8 +78,6 @@ export class TestLatencyMLS {
         TestLatencyMLS.worker.addEventListener('message', (message) => {
             TestLatencyMLS.workerMessageHanlder(message)
         })
-
-        const debugCanvas = document.location.search.indexOf('debug') !== -1
                  
         if(debugCanvas){
             console.log('AudioContext', ac)

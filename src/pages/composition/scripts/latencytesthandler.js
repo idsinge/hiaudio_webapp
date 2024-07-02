@@ -51,6 +51,7 @@ const manualSetLatencyHandler = () => {
     }
 }
 const openLatencyTestDialog = (stream) => {
+    const debugCanvas = document.location.search.indexOf('debug') !== -1
     const currentLat = localStorage.getItem('latency')    
     DynamicModal.dynamicModalDialog(
         `<img src='${imageUrl}' class='img-fluid' alt='...'>
@@ -59,11 +60,11 @@ const openLatencyTestDialog = (stream) => {
         <p>${currentLat ? '<i>Current latency: ' + '<span id="current-lat-val">'+currentLat+'</span>' + ' ms.</i>': ''}</p>
         ${active_lat_test.mls ? `<a class='nav-link' href='#' id='${TEST_LAT_MLS_BTN_ID}' data-toggle='modal' 
         data-toggle='popover' data-placement='bottom'  title='Testing ...' data-content='No input detected'></a><br>`: ''}       
-        <details>
+        <details ${debugCanvas?'':'hidden'}>
             <summary>Advanced</summary>
             <br/>
-             ${active_lat_test.ringbuf ? `<label for=''>Via AudioWorklet: </label>
-             <a id='btn-start' class='nav-link' href='#'>TEST LATENCY</a><br>` : ''}
+             ${active_lat_test.ringbuf ? `<label for=''><i>Test using AudioWorklet: </i></label>
+             <a id='btn-start' class='nav-link' href='#'>START</a><br>` : ''}
              ${active_lat_test.scrptprc ? `<label for=''>Via ScriptProcessor: </label>
              <a class='nav-link' href='#' id='${TEST_LAT_BTN_ID}' data-toggle='modal' 
                 data-toggle='popover' data-placement='bottom'  title='Testing ...' data-content='No input detected'>
@@ -87,7 +88,7 @@ const openLatencyTestDialog = (stream) => {
     
     if (!latencyTestInitialized) {
         latencyTestInitialized = true
-        active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, stream, TEST_LAT_MLS_BTN_ID)
+        active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, stream, TEST_LAT_MLS_BTN_ID, debugCanvas)
         active_lat_test.ringbuf && TestLatRingBuf.initialize(playlist.ac, stream)
         active_lat_test.scrptprc && TestLatScriptProc.initialize(playlist.ac)
     } else {
