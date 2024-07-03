@@ -1,39 +1,53 @@
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/record.js */
-import { playlist } from './composition'
-import { isSafari } from '../../../common/js/utils'
+import { createWaveformPlaylist, playlist } from './composition'
+import { getComposition, doAfterCompositionFetched } from './composition_helper'
+import { isSafari, MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 import { TestMic } from './webdictaphone/webdictaphone'
+import {initEventEmitter, enableUpdatesOnEmitter} from './eventemitter'
 
 export class Recorder {
     constructor() {
         this.recordGainNode = null
     }
 
-    init() {
+    init(compositionId) {
         let userMediaStream
-        const constraints = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false }}
         navigator.getUserMedia = (navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia ||
             navigator.msGetUserMedia)
 
-        const gotStream = (stream) => {            
+        const gotStream = (stream) => {
+            const audCtxt = new AudioContext({ latencyHint: 0 })
+            createWaveformPlaylist(audCtxt, stream)
             userMediaStream = this.getCorrectStreamForSafari(stream)  
-            playlist.initRecorder(userMediaStream, undefined, "Voice Track");
+            // userMediaStream.getTracks().forEach(async function(track) {                
+            //     console.log('Record Track Settings', track.getSettings())
+            // })
+            playlist.initRecorder(userMediaStream, undefined, "Voice Track")
             $(".btn-record").removeClass("disabled")
             this.setRecordGainNodeForTest(this.recordGainNode)
+            initEventEmitter()
+            enableUpdatesOnEmitter()
+            getComposition(compositionId, doAfterCompositionFetched)
         }
 
-        const logError = (err) => {            
-            console.error(err);
+        const logError = (err) => {
+            console.error(err)
+            const audCtxt = new AudioContext({ latencyHint: 0 })
+            createWaveformPlaylist(audCtxt)
+            initEventEmitter()
+            enableUpdatesOnEmitter()
+            getComposition(compositionId, doAfterCompositionFetched)
         }
 
         if (navigator.mediaDevices) {            
-            navigator.mediaDevices.getUserMedia(constraints)            
+            navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS)            
                 .then(gotStream)
                 .catch(logError)
         } else if (navigator.getUserMedia && 'MediaRecorder' in window) {
             navigator.getUserMedia(
-                constraints,
+                MEDIA_CONSTRAINTS,
                 gotStream,
                 logError
             )

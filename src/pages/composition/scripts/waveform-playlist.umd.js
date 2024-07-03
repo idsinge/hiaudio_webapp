@@ -8906,6 +8906,8 @@ class AnnotationList {
     this.durationFormat = "hh:mm:ss.uuu";
     this.isAutomaticScroll = false;
     this.resetDrawTimer = undefined;
+
+    this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   }
 
   // TODO extract into a plugin
@@ -8957,7 +8959,7 @@ class AnnotationList {
 
       const start = this.cursor;
       this.recordingTrack.setStartTime(start);
-    
+
       this.chunks = [];
       this.working = false;
     };
@@ -9739,7 +9741,9 @@ class AnnotationList {
     });
 
     // TODO improve this.
-    //this.masterGainNode.disconnect();
+    if (!this.isSafari) {
+      this.masterGainNode.disconnect();
+    }
     this.drawRequest();
     return Promise.all(this.playoutPromises);
   }
@@ -10072,7 +10076,7 @@ function init(options = {}, ee = event_emitter_default()()) {
 
   const playlist = new Playlist();
   const AudioContext = window.AudioContext || window.webkitAudioContext || false
-  const ctx = config.ac || new AudioContext();
+  const ctx = config.ac || new AudioContext({ latencyHint: 0 });
   playlist.setAudioContext(ctx);
   playlist.setSampleRate(config.sampleRate || ctx.sampleRate);
   playlist.setSamplesPerPixel(config.samplesPerPixel);

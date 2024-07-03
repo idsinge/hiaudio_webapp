@@ -1,57 +1,51 @@
 /* Source: https://github.com/superpoweredSDK/WebBrowserAudioLatencyMeasurement */
 import { latencyMeasurer } from './latencyMeasurer.js'
-import { isSafari } from '../../../../common/js/utils'
-import { playlist } from '../composition'
+import { MEDIA_CONSTRAINTS } from '../../../../common/js/utils'
+import { displayLatencyUI, TEST_LAT_BTN_ID } from '../latencytesthandler'
 
-export const NUMBER_TRIALS = 4
+export const NUMBER_TRIALS = 6
 const TOTAL_TRIALS = NUMBER_TRIALS - 1
 
-const warningMessageBeforeTest = `Please Make sure you are in a quiet place (so the browser can hear itself). Set both input and output audio volume to near maximum. This may be LOUD. Note: not all browsers on all devices will allow the browser permission to the speakers and microphone. If they don't, the test will not function.`
-
-export class TestLatency {
+export class TestLatScriptProc {
     
     constructor() {
         this.currentlatency = null
+        this.audioInput = null
     }
 
     static setCurrentLatency(latvalue){
         localStorage.setItem('latency', latvalue)
-        TestLatency.currentlatency = latvalue   
+        TestLatScriptProc.currentlatency = latvalue   
     }
     static getCurrentLatency () {
-        return TestLatency.currentlatency
+        return TestLatScriptProc.currentlatency
     }
 
-    static initialize() {
+    static initialize(ac) {
 
         const currentlatency = localStorage.getItem('latency')
-        TestLatency.currentlatency = currentlatency ? parseInt(currentlatency):null
 
-        TestLatency.audioContext = TestLatency.audioNode = null
+        TestLatScriptProc.currentlatency = currentlatency ? parseInt(currentlatency):null
 
-        TestLatency.content = document.getElementById('testlatency')
-        
-        let audioWorklet = (typeof AudioWorkletNode === 'function') ? 1 : 0
-        TestLatency.data = {
-            buffersize: audioWorklet ? 128 : 512,
-            samplerate: '?',
-            audioWorklet: audioWorklet
-        }
-        TestLatency.runningon = '?'
-        TestLatency.displayStart()        
+        TestLatScriptProc.audioContext = TestLatScriptProc.audioNode = null
+
+        TestLatScriptProc.audioContext = ac
+
+        TestLatScriptProc.displayStart()        
     }
 
     static displayStart() {
-        if (TestLatency.audioContext != null) TestLatency.audioContext.close()
-        TestLatency.audioContext = TestLatency.audioNode = null
-        TestLatency.content.innerHTML = ''
-        TestLatency.startbutton = document.createElement('a')
-        TestLatency.startbutton.innerText = 'TEST LATENCY'
-        TestLatency.startbutton.classList.add('btn-outline-success')
-        TestLatency.startbutton.onclick = TestLatency.start
-        TestLatency.content.appendChild(TestLatency.startbutton)
-        $('#testlatency').popover('hide')
-        $('#testlatency').popover({
+       
+        TestLatScriptProc.audioNode = null
+        TestLatScriptProc.content = document.getElementById(TEST_LAT_BTN_ID)
+        TestLatScriptProc.content.innerHTML = ''
+        TestLatScriptProc.startbutton = document.createElement('a')
+        TestLatScriptProc.startbutton.innerText = 'TEST LATENCY'
+        TestLatScriptProc.startbutton.classList.add('btn-outline-warning')
+        TestLatScriptProc.startbutton.onclick = TestLatScriptProc.start
+        TestLatScriptProc.content.appendChild(TestLatScriptProc.startbutton)
+        $('#'+TEST_LAT_BTN_ID).popover('hide')
+        $('#'+TEST_LAT_BTN_ID).popover({
             trigger: 'focus'            
         })
     }
@@ -62,84 +56,81 @@ export class TestLatency {
 
     static onMessageFromAudioScope(message) {
         if (message.latency > 0) {
-            TestLatency.setCurrentLatency(message.latency)
+            displayLatencyUI(message.latency)
+            TestLatScriptProc.setCurrentLatency(message.latency)
             const trialNum = message.state - 1
-            $('#testlatency').attr('data-content', trialNum + '/' + TOTAL_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
-            $('#testlatency').popover('show')
+            $('#'+TEST_LAT_BTN_ID).attr('data-content', trialNum + '/' + TOTAL_TRIALS + ' trials. Current latency: ' + message.latency + ' ms.')
+            $('#'+TEST_LAT_BTN_ID).popover('show')
         } else {
-            $('#testlatency').attr('data-content', 'No input detected')
-            $('#testlatency').popover('show')
+            $('#'+TEST_LAT_BTN_ID).attr('data-content', 'No input detected')
+            $('#'+TEST_LAT_BTN_ID).popover('show')
         }
        
         if (message.state >= NUMBER_TRIALS) {
-            TestLatency.finishTest(message.latency)
+            TestLatScriptProc.finishTest(message.latency)
         }
     }
 
     static onAudioSetupFinished() {
-        let audioInput = TestLatency.audioContext.createMediaStreamSource(TestLatency.inputStream)
-        audioInput.connect(TestLatency.audioNode)
-        TestLatency.audioNode.connect(TestLatency.audioContext.destination)
-        TestLatency.startbutton.innerText = 'STOP'
-        TestLatency.startbutton.classList.remove('btn-outline-success')
-        TestLatency.startbutton.classList.add('btn-outline-danger')
-        TestLatency.startbutton.onclick = TestLatency.displayStart
+        TestLatScriptProc.audioInput = TestLatScriptProc.audioContext.createMediaStreamSource(TestLatScriptProc.inputStream)
+        TestLatScriptProc.audioInput.connect(TestLatScriptProc.audioNode)
+        TestLatScriptProc.audioNode.connect(TestLatScriptProc.audioContext.destination)
+        TestLatScriptProc.startbutton.innerText = 'STOP'
+        TestLatScriptProc.startbutton.classList.remove('btn-outline-warning')
+        TestLatScriptProc.startbutton.classList.add('btn-outline-danger')
+        TestLatScriptProc.startbutton.onclick = TestLatScriptProc.finishTest
     }
 
-    static finishTest(latency) {
-        if (TestLatency.audioContext != null) TestLatency.audioContext.close()
-        TestLatency.audioContext = TestLatency.audioNode = null
-        TestLatency.startbutton.innerText = 'TEST AGAIN '
-        TestLatency.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
-        TestLatency.startbutton.classList.remove('btn-outline-danger')
-        TestLatency.startbutton.classList.add('btn-outline-primary')
-        TestLatency.startbutton.onclick = TestLatency.displayStart
-        $('#testlatency').popover('hide') 
+    static displayResultLatency(latency) {
+        if(latency && latency > 0){
+            TestLatScriptProc.startbutton.innerText = 'TEST AGAIN '
+            if(typeof latency !== 'object'){
+                TestLatScriptProc.startbutton.innerHTML += `<span class="badge badge-info">latency: ${latency} ms.</span>`
+            }
+            TestLatScriptProc.startbutton.classList.remove('btn-outline-danger')
+            TestLatScriptProc.startbutton.classList.add('btn-outline-primary')
+        }
+    }
+    
+    static finishTest(latency) {                
+        TestLatScriptProc.audioInput.disconnect(TestLatScriptProc.audioNode)
+        TestLatScriptProc.audioNode.disconnect(TestLatScriptProc.audioContext.destination)
+        TestLatScriptProc.audioNode = null
+        TestLatScriptProc.displayResultLatency(latency)
+        TestLatScriptProc.startbutton.onclick = TestLatScriptProc.displayStart
+        $('#'+TEST_LAT_BTN_ID).popover('hide')
     }
 
     static onAudioPermissionGranted(inputStream) {
 
-        TestLatency.inputStream = inputStream
-        TestLatency.latencyMeasurer = new latencyMeasurer()
-        TestLatency.latencyMeasurer.toggle()
-        TestLatency.lastState = 0        
-        // TODO: bufferSize (512) needs to be reviewed
-        TestLatency.audioNode = TestLatency.audioContext.createScriptProcessor(512, 2, 2)
+        TestLatScriptProc.inputStream = inputStream
+        TestLatScriptProc.latencyMeasurer = new latencyMeasurer()
+        TestLatScriptProc.latencyMeasurer.toggle()
+        TestLatScriptProc.lastState = 0        
+        // TODO: bufferSize 256 for ScriptProcessor works better to estimate the latency rather than 512
+        TestLatScriptProc.audioNode = TestLatScriptProc.audioContext.createScriptProcessor(256, 2, 2)
 
-        TestLatency.audioNode.onaudioprocess = function (e) {
+        TestLatScriptProc.audioNode.onaudioprocess = function (e) {
 
-            TestLatency.latencyMeasurer.processInput(e.inputBuffer.getChannelData(0), e.inputBuffer.getChannelData(1), TestLatency.data.samplerate, e.inputBuffer.length)
-            TestLatency.latencyMeasurer.processOutput(e.outputBuffer.getChannelData(0), e.outputBuffer.getChannelData(1))
+            TestLatScriptProc.latencyMeasurer.processInput(e.inputBuffer.getChannelData(0), e.inputBuffer.getChannelData(1), TestLatScriptProc.audioContext.sampleRate, e.inputBuffer.length)
+            TestLatScriptProc.latencyMeasurer.processOutput(e.outputBuffer.getChannelData(0), e.outputBuffer.getChannelData(1))
 
-            if (TestLatency.lastState != TestLatency.latencyMeasurer.state) {
-                TestLatency.lastState = TestLatency.latencyMeasurer.state
-                TestLatency.onMessageFromAudioScope({ state: TestLatency.lastState, latency: TestLatency.latencyMeasurer.latencyMs })
+            if (TestLatScriptProc.lastState != TestLatScriptProc.latencyMeasurer.state) {
+                TestLatScriptProc.lastState = TestLatScriptProc.latencyMeasurer.state
+                TestLatScriptProc.onMessageFromAudioScope({ state: TestLatScriptProc.lastState, latency: TestLatScriptProc.latencyMeasurer.latencyMs })
             }
         }
 
-        TestLatency.onAudioSetupFinished()     
+        TestLatScriptProc.onAudioSetupFinished()     
     }
 
-    static start() {
-        $('#testlatency').popover('hide')
-        if(!TestLatency.getCurrentLatency()){
-            const doTestLatency = window.confirm(`${warningMessageBeforeTest}`)
-            if(isSafari){
-                playlist.getEventEmitter().emit('resume')
-            } 
-            if (!doTestLatency) {     
-              return 
-            }
-        }
-        let AudioContext = window.AudioContext || window.webkitAudioContext || false
-        TestLatency.audioContext = new AudioContext({ latencyHint: 0 })
-        TestLatency.data.samplerate = TestLatency.audioContext.sampleRate
-        const constraints = { audio: {echoCancellation:false, noiseSuppression:false, autoGainControl:false }}
+    static async start() {
+        $('#'+TEST_LAT_BTN_ID).popover('hide') 
         if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia(constraints).then(TestLatency.onAudioPermissionGranted).catch(TestLatency.onAudioInputPermissionDenied)
+            navigator.mediaDevices.getUserMedia(MEDIA_CONSTRAINTS).then(TestLatScriptProc.onAudioPermissionGranted).catch(TestLatScriptProc.onAudioInputPermissionDenied)
         }
         else {
-            TestLatency.onAudioInputPermissionDenied(`Can't access getUserMedia.`)
+            TestLatScriptProc.onAudioInputPermissionDenied(`Can't access getUserMedia.`)
         }
     }
 }

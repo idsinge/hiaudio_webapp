@@ -10,7 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "parcel": "^2.12.0"
+    "@parcel/transformer-worklet": "^2.12.0",
+    "parcel": "^2.12.0",
+    "sharp": "^0.31.3"
   },
   "keywords": [
     "waveform",

@@ -5,10 +5,10 @@
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
 import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
 import { CURRENT_USER_ID } from './composition_helper'
-import { TestLatency } from './latencymeasure/testlatency'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
-var ee = playlist.getEventEmitter();
+//var ee = playlist.getEventEmitter();
+var ee = null
 var $container = $("body");
 var $timeFormat = $container.find('.time-format');
 var $audioStart = $container.find('.audio-start');
@@ -172,19 +172,6 @@ $container.on("click", ".btn-clear", function() {
   ee.emit("clear");
 });
 
-const handleTestLatencyDialog = () => {  
-  $('#testLatencyModal').modal('show')
-  document.getElementById('buttonOkTestLatency').onclick  = () => {
-    $('#testLatencyModal').modal('hide')
-    TestLatency.start()
-  }
-  document.getElementById('buttonNoTestLatency').onclick = () => {
-      $('#testLatencyModal').modal('hide')
-      TestLatency.setCurrentLatency(0)
-      startRecording(0)
-  }  
-}
-
 const startRecording = (currentLatency) => {
   if(!isRecording){
     isRecording = true;  
@@ -197,12 +184,9 @@ const startRecording = (currentLatency) => {
 
 $container.on("click", ".btn-record", function() {
   if(!isRecording){
-    const currentLatency = TestLatency.getCurrentLatency()
-    if(!currentLatency && currentLatency !== 0){
-      handleTestLatencyDialog()
-    } else {
-      startRecording(currentLatency)
-    }
+    let currentLatency = localStorage.getItem('latency')
+    currentLatency = currentLatency? parseInt(currentLatency):0
+    startRecording(currentLatency)
   }
 });
 
@@ -380,121 +364,129 @@ function displayDownloadLink(link) {
 }
 
 
-/*
-* Code below receives updates from the playlist.
-*/
-ee.on("select", updateSelect);
+export const initEventEmitter = () => {
 
-ee.on("timeupdate", updateTime);
+   ee = playlist.getEventEmitter();
+}
 
-ee.on("mute", function(track) {
-  displaySoundStatus("Mute button pressed for " + track.name, track);
-});
+export const enableUpdatesOnEmitter = () => {
+  
+  /*
+  * Code below receives updates from the playlist.
+  */
+  ee.on("select", updateSelect);
 
-ee.on("solo", function(track) {
-  displaySoundStatus("Solo button pressed for " + track.name, track);
-});
+  ee.on("timeupdate", updateTime);
 
-let volumetimeout = null
-ee.on("volumechange", function(volume, track) {
-  displaySoundStatus(track.name + " now has volume " + volume + ".");
-  clearTimeout(volumetimeout)
-  volumetimeout = setTimeout(() => {   
-    storeTrackSettings(track)   
-  }, 500)  
-});
+  ee.on("mute", function(track) {
+    displaySoundStatus("Mute button pressed for " + track.name, track);
+  });
 
-let stereopantimeout = null
-ee.on("stereopan", function(value, track) {
-  displaySoundStatus(track.name + " now has stereo pan " + value + ".");
-  clearTimeout(stereopantimeout)
-  stereopantimeout = setTimeout(() => {   
-    storeTrackSettings(track)
-  }, 500) 
-});
+  ee.on("solo", function(track) {
+    displaySoundStatus("Solo button pressed for " + track.name, track);
+  });
 
-ee.on("mastervolumechange", function(volume) {
-  displaySoundStatus("Master volume now has volume " + volume + ".");
-});
+  let volumetimeout = null
+  ee.on("volumechange", function(volume, track) {
+    displaySoundStatus(track.name + " now has volume " + volume + ".");
+    clearTimeout(volumetimeout)
+    volumetimeout = setTimeout(() => {   
+      storeTrackSettings(track)   
+    }, 500)  
+  });
+
+  let stereopantimeout = null
+  ee.on("stereopan", function(value, track) {
+    displaySoundStatus(track.name + " now has stereo pan " + value + ".");
+    clearTimeout(stereopantimeout)
+    stereopantimeout = setTimeout(() => {   
+      storeTrackSettings(track)
+    }, 500) 
+  });
+
+  ee.on("mastervolumechange", function(volume) {
+    displaySoundStatus("Master volume now has volume " + volume + ".");
+  });
 
 
-var audioStates = ["uninitialized", "loading", "decoding", "finished"];
+  var audioStates = ["uninitialized", "loading", "decoding", "finished"];
 
-ee.on("audiorequeststatechange", function(state, src) {
-  var name = src;
+  ee.on("audiorequeststatechange", function(state, src) {
+    var name = src;
 
-  if (src instanceof File) {
-    name = src.name;
-  }
-
-  displayLoadingData("Track " + name + " is in state " + audioStates[state]);
-});
-
-ee.on("loadprogress", function(percent, src) {
-  var name = src;
-
-  if (src instanceof File) {
-    name = src.name;
-  }
-
-  displayLoadingData("Track " + name + " has loaded " + percent + "%");
-});
-
-ee.on("audiosourcesloaded", function() {
-  displayLoadingData("Tracks have all finished decoding.");
-});
-// TODO: this workaround  for displaying the menu opt (issue-70)
-// needs to be reworked when bulk uploads are possible
-let waitForRender = null
-ee.on("audiosourcesrendered", function(lastUpdate) {  
-  if(USER_PERMISSION){   
-    if(lastUpdate){
-      waitForRender = lastUpdate
-      const lastPosTrack = playlist.tracks.length - 1
-      const lasttrack = playlist.tracks[lastPosTrack]
-      if(lasttrack && !lasttrack?.customClass){  
-        waitForRender = null
-        trackHandler.displayOptMenuForNewTrack(lastUpdate)
-      }   
-    } else if(waitForRender){
-        const toUpdate = waitForRender
-        waitForRender = null
-        trackHandler.displayOptMenuForNewTrack(toUpdate)
-    }   
-  }
-  displayLoadingData("Tracks have been rendered");
-});
-
-ee.on("audiosourceserror", function(e) {
-  displayLoadingData(e.message);
-});
-
-ee.on('audiorenderingfinished', function (type, data, trackPos) {
-
-  // trackPos is the param sent at btn-stop when stop recording
-  // but received from Playlist.js in event audiorenderingfinished  
-  if(trackPos >= 0 && USER_PERMISSION){    
-    data.name = 'audio';
-    data.fileName = Date.now()  + '.wav' 
-    fileUploader.sendData(data, 'blob')
-  }
-  else if (type == 'wav'){
-    if (downloadUrl) {
-      window.URL.revokeObjectURL(downloadUrl);
+    if (src instanceof File) {
+      name = src.name;
     }
 
-    downloadUrl = window.URL.createObjectURL(data);
-    displayDownloadLink(downloadUrl);
-  }
-});
+    displayLoadingData("Track " + name + " is in state " + audioStates[state]);
+  });
 
-ee.on('finished', function () {
-  console.log("The cursor has reached the end of the selection !");
-  $(".btn-group .btn-record").prop('disabled', false);
+  ee.on("loadprogress", function(percent, src) {
+    var name = src;
 
-  if (isLooping) {
-    playoutPromises.then(function() {
-      playoutPromises = playlist.play(startTime, endTime);
-    });
-  }
-});
+    if (src instanceof File) {
+      name = src.name;
+    }
+
+    displayLoadingData("Track " + name + " has loaded " + percent + "%");
+  });
+
+  ee.on("audiosourcesloaded", function() {
+    displayLoadingData("Tracks have all finished decoding.");
+  });
+  // TODO: this workaround  for displaying the menu opt (issue-70)
+  // needs to be reworked when bulk uploads are possible
+  let waitForRender = null
+  ee.on("audiosourcesrendered", function(lastUpdate) {  
+    if(USER_PERMISSION){   
+      if(lastUpdate){
+        waitForRender = lastUpdate
+        const lastPosTrack = playlist.tracks.length - 1
+        const lasttrack = playlist.tracks[lastPosTrack]
+        if(lasttrack && !lasttrack?.customClass){  
+          waitForRender = null
+          trackHandler.displayOptMenuForNewTrack(lastUpdate)
+        }   
+      } else if(waitForRender){
+          const toUpdate = waitForRender
+          waitForRender = null
+          trackHandler.displayOptMenuForNewTrack(toUpdate)
+      }   
+    }
+    displayLoadingData("Tracks have been rendered");
+  });
+
+  ee.on("audiosourceserror", function(e) {
+    displayLoadingData(e.message);
+  });
+
+  ee.on('audiorenderingfinished', function (type, data, trackPos) {
+
+    // trackPos is the param sent at btn-stop when stop recording
+    // but received from Playlist.js in event audiorenderingfinished  
+    if(trackPos >= 0 && USER_PERMISSION){    
+      data.name = 'audio';
+      data.fileName = Date.now()  + '.wav' 
+      fileUploader.sendData(data, 'blob')
+    }
+    else if (type == 'wav'){
+      if (downloadUrl) {
+        window.URL.revokeObjectURL(downloadUrl);
+      }
+
+      downloadUrl = window.URL.createObjectURL(data);
+      displayDownloadLink(downloadUrl);
+    }
+  });
+
+  ee.on('finished', function () {
+    console.log("The cursor has reached the end of the selection !");
+    $(".btn-group .btn-record").prop('disabled', false);
+
+    if (isLooping) {
+      playoutPromises.then(function() {
+        playoutPromises = playlist.play(startTime, endTime);
+      });
+    }
+  });
+}

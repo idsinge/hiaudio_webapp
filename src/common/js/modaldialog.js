@@ -1,12 +1,13 @@
 class DynamicModal {
     constructor() {
         this.modal = this.getDynamicModal()
+        this.callbackDismiss = null
         if (!this.modal) {
             this.modal = this.initDynamicModal()
         }
     }
 
-    dynamicModalDialog(message, idbtn, textBtnOK, textBtnCancel, popupTitle, backgroundHeader) {
+    dynamicModalDialog(message, idbtn, textBtnOK, textBtnCancel, popupTitle, backgroundHeader, callbackDismiss) {
         const html =
             '<div class="modal-header '+backgroundHeader+' text-white">' +
             '<h5 class="modal-title" id="dynamicModalLabel">'+popupTitle+'</h5>' +
@@ -23,7 +24,15 @@ class DynamicModal {
             '</div>'
 
         this.setDynamicModalContent(html)
+        this.callbackDismiss = callbackDismiss
+        const self = this
         $(this.modal).modal('show')
+        $(this.modal).on('hidden.bs.modal', function (event) {
+            if(self.callbackDismiss){
+                self.callbackDismiss()
+                self.callbackDismiss = null
+            }            
+        })
     }
 
     getDynamicModal() {
