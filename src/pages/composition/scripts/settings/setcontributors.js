@@ -1,4 +1,5 @@
 import { ENDPOINT } from '../../../../common/js/config'
+import DynamicModal from '../../../../common/js/modaldialog'
 import { looksLikeMail, isSafari } from '../../../../common/js/utils'
 import {updateSettings} from '../settings'
 import { playlist } from '../composition'
@@ -102,18 +103,29 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
                 NEW_CONTRIBUTORS.push(newcontrib)            
                 addContributorToUI(ul, newcontrib)
                 if(response?.status === 404){
-                    alert('An invitation via email will be sent to: '+ contrib + ', after clicking on the button Confirm')
+                    displayModalDialog('An invitation via email will be sent to: '+ contrib + ', after clicking on the button Confirm')
                 }
             } else {
-                alert(`User can't be added`)
+                displayModalDialog(`User can't be added`)
             }
         } else {
-            alert('Duplicate user')
+            displayModalDialog(`Duplicate user`)
         }
         if(isSafari){
             playlist.getEventEmitter().emit('resume')
         }        
     }   
+}
+
+const displayModalDialog = (message) => {
+    DynamicModal.dynamicModalDialog(
+        message,
+        null,
+        '',
+        'Close',
+        'Warning!',
+        'bg-warning'
+      )
 }
 
 const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) => {

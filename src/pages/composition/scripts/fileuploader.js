@@ -2,6 +2,7 @@
 /* https://stackoverflow.com/a/38968948 */
 
 import { UPLOAD_ENDPOINT } from '../../../common/js/config'
+import DynamicModal from '../../../common/js/modaldialog'
 import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../../common/js/utils'
 import { playlist, trackHandler } from './composition'
 
@@ -50,7 +51,7 @@ export class FileUploader {
 
     }
     sendData(file, type) {
-
+        const me = this
         if (!type && !file.binary && file.dom.files.length > 0) {
             setTimeout(this.sendData, 10)
             return
@@ -76,20 +77,30 @@ export class FileUploader {
                         playlist.getEventEmitter().emit("audiosourcesrendered", respJson)
                     }                
                 } else {
-                    alert('Oops! Something went wrong.')
+                    me.displayModalDialog(respJson.error)
                 }
             } else {
-                alert('Oops! Something went wrong.')
+                me.displayModalDialog('Oops! Something went wrong.')
             }
         })
 
         XHR.addEventListener('error', (event) => {
             cancelLoader(LOADER_ELEM_ID)
-            alert('Oops! Something went wrong.')
+            me.displayModalDialog('Problem sending file')
         })
 
         XHR.open('POST', UPLOAD_ENDPOINT)
         XHR.send(formData)
         startLoader(LOADER_ELEM_ID, "Uploading track...")
+    }
+    displayModalDialog (message) {
+        DynamicModal.dynamicModalDialog(
+            message, 
+            null, 
+            '',
+            'Close',
+            'Error',
+            'bg-danger'
+        )
     }
 }

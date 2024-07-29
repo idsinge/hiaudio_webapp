@@ -1,4 +1,5 @@
 import { ENDPOINT } from '../../../common/js/config'
+import DynamicModal from '../../../common/js/modaldialog'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
 import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, fileUploader, playlist } from './composition'
@@ -48,7 +49,14 @@ export const getComposition = (compositionId, callback, extraParams) => {
     })
     .then(() => {
         if (errorIs) {
-            alert(errorIs)
+            DynamicModal.dynamicModalDialog(
+                errorIs, 
+                null, 
+                '',
+                'Close',
+                'Error',
+                'bg-danger'
+            )
         }
         callback(tracksInfo, extraParams)
     })

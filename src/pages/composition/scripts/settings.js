@@ -1,4 +1,5 @@
 import { ENDPOINT } from '../../../common/js/config'
+import  DynamicModal from '../../../common/js/modaldialog'
 import { startLoader, cancelLoader, isSafari } from '../../../common/js/utils'
 import {openSettingsButtonHandler, saveParentCollection} from './settings/setcollection'
 import {setUITitle, getCurrentTitle, saveTitle} from './settings/settitle'
@@ -59,8 +60,15 @@ export const updateSettings = async (method, api, data) => {
         if (respToJson) {
             response = respToJson
         }
-    } catch (error) {        
-        alert(error)
+    } catch (error) {
+        DynamicModal.dynamicModalDialog(
+            error, 
+            null, 
+            '',
+            'Close',
+            'Error',
+            'bg-danger'
+        )
     }
     return response
 }
