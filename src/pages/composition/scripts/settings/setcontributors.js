@@ -224,9 +224,7 @@ const removeContributorSwitchHandler = (contrib) => {
                     'Delete Contributor',
                     'bg-warning',
                     () => {
-                        if(document.activeElement.id !== 'btn-delete-contributor'){
-                            chk.checked = false
-                        }
+                        chk.checked = false
                     }
                 )
                 document.getElementById('btn-delete-contributor').onclick = async () => {
@@ -242,7 +240,9 @@ const removeContributorSwitchHandler = (contrib) => {
                     } else {
                         TOREMOVE_CONTRIBUTORS.push(contrib.email)
                     }
-                    DynamicModal.closeDynamicModal()
+                    DynamicModal.closeDynamicModal(()=>{
+                        chk.checked = true
+                    })
                 }
             }
         }
