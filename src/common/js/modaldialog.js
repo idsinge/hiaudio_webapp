@@ -43,8 +43,11 @@ class DynamicModal {
         this.modal.querySelector('.modal-content').innerHTML = html
     }
 
-    closeDynamicModal() {
+    closeDynamicModal(callBackClose) {
         $(this.modal).modal('hide')
+        if(callBackClose){
+            callBackClose()
+        }
     }
 
     initDynamicModal() {
