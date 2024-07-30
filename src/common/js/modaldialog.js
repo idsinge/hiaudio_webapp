@@ -4,6 +4,13 @@ class DynamicModal {
         this.callbackDismiss = null
         if (!this.modal) {
             this.modal = this.initDynamicModal()
+            const self = this
+            $(this.modal).on('hide.bs.modal', function (event) {
+                if(self.callbackDismiss){
+                    self.callbackDismiss()
+                    self.callbackDismiss = null
+                }
+            })
         }
     }
 
@@ -25,14 +32,7 @@ class DynamicModal {
 
         this.setDynamicModalContent(html)
         this.callbackDismiss = callbackDismiss
-        const self = this
         $(this.modal).modal('show')
-        $(this.modal).on('hidden.bs.modal', function (event) {
-            if(self.callbackDismiss){
-                self.callbackDismiss()
-                self.callbackDismiss = null
-            }            
-        })
     }
 
     getDynamicModal() {

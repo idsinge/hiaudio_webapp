@@ -113,14 +113,19 @@ const saveButtonHandler = async (compId) => {
 }
 
 const deleteComposition = async (compId) => {
-    const dialog = confirm('Delete ' + getCurrentTitle() + '?')
-    if(isSafari){
-        playlist.getEventEmitter().emit('resume')
-    } 
-    if (dialog) {
+    DynamicModal.dynamicModalDialog(
+        'Delete ' + getCurrentTitle() + '?',
+        'btn-delete-composition',
+        'OK',
+        'Cancel',
+        'Delete Composition',
+        'bg-warning'
+    )
+    document.getElementById('btn-delete-composition').onclick = async () => {
         const resultDeleteComp = await updateSettings('DELETE', '/deletecomposition/'+compId, null)        
         if (resultDeleteComp.ok) {
             window.location.href = window.location.origin
         }
+        DynamicModal.closeDynamicModal()
     }
 }
