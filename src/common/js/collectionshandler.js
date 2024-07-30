@@ -1,5 +1,6 @@
 
 import { ENDPOINT } from './config'
+import DynamicModal from './modaldialog'
 
 export const getCollections = async () => {
    
@@ -13,7 +14,14 @@ export const getCollections = async () => {
 }
 
 export const getCollectionsError = () => {
-    alert(`Problem getting collections`)
+    DynamicModal.dynamicModalDialog(
+        'Problem getting collections', 
+        null, 
+        '',
+        'Close',
+        'Error',
+        'bg-danger'
+    )
 }
 
 export const createListCollections = (collections,listId, coll_id) => {

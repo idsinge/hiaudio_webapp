@@ -1,4 +1,5 @@
 import { ENDPOINT } from '../../../common/js/config'
+import DynamicModal from '../../../common/js/modaldialog'
 import { LOADER_ELEM_ID, startLoader, cancelLoader, isSafari } from '../../../common/js/utils'
 import { CURRENT_USER_ID } from './composition_helper'
 import { playlist } from './composition'
@@ -106,12 +107,17 @@ export class TrackHandler {
         }
     }
     deleteTrackConfirmDialog(event, callback, afterCallback) {       
-        const dialog = confirm('Delete ' + event.target.dataset.name + '?')
-        if(isSafari){
-            playlist.getEventEmitter().emit('resume')
-        }        
-        if (dialog) {
+        DynamicModal.dynamicModalDialog(
+            'Delete ' + event.target.dataset.name + '?',
+            'btn-delete-track',
+            'OK',
+            'Cancel',
+            'Delete Track',
+            'bg-warning'
+        )
+        document.getElementById('btn-delete-track').onclick = () => {
             callback(event.target.dataset.pos, event.target.dataset.trackId, afterCallback)
+            DynamicModal.closeDynamicModal()
         }
     }
     sendDeleteRequest(pos,  track_id, doAfterDeleted) {

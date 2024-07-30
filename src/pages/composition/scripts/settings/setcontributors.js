@@ -1,4 +1,5 @@
 import { ENDPOINT } from '../../../../common/js/config'
+import DynamicModal from '../../../../common/js/modaldialog'
 import { looksLikeMail, isSafari } from '../../../../common/js/utils'
 import {updateSettings} from '../settings'
 import { playlist } from '../composition'
@@ -102,18 +103,29 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
                 NEW_CONTRIBUTORS.push(newcontrib)            
                 addContributorToUI(ul, newcontrib)
                 if(response?.status === 404){
-                    alert('An invitation via email will be sent to: '+ contrib + ', after clicking on the button Confirm')
+                    displayModalDialog('An invitation via email will be sent to: '+ contrib + ', after clicking on the button Confirm')
                 }
             } else {
-                alert(`User can't be added`)
+                displayModalDialog(`User can't be added`)
             }
         } else {
-            alert('Duplicate user')
+            displayModalDialog(`Duplicate user`)
         }
         if(isSafari){
             playlist.getEventEmitter().emit('resume')
         }        
     }   
+}
+
+const displayModalDialog = (message) => {
+    DynamicModal.dynamicModalDialog(
+        message,
+        null,
+        '',
+        'Close',
+        'Warning!',
+        'bg-warning'
+      )
 }
 
 const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) => {
@@ -201,28 +213,36 @@ export const saveRemoveContributors = async (compId) => {
 const removeContributorSwitchHandler = (contrib) => {
     
     document.getElementById('removeContSwitch'+contrib.user_uid).addEventListener('change', function(event) {        
-        const chk = event.target        
-        if (chk.tagName === 'INPUT' && chk.type === 'checkbox') {        
-            if(chk.checked){ 
-                const removeContributorDialog = confirm(`Do you want remove the contributor: ${contrib.email}?`)
-                if(isSafari){
-                    playlist.getEventEmitter().emit('resume')
-                } 
-                if ( removeContributorDialog === true) {
-                    const indexContribInNew = NEW_CONTRIBUTORS.findIndex(x => x.email === contrib.email)                                     
-                    if(indexContribInNew > -1){                        
+        const chk = event.target
+        if (chk.tagName === 'INPUT' && chk.type === 'checkbox') {
+            if(chk.checked){
+                DynamicModal.dynamicModalDialog(
+                    `Do you want remove the contributor: ${contrib.email}?`,
+                    'btn-delete-contributor',
+                    'OK',
+                    'Cancel',
+                    'Delete Contributor',
+                    'bg-warning',
+                    () => {
+                        if(document.activeElement.id !== 'btn-delete-contributor'){
+                            chk.checked = false
+                        }
+                    }
+                )
+                document.getElementById('btn-delete-contributor').onclick = async () => {
+                    const indexContribInNew = NEW_CONTRIBUTORS.findIndex(x => x.email === contrib.email)
+                    if(indexContribInNew > -1){
                         NEW_CONTRIBUTORS.splice(indexContribInNew,1)
                         const indexContribInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.email === contrib.email)
-                        if(indexContribInCurrent === -1){                            
+                        if(indexContribInCurrent === -1){
                             document.getElementById(contrib.user_uid).remove()
                         } else {
                             TOREMOVE_CONTRIBUTORS.push(contrib.email)
                         }
-                    } else {                        
+                    } else {
                         TOREMOVE_CONTRIBUTORS.push(contrib.email)
-                    }                 
-                } else {                   
-                    event.target.checked = false
+                    }
+                    DynamicModal.closeDynamicModal()
                 }
             }
         }
@@ -246,9 +266,8 @@ export const updateContributorsAtCompPage = () => {
                 } else {
                     const prevBadge = contributorsbadgetext.previousSibling
                     contributorsbadgetext.remove()
-                    console.log(contributorsbadgetext.nextSibling)
                     prevBadge.remove()
-                    rolebadgetext.nextSibling.remove()                
+                    rolebadgetext.nextSibling.remove()
                 }
             }
         }
