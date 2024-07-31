@@ -92,7 +92,7 @@ const verifyResponse = (response)=> {
   $('#newMusicModal').modal('hide')  
   if(response.composition){
     window.location.href = uriCompositionPage + response.composition.uuid  
-  } else {
+  } else if(response.ok) {
     DynamicModal.dynamicModalDialog(
       `Collection created successfully!`,
       null,
@@ -100,6 +100,15 @@ const verifyResponse = (response)=> {
       'Close',
       'New Collection',
       'bg-success'
+    )
+  } else {
+    DynamicModal.dynamicModalDialog(
+      `An error happened, item not created`,
+      null,
+      '',
+      'Close',
+      'Error at Creation',
+      'bg-danger'
     )
   }
 }
