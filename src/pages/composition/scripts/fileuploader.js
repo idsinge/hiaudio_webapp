@@ -3,7 +3,6 @@
 
 import { UPLOAD_ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
-import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../../common/js/utils'
 import { playlist, trackHandler } from './composition'
 
 export class FileUploader {
@@ -64,9 +63,12 @@ export class FileUploader {
         const dataFormFileName = type ? file.fileName : file.dom.files[0].name
         formData.append('composition_id', this.compositionId)
         formData.append('audio', dataFormValue, dataFormFileName)
+        const uniqueId = Date.now()
+        const uploadBarHtml = `<div id='${'progress-elem-'+uniqueId}'>${dataFormFileName}<br><progress id='upload-progress-bar-${uniqueId}'></progress>&nbsp;<span id='upload-percentage-${uniqueId}'></span><br/></div>`
+        const progressBarContainer = document.getElementById('upload-progress-bar-container')
+        progressBarContainer.innerHTML += uploadBarHtml
 
         XHR.addEventListener('load', (event) => {
-            cancelLoader(LOADER_ELEM_ID)
             if(event.srcElement && event.srcElement.response){
                 const respJson = JSON.parse(event.srcElement.response)
                 if(respJson.ok){
@@ -85,13 +87,24 @@ export class FileUploader {
         })
 
         XHR.addEventListener('error', (event) => {
-            cancelLoader(LOADER_ELEM_ID)
             me.displayModalDialog('Problem sending file')
+        })
+
+        XHR.upload.addEventListener("progress", (event) => {
+            const progressElem = document.getElementById('progress-elem-' + uniqueId)
+            const uploadProgressBar = document.getElementById('upload-progress-bar-' + uniqueId)
+            const uploadPercentage = document.getElementById('upload-percentage-' + uniqueId)
+            if (event.lengthComputable) {
+              uploadProgressBar.value = event.loaded / event.total
+              uploadPercentage.innerText = (event.loaded / event.total * 100).toFixed(2) + '%'
+              if(uploadProgressBar.value === 1){
+                progressElem.remove()
+              }
+            }
         })
 
         XHR.open('POST', UPLOAD_ENDPOINT)
         XHR.send(formData)
-        startLoader(LOADER_ELEM_ID, "Uploading track...")
     }
     displayModalDialog (message) {
         DynamicModal.dynamicModalDialog(
