@@ -1,5 +1,6 @@
 
 import { ENDPOINT } from '../../../common/js/config'
+import DynamicModal from '../../../common/js/modaldialog'
 import {uriCompositionPage} from './home'
 import {getCollections, getCollectionsError, createListCollections } from '../../../common/js/collectionshandler.js'
 import './editcollections'
@@ -91,5 +92,14 @@ const verifyResponse = (response)=> {
   $('#newMusicModal').modal('hide')  
   if(response.composition){
     window.location.href = uriCompositionPage + response.composition.uuid  
+  } else {
+    DynamicModal.dynamicModalDialog(
+      `Collection created successfully!`,
+      null,
+      '',
+      'Close',
+      'New Collection',
+      'bg-success'
+    )
   }
 }
