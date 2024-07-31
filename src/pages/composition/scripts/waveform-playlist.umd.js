@@ -7708,6 +7708,7 @@ const MAX_CANVAS_WIDTH = 1000;
   }
 
   render(data) {
+    if (!this.peaks) return
     const width = this.peaks.length;
     const playbackX = secondsToPixels(
       data.playbackSeconds,
@@ -9638,7 +9639,7 @@ class AnnotationList {
 
   isPlaying() {
     return this.tracks.reduce(
-      (isPlaying, track) => isPlaying || track.isPlaying(),
+      (isPlaying, track) => isPlaying || track.isPlaying() || (this.mediaRecorder && this.mediaRecorder.state === "recording"),
       false
     );
   }
@@ -9803,6 +9804,7 @@ class AnnotationList {
     });
 
     this.playoutPromises = playoutPromises;
+    this.startAnimation(start)
   }
 
   startAnimation(startTime) {
