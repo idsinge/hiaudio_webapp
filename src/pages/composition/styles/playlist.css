@@ -440,4 +440,8 @@ footer {
   margin-top: 2em;
 }
 
+.editor-container {
+  max-width: 90%;
+}
+
 /*# sourceMappingURL=main.css.map */
