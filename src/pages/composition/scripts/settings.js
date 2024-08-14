@@ -119,7 +119,7 @@ const deleteComposition = async (compId) => {
         'OK',
         'Cancel',
         'Delete Composition',
-        'bg-warning'
+        'bg-danger'
     )
     document.getElementById('btn-delete-composition').onclick = async () => {
         const resultDeleteComp = await updateSettings('DELETE', '/deletecomposition/'+compId, null)        

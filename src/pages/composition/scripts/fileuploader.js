@@ -41,7 +41,11 @@ export class FileUploader {
         })
 
         reader.addEventListener('loadend', () => {
-            this.sendData(file)
+            const controlsList = document.getElementsByClassName('controls')
+            //console.log('controlsList.length', controlsList.length)
+            const trackPos = controlsList.length
+            // TODO: remove from here
+            //this.sendData(file, null, trackPos)
         })
 
         if (thefile) {
@@ -49,20 +53,21 @@ export class FileUploader {
         }
 
     }
-    sendData(file, type) {
+    sendData(file, type, trackuid) {
         const me = this
-        if (!type && !file.binary && file.dom.files.length > 0) {
-            setTimeout(this.sendData, 10)
-            return
-        }
+        // if (!type && !file.binary && file.dom.files.length > 0) {
+        //     console.log('sendData ... hello ??')
+        //     setTimeout(this.sendData, 10)
+        //     return
+        // }
 
         const XHR = new XMLHttpRequest()
-
         const formData = new FormData()
-        const dataFormValue = type ? file : file.dom.files[0]
-        const dataFormFileName = type ? file.fileName : file.dom.files[0].name
+        const dataFormValue = type ? file : file
+        const dataFormFileName = type ? file.fileName : file.name
         formData.append('composition_id', this.compositionId)
         formData.append('audio', dataFormValue, dataFormFileName)
+        //formData.append('client_uid', uniqueId)
         const uniqueId = Date.now()
         const uploadBarHtml = `<div id='${'progress-elem-'+uniqueId}'>${dataFormFileName}<br><progress id='upload-progress-bar-${uniqueId}'></progress>&nbsp;<span id='upload-percentage-${uniqueId}'></span><br/></div>`
         const progressBarContainer = document.getElementById('upload-progress-bar-container')
@@ -71,13 +76,17 @@ export class FileUploader {
         XHR.addEventListener('load', (event) => {
             if(event.srcElement && event.srcElement.response){
                 const respJson = JSON.parse(event.srcElement.response)
+                //console.log('sendData trackPos', trackPos)
                 if(respJson.ok){
                     fileInput.value =''
-                    if(type === 'blob'){
-                        trackHandler.displayOptMenuForNewTrack(respJson)
-                    } else {
-                        playlist.getEventEmitter().emit("audiosourcesrendered", respJson)
-                    }                
+                    respJson.trackuid = trackuid
+                    trackHandler.displayOptMenuForNewTrack(respJson)
+                    //if(type === 'blob'){
+                    //    trackHandler.displayOptMenuForNewTrack(respJson)
+                    //} else {
+                        //console.log('emit("audiosourcesrendered"', respJson)
+                        //playlist.getEventEmitter().emit("audiosourcesrendered", respJson)
+                    //}                
                 } else {
                     me.displayModalDialog(respJson.error)
                 }
