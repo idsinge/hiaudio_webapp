@@ -7,42 +7,31 @@ import { createTrackInfoTable } from './trackinfo/trackinfo'
 
 export class TrackHandler {
     displayOptMenuForNewTrack(newTrack){
-        console.log('newTrack' ,newTrack)
-        //console.log(newTrack)
         const element = newTrack.result
         const audio = element?.message?.audio || element?.message?.voice
         const title = audio.title || element.message.date
-        const track_id = audio.file_unique_id 
+        const track_id = audio.file_unique_id
         const controlsList = document.getElementsByClassName('controls')
-        //console.log(controlsList)
-        //console.log(playlist.tracks)
-        //let pos = controlsList.length - 1 
-        //if(pos>=0){
-        // TODO: before using the pos, check if it's valid
-        // as some tracks may have been deleted
-        //const pos = newTrack.trackpos
-        //console.log(playlist.tracks)
         let pos = 0
         let posFound = false
-        while(!posFound && (pos < playlist.tracks.length)){                  
+        while(!posFound && (pos < playlist.tracks.length)){
             if(playlist.tracks[pos].trackuid === newTrack.trackuid){
-                console.log(playlist.tracks[pos].name + ' at ' + pos)
                 posFound = true
             } else {
                 pos ++
             }
         }
-        
-        //const pos = playlist.tracks.findIndex((obj) => obj.trackuid === newTrack.trackuid )
-     
-        //console.log(title + ' at ' + pos)
         if(posFound) {
-            const customClass = { name: title, track_id: track_id, user_id:audio.user_id, user_uid:audio.user_uid, composition_id: audio.composition_id }
-            playlist.tracks[pos].customClass = customClass            
+            const customClass = { 
+                name: title,
+                track_id: track_id,
+                user_id:audio.user_id,
+                user_uid:audio.user_uid,
+                composition_id: audio.composition_id
+            }
+            playlist.tracks[pos].customClass = customClass
             this.createMenuOptButton(controlsList, pos, title, track_id)
         }
-        //}
-        
     }
     displayOptMenuForTracks(role) {
         const menuBtns = document.querySelectorAll('.menuoptbtn')
@@ -63,7 +52,6 @@ export class TrackHandler {
         }
     }
     createMenuOptButton(controlsList, pos, name, track_id){
-        console.log('createMenuOptButton', name)
         const menuBtnId = 'menuoptbtn-' + pos
         const menuDrpDownId = 'menuDropdown' + pos
         const buttonMenu = document.createElement('button')

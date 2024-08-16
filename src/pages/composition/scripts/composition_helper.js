@@ -1,7 +1,7 @@
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
-import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
+import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage, isSafari } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, fileUploader, playlist } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
@@ -109,6 +109,12 @@ const createNewTrack = (element, tracksInfo, tracksAsObj) => {
 }
 
 const createArrayOfTracks = (tracksInfo, stored_tracks) => {
+    const inputElement = document.getElementById('fileInput')
+    // TODO:issue-169 if Safari then ogg is not allowed in accept. Server should deliver m4a instead
+    inputElement.accept = ['.mp3','.wav','.m4a','.flac', '.aac']
+    // if(!isSafari){
+    //     inputElement.accept inputElement.accept = ['.mp3','.wav','.m4a','.flac','.aac','.ogg']
+    // }
     const canUpload = tracksInfo.owner || (1<=tracksInfo.role && tracksInfo.role <= 3) || false
     const userRole = tracksInfo.role
     CURRENT_USER_ID = tracksInfo.viewer_id
@@ -119,7 +125,6 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     if (canUpload) {
         playlist.controls.widgets.remove = false
         setUserPermission(true)
-        fileUploader.enableUpload()
         if (userRole === 1) {
             enableCompositionSettings(tracksInfo)
         }

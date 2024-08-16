@@ -434,41 +434,25 @@ export const enableUpdatesOnEmitter = () => {
   ee.on("audiosourcesloaded", function() {
     displayLoadingData("Tracks have all finished decoding.");
   });
-  // TODO: this workaround  for displaying the menu opt (issue-70)
-  // needs to be reworked when bulk uploads are possible
-  //let waitForRender = null
+  
   let fileCounter = 0
   let processTracks = []
-  ee.on("audiosourcesrendered", function(lastUpdate) {    
+  ee.on("audiosourcesrendered", function() {    
     if(USER_PERMISSION){
       const theFile = document.getElementById('fileInput')
       const numberNewFiles = theFile.files.length
-      //console.log('number files', numberNewFiles)
       if(numberNewFiles){
         const trackPos = playlist.tracks.length - 1
         const trackUID = Date.now()
-        playlist.tracks[trackPos].trackuid = trackUID        
-        console.log(playlist.tracks[trackPos].name + ' at ' + trackPos)
+        playlist.tracks[trackPos].trackuid = trackUID
         if(fileCounter < numberNewFiles){
-          processTracks.push(playlist.tracks[trackPos])
-          //console.log(theFile.files[fileCounter])
-          //theFile.files[fileCounter].trackuid = trackUID
+          processTracks.push(playlist.tracks[trackPos])         
           fileCounter ++
-        } 
+        }
         if(fileCounter === numberNewFiles){
-          //theFile.files[fileCounter].trackuid = trackUID
-          //console.log('Ready to Upload', theFile.files.length)
-          console.log(theFile.files)
-          //console.log(typeof(playlist.tracks))
           const arrayFiles = Array.from(theFile.files)
           for(let pos = 0; pos < theFile.files.length; pos++){
-            console.log('file', processTracks[pos])
-            // TODO: remove track pos, it will be retrieve in the exact moment when displaying the menu
-            console.log('Esto: ', theFile.files[pos].name)
-            console.log(' No es lo mismo que est: ', processTracks[pos].name)
             const index = arrayFiles.findIndex((obj) => obj.name === processTracks[pos].name)
-            console.log(index)
-            //fileUploader.sendData(theFile.files[pos], null, theFile.files[pos].trackuid)
             fileUploader.sendData(arrayFiles[index], null, processTracks[pos].trackuid )
           }
           processTracks = []
@@ -485,24 +469,17 @@ export const enableUpdatesOnEmitter = () => {
   });
 
   ee.on('audiorenderingfinished', function (type, data, trackPos) {
-
-    // trackPos is the param sent at btn-stop when stop recording
-    // but received from Playlist.js in event audiorenderingfinished  
     if(trackPos >= 0 && USER_PERMISSION){
-      //console.log('trackPos', trackPos)
       const trackUID = Date.now()
-      data.name = 'audio';
+      data.name = 'audio'
       data.fileName = trackUID + '.wav'
-      const trackPos = playlist.tracks.length - 1
       playlist.tracks[trackPos].trackuid = trackUID
-      //console.log(playlist.tracks[trackPos])
       fileUploader.sendData(data, 'blob', trackUID)
     }
     else if (type == 'wav'){
       if (downloadUrl) {
         window.URL.revokeObjectURL(downloadUrl);
       }
-
       downloadUrl = window.URL.createObjectURL(data);
       displayDownloadLink(downloadUrl);
     }
