@@ -434,26 +434,34 @@ export const enableUpdatesOnEmitter = () => {
   ee.on("audiosourcesloaded", function() {
     displayLoadingData("Tracks have all finished decoding.");
   });
-  // TODO: this workaround  for displaying the menu opt (issue-70)
-  // needs to be reworked when bulk uploads are possible
-  let waitForRender = null
-  ee.on("audiosourcesrendered", function(lastUpdate) {  
-    if(USER_PERMISSION){   
-      if(lastUpdate){
-        waitForRender = lastUpdate
-        const lastPosTrack = playlist.tracks.length - 1
-        const lasttrack = playlist.tracks[lastPosTrack]
-        if(lasttrack && !lasttrack?.customClass){  
-          waitForRender = null
-          trackHandler.displayOptMenuForNewTrack(lastUpdate)
-        }   
-      } else if(waitForRender){
-          const toUpdate = waitForRender
-          waitForRender = null
-          trackHandler.displayOptMenuForNewTrack(toUpdate)
-      }   
-    }
-    displayLoadingData("Tracks have been rendered");
+  
+  let fileCounter = 0
+  let processTracks = []
+  ee.on("audiosourcesrendered", function() {    
+    if(USER_PERMISSION){
+      const theFile = document.getElementById('fileInput')
+      const numberNewFiles = theFile.files.length
+      if(numberNewFiles){
+        const trackPos = playlist.tracks.length - 1
+        const trackUID = Date.now()
+        playlist.tracks[trackPos].trackuid = trackUID
+        if(fileCounter < numberNewFiles){
+          processTracks.push(playlist.tracks[trackPos])         
+          fileCounter ++
+        }
+        if(fileCounter === numberNewFiles){
+          const arrayFiles = Array.from(theFile.files)
+          for(let pos = 0; pos < theFile.files.length; pos++){
+            const index = arrayFiles.findIndex((obj) => obj.name === processTracks[pos].name)
+            fileUploader.sendData(arrayFiles[index], null, processTracks[pos].trackuid )
+          }
+          processTracks = []
+          fileCounter = 0
+        }
+      } else {
+        displayLoadingData("Tracks have been rendered");
+      }
+    }    
   });
 
   ee.on("audiosourceserror", function(e) {
@@ -461,19 +469,17 @@ export const enableUpdatesOnEmitter = () => {
   });
 
   ee.on('audiorenderingfinished', function (type, data, trackPos) {
-
-    // trackPos is the param sent at btn-stop when stop recording
-    // but received from Playlist.js in event audiorenderingfinished  
-    if(trackPos >= 0 && USER_PERMISSION){    
-      data.name = 'audio';
-      data.fileName = Date.now()  + '.wav' 
-      fileUploader.sendData(data, 'blob')
+    if(trackPos >= 0 && USER_PERMISSION){
+      const trackUID = Date.now()
+      data.name = 'audio'
+      data.fileName = trackUID + '.wav'
+      playlist.tracks[trackPos].trackuid = trackUID
+      fileUploader.sendData(data, 'blob', trackUID)
     }
     else if (type == 'wav'){
       if (downloadUrl) {
         window.URL.revokeObjectURL(downloadUrl);
       }
-
       downloadUrl = window.URL.createObjectURL(data);
       displayDownloadLink(downloadUrl);
     }

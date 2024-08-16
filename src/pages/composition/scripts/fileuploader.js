@@ -3,81 +3,38 @@
 
 import { UPLOAD_ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
-import { playlist, trackHandler } from './composition'
+import { trackHandler } from './composition'
 
 export class FileUploader {
     constructor(compositionId, trackhandler) {
         this.compositionId = compositionId
         this.trackhandler = trackhandler
     }
-    enableUpload(){
+    sendData(file, type, trackuid) {
         const me = this
-        const inputElement = document.getElementById("fileInput");
-        inputElement.addEventListener("change", handleFiles, false);
-        function handleFiles(event) {  
-            event.preventDefault()
-            me.fileReader(this.files[0])
-        }
-        dropContainer.ondragover = dropContainer.ondragenter = (evt) => {
-            evt.preventDefault()
-        }
-
-        dropContainer.ondrop = (evt) => {
-            fileInput.files = evt.dataTransfer.files
-            this.fileReader(fileInput.files[0])
-            evt.preventDefault()
-        }
-    }
-    fileReader (thefile) {
-        const file = {
-            dom: document.getElementById('fileInput'),
-            binary: null
-        }
-        const reader = new FileReader()
-
-        reader.addEventListener('load', () => {
-
-            file.binary = reader.result
-        })
-
-        reader.addEventListener('loadend', () => {
-            this.sendData(file)
-        })
-
-        if (thefile) {
-            reader.readAsBinaryString(thefile)
-        }
-
-    }
-    sendData(file, type) {
-        const me = this
-        if (!type && !file.binary && file.dom.files.length > 0) {
-            setTimeout(this.sendData, 10)
-            return
-        }
+        // if (!type && !file.binary && file.dom.files.length > 0) {
+        //     console.log('sendData ... hello ??')
+        //     setTimeout(this.sendData, 10)
+        //     return
+        // }
 
         const XHR = new XMLHttpRequest()
-
         const formData = new FormData()
-        const dataFormValue = type ? file : file.dom.files[0]
-        const dataFormFileName = type ? file.fileName : file.dom.files[0].name
+        const dataFormFileName = type ? file.fileName : file.name
         formData.append('composition_id', this.compositionId)
-        formData.append('audio', dataFormValue, dataFormFileName)
-        const uniqueId = Date.now()
-        const uploadBarHtml = `<div id='${'progress-elem-'+uniqueId}'>${dataFormFileName}<br><progress id='upload-progress-bar-${uniqueId}'></progress>&nbsp;<span id='upload-percentage-${uniqueId}'></span><br/></div>`
+        formData.append('audio', file, dataFormFileName)
+        const uploadBarHtml = `<div id='${'progress-elem-'+trackuid}'>${dataFormFileName}<br><progress id='upload-progress-bar-${trackuid}'></progress>&nbsp;<span id='upload-percentage-${trackuid}'></span><br/></div>`
         const progressBarContainer = document.getElementById('upload-progress-bar-container')
         progressBarContainer.innerHTML += uploadBarHtml
 
         XHR.addEventListener('load', (event) => {
-            if(event.srcElement && event.srcElement.response){
-                const respJson = JSON.parse(event.srcElement.response)
+            if(event.target && event.target.response){
+                const respJson = JSON.parse(event.target.response)
                 if(respJson.ok){
+                    // fileInput is not declared here but refers to the input file for audio
                     fileInput.value =''
-                    if(type === 'blob'){
-                        trackHandler.displayOptMenuForNewTrack(respJson)
-                    } else {
-                        playlist.getEventEmitter().emit("audiosourcesrendered", respJson)
-                    }                
+                    respJson.trackuid = trackuid
+                    trackHandler.displayOptMenuForNewTrack(respJson)
                 } else {
                     me.displayModalDialog(respJson.error)
                 }
@@ -91,9 +48,9 @@ export class FileUploader {
         })
 
         XHR.upload.addEventListener("progress", (event) => {
-            const progressElem = document.getElementById('progress-elem-' + uniqueId)
-            const uploadProgressBar = document.getElementById('upload-progress-bar-' + uniqueId)
-            const uploadPercentage = document.getElementById('upload-percentage-' + uniqueId)
+            const progressElem = document.getElementById('progress-elem-' + trackuid)
+            const uploadProgressBar = document.getElementById('upload-progress-bar-' + trackuid)
+            const uploadPercentage = document.getElementById('upload-percentage-' + trackuid)
             if (event.lengthComputable) {
               uploadProgressBar.value = event.loaded / event.total
               uploadPercentage.innerText = (event.loaded / event.total * 100).toFixed(2) + '%'
