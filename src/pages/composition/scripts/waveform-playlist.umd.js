@@ -6278,7 +6278,7 @@ class IdentityLoader extends loader_Loader {
 ;// CONCATENATED MODULE: ./src/track/loader/XHRLoader.js
 
 
-/* harmony default export */ const XHRLoader = (class extends (/* unused pure expression or super */ null && (Loader)) {
+/* harmony default export */ const XHRLoader = (class extends loader_Loader {
   /**
    * Loads an audio file via XHR.
    */
@@ -6314,7 +6314,7 @@ class IdentityLoader extends loader_Loader {
 ;// CONCATENATED MODULE: ./src/track/loader/FetchLoader.js
 
 
-/* harmony default export */ const FetchLoader = (class extends loader_Loader {
+/* harmony default export */ const FetchLoader = (class extends (/* unused pure expression or super */ null && (Loader)) {
   /**
    * Loads an audio file via fetch API.
    */
@@ -6344,8 +6344,8 @@ class IdentityLoader extends loader_Loader {
     } else if (src instanceof AudioBuffer) {
       return new IdentityLoader(src, audioContext, ee);
     } else if (typeof src === "string") {
-      //return new XHRLoader(src, audioContext, ee);
-      return new FetchLoader(src, audioContext, ee);
+      return new XHRLoader(src, audioContext, ee);
+      //return new FetchLoader(src, audioContext, ee);
     }
 
     throw new Error("Unsupported src type");
@@ -7698,9 +7698,8 @@ const MAX_CANVAS_WIDTH = 1000;
       "div.controls",
       {
         attributes: {
-          style: `height: ${numChan * data.height}px; width: ${
-            data.controls.width
-          }px; position: absolute; left: 0; z-index: 10;`,
+          style: `height: ${numChan * data.height}px; width: ${data.controls.width
+            }px; position: absolute; left: 0; z-index: 10;`,
         },
       },
       controls
@@ -7860,9 +7859,8 @@ const MAX_CANVAS_WIDTH = 1000;
         `div.channel.channel-${channelNum}`,
         {
           attributes: {
-            style: `height: ${data.height}px; width: ${width}px; top: ${
-              channelNum * data.height
-            }px; left: ${startX}px; position: absolute; margin: 0; padding: 0; z-index: 1;`,
+            style: `height: ${data.height}px; width: ${width}px; top: ${channelNum * data.height
+              }px; left: ${startX}px; position: absolute; margin: 0; padding: 0; z-index: 1;`,
           },
         },
         channelChildren
@@ -7924,9 +7922,8 @@ const MAX_CANVAS_WIDTH = 1000;
       `div.channel-wrapper${audibleClass}${customClass}`,
       {
         attributes: {
-          style: `margin-left: ${channelMargin}px; height: ${
-            data.height * numChan
-          }px;`,
+          style: `margin-left: ${channelMargin}px; height: ${data.height * numChan
+            }px;`,
         },
       },
       channelChildren

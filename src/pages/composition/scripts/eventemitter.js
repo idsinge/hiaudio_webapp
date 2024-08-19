@@ -3,8 +3,8 @@
  * This enables projects to create/control the useability of the project.
 */
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
-import { playlist, fileUploader, USER_PERMISSION, trackHandler } from './composition'
-import { CURRENT_USER_ID } from './composition_helper'
+import { playlist, fileUploader, USER_PERMISSION } from './composition'
+import { CURRENT_USER_ID, NUM_TRACKS } from './composition_helper'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
 //var ee = playlist.getEventEmitter();
@@ -104,6 +104,25 @@ updateSelect(startTime, endTime);
 updateTime(audioPos);
 
 
+let downloadProgressItems = {}
+function updateDownloadProgress(name, percent){
+  const downloadProgressElem = document.getElementById('download-progress-elems')
+  if(downloadProgressElem && !downloadProgressElem.hidden){
+    let downloadProgress = 0
+    downloadProgressItems[name] = percent
+    const downloadProgressBar = document.getElementById('download-progress-bar')
+    const downloadPercentage = document.getElementById('download-percentage')
+    for (const [key, value] of Object.entries(downloadProgressItems)) {
+      downloadProgress += value
+    }
+    const progressNumber = (downloadProgress / NUM_TRACKS).toFixed(2)
+    downloadProgressBar.value = progressNumber / 100
+    downloadPercentage.innerHTML = progressNumber + ' %'
+    if(progressNumber == 100){
+       downloadProgressElem.remove()
+    }
+  }
+}
 
 /*
 * Code below sets up events to send messages to the playlist.
@@ -427,7 +446,7 @@ export const enableUpdatesOnEmitter = () => {
     if (src instanceof File) {
       name = src.name;
     }
-
+    updateDownloadProgress(name, percent)
     displayLoadingData("Track " + name + " has loaded " + percent + "%");
   });
 

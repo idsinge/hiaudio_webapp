@@ -2,12 +2,14 @@ import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
 import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage, isSafari } from '../../../common/js/utils'
-import { setUserPermission, trackHandler, fileUploader, playlist } from './composition'
+import { setUserPermission, trackHandler, playlist } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
 import { trackInfoHandler } from './trackinfo/trackinfo'
 
 export let CURRENT_USER_ID = null
+export let NUM_TRACKS = 0
+
 function Track(id, title, muted, soloed, gain, stereoPan, customClass) {
     this.id = id
     this.name = title
@@ -24,7 +26,7 @@ export const getComposition = (compositionId, callback, extraParams) => {
 
     let errorIs = null
     let tracksInfo = {}
-
+    cancelLoader(LOADER_ELEM_ID)
     fetch(ENDPOINT + "/composition/" + compositionId, {
         method: 'GET',
         headers: {
@@ -131,15 +133,19 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     }
     if (tracksInfo.tracks) {
         const arrayLoad = []
-        tracksInfo.tracks.forEach((element) => {
-            if(element){
-                const newTrack = createNewTrack(element, tracksInfo, tracksAsObj)
-                arrayLoad.push(newTrack)
-            }
-        })
+        if(tracksInfo.tracks.length){
+            NUM_TRACKS = tracksInfo.tracks.length
+            const downloadProgressElem = document.getElementById('download-progress-elems')
+            downloadProgressElem.hidden = false
+            tracksInfo.tracks.forEach((element) => {
+                if(element){
+                    const newTrack = createNewTrack(element, tracksInfo, tracksAsObj)
+                    arrayLoad.push(newTrack)
+                }
+            })
+        }
         createTrackList(arrayLoad, canUpload, userRole)
     } else {
-        cancelLoader(LOADER_ELEM_ID)
         playlist.initExporter()
     }
 }
@@ -152,7 +158,6 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
         errorIs = error
     })
     .then(() => {
-        cancelLoader(LOADER_ELEM_ID)
         if (errorIs) {
             alert(errorIs)
         } else {
