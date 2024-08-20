@@ -119,7 +119,7 @@ function updateDownloadProgress(name, percent){
     downloadProgressBar.value = progressNumber / 100
     downloadPercentage.innerHTML = progressNumber + ' %'
     if(progressNumber == 100){
-       downloadProgressElem.remove()
+       downloadProgressElem.innerHTML = `Rendering...<br><progress></progress>`
     }
   }
 }
@@ -456,7 +456,11 @@ export const enableUpdatesOnEmitter = () => {
   
   let fileCounter = 0
   let processTracks = []
-  ee.on("audiosourcesrendered", function() {    
+  ee.on("audiosourcesrendered", function() {
+    const downloadProgressElem = document.getElementById('download-progress-elems')
+    if(downloadProgressElem && !downloadProgressElem.hidden){
+      downloadProgressElem.remove()
+    }
     if(USER_PERMISSION){
       const theFile = document.getElementById('fileInput')
       const numberNewFiles = theFile.files.length
