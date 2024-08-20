@@ -1,5 +1,15 @@
 import { callJsonApi, looksLikeMail, cancelLoader, LOADER_ELEM_ID, activateGoHomeLink } from '../../common/js/utils'
 
+let params = new URLSearchParams(document.location.search);
+let code = params.get('code')
+
+if(!code){
+    document.getElementById('code-refusal-container').hidden = false
+} else {
+    document.getElementById('inputrefusalcode').value = code
+}
+
+
 const sendRemovalRequest = async () => {
     const toRemoveEmail = document.getElementById('inputemailtoremove').value
     if(looksLikeMail(toRemoveEmail)){
