@@ -1,7 +1,5 @@
-import { isSafari } from '../../../../common/js/utils'
 import { drawResults, clearCanvas } from './helper'
 import { generateMLS } from './mls'
-import { TestMic } from '../webdictaphone/webdictaphone'
 import { displayLatencyUI } from '../latencytesthandler'
 
 const CANVAS = `<div class='container' id='audio-area'>
@@ -31,6 +29,8 @@ export class TestLatencyMLS {
 
     inputStream = null
 
+    browserId = null
+
     static setCurrentLatency(latvalue) {
         localStorage.setItem('latency', latvalue)
         displayLatencyUI(latvalue)
@@ -41,10 +41,8 @@ export class TestLatencyMLS {
     }
 
     static getCorrectStreamForSafari(stream){
-        const safariVersionIndex = navigator.userAgent.indexOf('Version/')
-        const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
-        const safariVersion = parseFloat(versionString)        
-        if(isSafari && safariVersion > 16){
+        const browserVersion = parseInt(TestLatencyMLS.browserId.version)
+        if((TestLatencyMLS.browserId.browser === 'safari') && (browserVersion >= 16)) {
             const micsource = TestLatencyMLS.audioContext.createMediaStreamSource(stream)
             TestLatencyMLS.recordGainNode = TestLatencyMLS.audioContext.createGain()
             micsource.connect(TestLatencyMLS.recordGainNode)
@@ -57,17 +55,10 @@ export class TestLatencyMLS {
             return stream
         }
     }
-    static setRecordGainNodeForTest(recordGainNode){
-        const safariVersionIndex = navigator.userAgent.indexOf('Version/')
-        const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
-        const safariVersion = parseFloat(versionString)        
-        if(isSafari && safariVersion > 16){
-          const testMic = new TestMic()
-          testMic.init(recordGainNode)
-        }
-    }
 
-    static async initialize(ac, stream, btnId, debugCanvas) {
+    static async initialize(ac, stream, btnId, debugCanvas, browserId) {
+
+        TestLatencyMLS.browserId = browserId
 
         TestLatencyMLS.btnId = btnId
 
@@ -96,7 +87,6 @@ export class TestLatencyMLS {
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
         TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
         const userMediaStream =  TestLatencyMLS.getCorrectStreamForSafari(inputStream)
-        TestLatencyMLS.setRecordGainNodeForTest(TestLatencyMLS.recordGainNode)
         TestLatencyMLS.inputStream = userMediaStream
         if(TestLatencyMLS.debugCanvas){
             userMediaStream.getTracks().forEach(async function(track) {

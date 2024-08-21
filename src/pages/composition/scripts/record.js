@@ -1,13 +1,14 @@
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/record.js */
 import { createWaveformPlaylist, playlist } from './composition'
 import { getComposition, doAfterCompositionFetched } from './composition_helper'
-import { isSafari, MEDIA_CONSTRAINTS } from '../../../common/js/utils'
+import { MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 import { TestMic } from './webdictaphone/webdictaphone'
 import {initEventEmitter, enableUpdatesOnEmitter} from './eventemitter'
 
 export class Recorder {
-    constructor() {
+    constructor(browserId) {
         this.recordGainNode = null
+        this.browserId = browserId
     }
 
     init(compositionId) {
@@ -54,10 +55,8 @@ export class Recorder {
         }
     }
     getCorrectStreamForSafari(stream){
-        const safariVersionIndex = navigator.userAgent.indexOf('Version/')
-        const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
-        const safariVersion = parseFloat(versionString)        
-        if(isSafari && safariVersion > 16){
+        const browserVersion = parseInt(this.browserId.version)
+        if((this.browserId.browser === 'safari') && (browserVersion >= 16)) {
             const micsource = playlist.ac.createMediaStreamSource(stream)
             this.recordGainNode = playlist.ac.createGain()
             micsource.connect(this.recordGainNode)
@@ -72,10 +71,8 @@ export class Recorder {
         }
     }
     setRecordGainNodeForTest(recordGainNode){
-        const safariVersionIndex = navigator.userAgent.indexOf('Version/')
-        const versionString =  navigator.userAgent.substring(safariVersionIndex + 8)
-        const safariVersion = parseFloat(versionString)        
-        if(isSafari && safariVersion > 16){
+        const browserVersion = parseInt(this.browserId.version)
+        if((this.browserId.browser === 'safari') && (browserVersion >= 16)) {
           const testMic = new TestMic()
           testMic.init(recordGainNode)
         }

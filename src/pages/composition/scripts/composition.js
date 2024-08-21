@@ -4,7 +4,8 @@ import WaveformPlaylist from './waveform-playlist.umd'
 import { Recorder } from './record'
 import { triggerTestLatencyButton, triggerLatencyTestHandler } from './latencytesthandler'
 import DynamicModal from '../../../common/js/modaldialog'
-import { activateGoHomeLink, isSafari } from '../../../common/js/utils'
+import { activateGoHomeLink } from '../../../common/js/utils'
+import detectBrowser from '../../../common/js/detect-browser.js'
 
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
@@ -49,15 +50,14 @@ export const createWaveformPlaylist = (audCtxt, stream) => {
   triggerLatencyTestHandler(stream)
 }
 
-export const recorder = new Recorder()
+const browserId = detectBrowser()
+export const recorder = new Recorder(browserId)
 
 const compositionId = COMPOSITION_ID
 
 const testMicButtonForSafari = () => {
-  const safariVersionIndex = navigator.userAgent.indexOf('Version/')
-  const versionString = navigator.userAgent.substring(safariVersionIndex + 8)
-  const safariVersion = parseFloat(versionString)
-  if (isSafari && safariVersion > 16) {
+  const browserVersion = parseInt(recorder.browserId.version)
+  if((recorder.browserId.browser === 'safari') && (browserVersion >= 16)) {
     return `<li class='nav-item'>
               <a class='nav-link' href='#' id='testmicrophone' data-toggle='modal' data-target='#testMicrophoneModal'>
                 <i class='fa-solid fa-microphone'></i> TEST MIC

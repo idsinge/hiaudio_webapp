@@ -11,6 +11,8 @@ export const TEST_LAT_MLS_BTN_ID = 'testlatencymlsbtn'
 
 let latencyTestInitialized = false
 
+const browserId = detectBrowser()
+
 const imageUrl = new URL('../../../common/img/imgtestlatdemo.jpg?as=webp', import.meta.url)
 
 export const displayLatencyUI = (value) =>{
@@ -88,7 +90,7 @@ const openLatencyTestDialog = (stream) => {
     
     if (!latencyTestInitialized) {
         latencyTestInitialized = true
-        active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, stream, TEST_LAT_MLS_BTN_ID, debugCanvas)
+        active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, stream, TEST_LAT_MLS_BTN_ID, debugCanvas, browserId)
         active_lat_test.ringbuf && TestLatRingBuf.initialize(playlist.ac, stream)
         active_lat_test.scrptprc && TestLatScriptProc.initialize(playlist.ac)
     } else {
@@ -99,9 +101,8 @@ const openLatencyTestDialog = (stream) => {
 }
 
 export const triggerLatencyTestHandler = (stream) => {
-    const browserId = detectBrowser()
     console.log(browserId)
-    if(browserId.os === 'ipad' || browserId.os === 'iphone' || browserId.browsers === 'safari') {
+    if(browserId.os === 'ipad' || browserId.os === 'iphone' || browserId.browser === 'safari') {
         active_lat_test.ringbuf = false
     }
     document.getElementById('trigger-lat-test-btn').onclick = () => {
