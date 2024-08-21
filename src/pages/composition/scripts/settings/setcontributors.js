@@ -1,8 +1,7 @@
 import { ENDPOINT } from '../../../../common/js/config'
 import DynamicModal from '../../../../common/js/modaldialog'
-import { looksLikeMail, isSafari } from '../../../../common/js/utils'
+import { looksLikeMail } from '../../../../common/js/utils'
 import {updateSettings} from '../settings'
-import { playlist } from '../composition'
 
 let CURRENT_CONTRIBUTORS = []
 let NEW_CONTRIBUTORS = []
@@ -111,9 +110,6 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
         } else {
             displayModalDialog(`Duplicate user`)
         }
-        if(isSafari){
-            playlist.getEventEmitter().emit('resume')
-        }        
     }   
 }
 

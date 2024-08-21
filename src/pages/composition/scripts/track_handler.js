@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
-import { LOADER_ELEM_ID, startLoader, cancelLoader, isSafari } from '../../../common/js/utils'
+import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../../common/js/utils'
 import { CURRENT_USER_ID } from './composition_helper'
 import { playlist } from './composition'
 import { createTrackInfoTable } from './trackinfo/trackinfo'
