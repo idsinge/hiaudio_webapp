@@ -126,7 +126,7 @@ export class TrackHandler {
             'OK',
             'Cancel',
             'Delete Track',
-            'bg-warning'
+            'bg-danger'
         )
         document.getElementById('btn-delete-track').onclick = () => {
             callback(event.target.dataset.pos, event.target.dataset.trackId, afterCallback)
