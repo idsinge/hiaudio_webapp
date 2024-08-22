@@ -1,5 +1,4 @@
-import { isSafari } from '../../../../common/js/utils'
-import { setCanvasData, ButtonHandlers, mediaRecorderStopUI } from './webdictaphone_ui'
+import { setCanvasData } from './webdictaphone_ui'
 
 /* SOURCE: https://github.com/mdn/dom-examples/blob/main/media/web-dictaphone */
 
@@ -13,7 +12,6 @@ export class TestMic {
         this.analyser = null
         this.gainNode = null
         this.recordGainNode = null
-        this.buttonHandlers = null
     }  
 
     init(recordGainNode){
@@ -59,25 +57,8 @@ export class TestMic {
         this.gainNode.connect(this.analyser)
         const dest = this.audioCtxTestMic.createMediaStreamDestination()
         this.gainNode.connect(dest)
-        const mediaRecorder = new MediaRecorder(dest.stream)
-    
         this.draw()
-        this.buttonHandlers = new ButtonHandlers(mediaRecorder, this)
-        this.buttonHandlers.init()
-        this.mediaRecoderHandlers(mediaRecorder)
         this.uiHandlers()
-    }
-    mediaRecoderHandlers(mediaRecorder){
-        let chunks = []
-        mediaRecorder.onstop = function (event) {
-            const blob = new Blob(chunks, { type: mediaRecorder.mimeType })
-            chunks = []
-            const audioURL = window.URL.createObjectURL(blob)
-            mediaRecorderStopUI(audioURL)
-        }
-        mediaRecorder.ondataavailable = function (e) {
-            chunks.push(e.data)
-        }
     }
     draw(){
         const me  = this
@@ -91,12 +72,6 @@ export class TestMic {
     }
     async connectSource(){
         this.analyser.connect(this.audioCtxTestMic.destination)
-        if (isSafari) {
-            console.log(`Audio context state change: ${this.audioCtxTestMic.state}`)
-            if (this.audioCtxTestMic.state === 'suspended') {
-                await this.audioCtxTestMic.resume()
-            }
-        }
     }
     disconnectSource(){
         this.analyser.disconnect()
@@ -108,7 +83,6 @@ export class TestMic {
             document.getElementById('current-input-gain-test-mic').value = me.CURRENT_GAIN_TEST_MIC
         })
         $('#testMicrophoneModal').on('hide.bs.modal', async (event) => {
-            me.buttonHandlers.stopButtonClick()
             me.analyser.disconnect()
         })
         

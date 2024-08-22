@@ -58,7 +58,7 @@ const openLatencyTestDialog = (stream) => {
     DynamicModal.dynamicModalDialog(
         `<img src='${imageUrl}' class='img-fluid' alt='...'>
         <p>Place your mic as close as possible to the speakers/headphones.</p>
-        <p><b>WARNING!</b> Be careful with the volume as a noise will be played through left speaker.</p>
+        <p class='alert alert-danger'><b>WARNING!</b> Be careful with the volume as a noise will be played through left speaker.</p>
         <p>${currentLat ? '<i>Current latency: ' + '<span id="current-lat-val">'+currentLat+'</span>' + ' ms.</i>': ''}</p>
         ${active_lat_test.mls ? `<a class='nav-link' href='#' id='${TEST_LAT_MLS_BTN_ID}' data-toggle='modal' 
         data-toggle='popover' data-placement='bottom'  title='Testing ...' data-content='No input detected'></a><br>`: ''}       
