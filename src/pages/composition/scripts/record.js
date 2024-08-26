@@ -22,8 +22,10 @@ export class Recorder {
             const audCtxt = new AudioContext({ latencyHint: 0 })
             createWaveformPlaylist(audCtxt, stream)
             userMediaStream = this.getCorrectStreamForSafari(stream)  
-            // userMediaStream.getTracks().forEach(async function(track) {                
+            // userMediaStream.getTracks().forEach(async function(track) {
+            //     console.log('Record Track ', track)
             //     console.log('Record Track Settings', track.getSettings())
+            //     console.log('Record Track Capabilities', track.getCapabilities())
             // })
             playlist.initRecorder(userMediaStream, undefined, "Voice Track")
             $(".btn-record").removeClass("disabled")
@@ -64,6 +66,7 @@ export class Recorder {
             const defaultGain = micGain ? parseInt(micGain) : 1
             this.recordGainNode.gain.value = defaultGain
             const dest = playlist.ac.createMediaStreamDestination()
+            dest.channelCount = 1
             this.recordGainNode.connect(dest)
             return dest.stream
         } else {
@@ -74,7 +77,7 @@ export class Recorder {
         const browserVersion = parseInt(this.browserId.version)
         if((this.browserId.browser === 'safari') && (browserVersion >= 16)) {
           const testMic = new TestMic()
-          testMic.init(recordGainNode)
+          testMic.init(recordGainNode, playlist.ac)
         }
     }
 }
