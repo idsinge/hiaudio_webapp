@@ -135,14 +135,8 @@ export class TestLatencyMLS {
 
             const noiseSource = TestLatencyMLS.audioContext.createBufferSource()
             noiseSource.buffer = TestLatencyMLS.noiseBuffer
-
-            const splitter = TestLatencyMLS.audioContext.createChannelSplitter(2)
-            const merger = TestLatencyMLS.audioContext.createChannelMerger(2)
-
-            noiseSource.connect(splitter)
-            splitter.connect(merger, 0, 0) // Connect only the left channel
-            merger.connect(TestLatencyMLS.audioContext.destination)            
-            
+            noiseSource.connect(TestLatencyMLS.audioContext.destination)
+                        
             TestLatencyMLS.audioContext.createMediaStreamSource(TestLatencyMLS.inputStream)
 
             let chunks = []
@@ -153,9 +147,7 @@ export class TestLatencyMLS {
                 chunks.push(event.data)
             }
             mediaRecorder.onstop = async () => {
-                noiseSource.disconnect(splitter)
-                splitter.disconnect(merger, 0, 0)
-                merger.disconnect(TestLatencyMLS.audioContext.destination)
+                noiseSource.disconnect(TestLatencyMLS.audioContext.destination)
                 TestLatencyMLS.displayAudioTagElem(chunks, mediaRecorder.mimeType)
             }
 
