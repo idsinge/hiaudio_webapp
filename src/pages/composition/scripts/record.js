@@ -74,7 +74,7 @@ export class Recorder {
         const browserVersion = parseInt(this.browserId.version)
         if((this.browserId.browser === 'safari') && (browserVersion >= 16)) {
           const testMic = new TestMic()
-          testMic.init(recordGainNode)
+          testMic.init(recordGainNode, playlist.ac)
         }
     }
 }
