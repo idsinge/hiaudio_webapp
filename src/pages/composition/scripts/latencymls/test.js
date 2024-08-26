@@ -49,6 +49,7 @@ export class TestLatencyMLS {
             const defaultGain = 50 // force the gain to be 50 so it does not depend on manual control
             TestLatencyMLS.recordGainNode.gain.value = defaultGain
             const dest = TestLatencyMLS.audioContext.createMediaStreamDestination()
+            dest.channelCount = 1
             TestLatencyMLS.recordGainNode.connect(dest)
             return dest.stream
         } else {
