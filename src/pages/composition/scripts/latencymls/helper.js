@@ -64,24 +64,6 @@ export function drawAutocorrelation(autocorrelation, idcanvas) {
     }
 }
 
-
-export function findPeakAndMean(array) {
-    let peakValue = array[0]
-    let peakIndex = 0
-    let sum = 0
-
-    for (let i = 1; i < array.length; i++) {
-        if (array[i] > peakValue) {
-            peakValue = array[i]
-            peakIndex = i
-        }
-        sum += array[i]
-    }
-    const mean = sum / array.length
-
-    return { peakValue, peakIndex, mean }
-}
-
 export const clearCanvas = () => {
     const canvas1 = document.getElementById('autocorrelationCanvas1')
     canvas1.width = window.innerWidth / 2

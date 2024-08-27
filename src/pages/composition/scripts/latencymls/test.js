@@ -185,7 +185,7 @@ export class TestLatencyMLS {
                 channel: message.data.channel
             })
         }
-        if(message.data.peakValue){                
+        if(message.data.peakValuePow){                
             TestLatencyMLS.displayresults(message.data, TestLatencyMLS.signalrecorded, TestLatencyMLS.noiseBuffer, TestLatencyMLS.correlation)
         }
     }
@@ -233,18 +233,20 @@ export class TestLatencyMLS {
         return audioBuffer
     }
 
-    static displayresults(peak, signalrecorded, mlssignal, correlation, channel) {
+    static displayresults(peak, signalrecorded, mlssignal, correlation) {
        
         if(peak.channel === 0){
             const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
-            const ratioIs = peak.peakValue / peak.mean
+            const ratioIs = Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
             //console.log('Corr ABS(Ratio)', Math.abs(ratioIs))
             TestLatencyMLS.setCurrentLatency(roundtriplatency)
             TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
             TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
+            TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-light'>ratio: ${ratioIs.toFixed(2)}</span>`
             TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
             if(TestLatencyMLS.debugCanvas) {
+                console.log('peak energy info', peak)
                 console.log('Latency = ', roundtriplatency + ' ms')
                 drawResults(signalrecorded.getChannelData(0), 'leftChannelCanvas', 'autocorrelationCanvas1', correlation)
                 console.log('signalrecorded.numberOfChannels', signalrecorded.numberOfChannels)
@@ -265,7 +267,7 @@ export class TestLatencyMLS {
             console.log('Channel', peak.channel )
             const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
             console.log('Latency = ', roundtriplatency + ' ms')
-            const ratioIs = peak.peakValue / peak.mean
+            const ratioIs = Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
             drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', TestLatencyMLS.correlation)
         }      
