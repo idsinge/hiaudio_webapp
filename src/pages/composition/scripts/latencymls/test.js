@@ -136,9 +136,7 @@ export class TestLatencyMLS {
             const noiseSource = TestLatencyMLS.audioContext.createBufferSource()
             noiseSource.buffer = TestLatencyMLS.noiseBuffer
             noiseSource.connect(TestLatencyMLS.audioContext.destination)
-                        
-            TestLatencyMLS.audioContext.createMediaStreamSource(TestLatencyMLS.inputStream)
-
+            
             let chunks = []
 
             const mediaRecorder = new MediaRecorder(TestLatencyMLS.inputStream)
