@@ -40,6 +40,26 @@ const testLatFinishCallback = () => {
     }
 }
 
+const latencyWarningModal = `<div class="modal fade" id="latencyTestWarning" tabindex="-1" aria-labelledby="latencyTestWarningLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header bg-warning">
+              <h5 class="modal-title" id="latencyTestWarning">Latency Test Issue</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <p>It seems there's a problem trying to estimate the latency. Please check the audio settings of your device carefully.</p> 
+                <!-- If you have any issue you can also visit our support page. <p>More information at: <span> <a href="${window.location.origin}/static/support.html" target="_blank">${window.location.origin}/static/support.html</a></span></p> -->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+    </div>`
+
 const manualSetLatencyHandler = () => {
     document.getElementById('latencyslider').onchange = (event) =>{
         localStorage.setItem('latency', event.target.value) 
@@ -78,6 +98,7 @@ const openLatencyTestDialog = (stream) => {
                 <input type='range' min='0' max='500' class='form-control-range' id='latencyslider' value='${currentLat || 0}'>
             </p>
         </details>
+        ${latencyWarningModal}
        `,
         null,
         '',

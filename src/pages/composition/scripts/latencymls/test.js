@@ -239,7 +239,9 @@ export class TestLatencyMLS {
             const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
             const ratioIs = Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
-            //console.log('Corr ABS(Ratio)', Math.abs(ratioIs))
+            if(ratioIs <= 1.8){
+                $('#latencyTestWarning').modal('show')
+            }
             TestLatencyMLS.setCurrentLatency(roundtriplatency)
             TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
             TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
