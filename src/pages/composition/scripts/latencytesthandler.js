@@ -50,8 +50,8 @@ const latencyWarningModal = `<div class="modal fade" id="latencyTestWarning" tab
               </button>
             </div>
             <div class="modal-body">
-                <p>It seems there's a problem trying to estimate the latency. Please check the audio settings of your device carefully. If you have any issue you can also visit our support page.</p>
-                <p>More information at: <span> <a href="${window.location.origin}/static/support.html" target="_blank">${window.location.origin}/static/support.html</a></span></p>
+                <p>It seems there's a problem trying to estimate the latency. Please check the audio settings of your device carefully.</p> 
+                <!-- If you have any issue you can also visit our support page. <p>More information at: <span> <a href="${window.location.origin}/static/support.html" target="_blank">${window.location.origin}/static/support.html</a></span></p> -->
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -239,7 +239,7 @@ export class TestLatencyMLS {
             const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
             const ratioIs = Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
-            if(ratioIs <= 1.7){
+            if(ratioIs <= 1.8){
                 $('#latencyTestWarning').modal('show')
             }
             TestLatencyMLS.setCurrentLatency(roundtriplatency)
