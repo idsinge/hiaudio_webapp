@@ -81,3 +81,17 @@
         margin: 0 auto;
     }
 }
+
+.volume-bar {
+    height: 30px;
+    background: lightgray;
+    position: relative;
+}
+
+.volume-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: green;
+}
