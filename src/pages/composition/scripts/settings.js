@@ -35,7 +35,7 @@ const createSettingsButton = () => {
     const ulElem = document.getElementById('useroptions')
     const liElem = document.createElement('li')
     liElem.innerHTML = `<li class="nav-item">
-    <a class="nav-link" href="#" id="openSettingsButton" data-toggle="modal" data-target="#settingsModal">Settings</a>
+    <a class="nav-link" href="#" id="openSettingsButton" data-toggle="modal" data-target="#settingsModal">Composition Info</a>
   </li>
    `
    ulElem.appendChild(liElem)

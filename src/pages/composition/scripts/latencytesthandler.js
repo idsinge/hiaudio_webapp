@@ -121,12 +121,29 @@ const openLatencyTestDialog = (stream) => {
     }
 }
 
+let wakeLock = null
+const enableWakeLock = async() => {
+  if ('wakeLock' in navigator) {    
+    try {
+      wakeLock = await navigator.wakeLock.request('screen')
+      console.log('Wake Lock Activated')
+    } catch (err) {
+      wakeLock = false
+      // The Wake Lock request has failed - usually system related, such as battery.
+      console.log('Error', err)
+    }
+  }
+}
+
 export const triggerLatencyTestHandler = (stream) => {
     console.log(browserId)
     if(browserId.os === 'ipad' || browserId.os === 'iphone' || browserId.browser === 'safari') {
         active_lat_test.ringbuf = false
     }
-    document.getElementById('trigger-lat-test-btn').onclick = () => {
+    document.getElementById('trigger-lat-test-btn').onclick =  async() => {
+        if(wakeLock === null){
+            await enableWakeLock()
+        }
         openLatencyTestDialog(stream)
     } 
 }
