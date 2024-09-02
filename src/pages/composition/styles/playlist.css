@@ -68,6 +68,16 @@
 .playlist .btn-outline-dark:active:focus, .playlist .btn-outline-dark:focus {
   box-shadow: 0 0 0 0.2rem var(--wp-mute-solo-focus-color);
 }
+
+/* Media query to disable hover styles on touch devices */
+@media (hover: none) {
+  .playlist .btn-outline-dark:hover {
+    color: var(--wp-mute-solo-color); /* Reset to default color */
+    background-color: transparent; /* Reset background */
+    border-color: var(--wp-mute-solo-color);
+  }
+}
+
 .playlist .btn-danger {
   color: var(--wp-btn-danger-color);
   background-color: var(--wp-btn-danger-background-color);
