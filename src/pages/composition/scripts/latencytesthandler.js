@@ -29,7 +29,7 @@ export const triggerTestLatencyButton = () => {
       LATENCY TEST</a>
   </li>`}
 
-let active_lat_test = {mls:true,ringbuf:true,scrptprc:false}
+let active_lat_test = {mls:true,ringbuf:false,scrptprc:false}
 
 const testLatFinishCallback = () => {
     if (active_lat_test.ringbuf && TestLatRingBuf.running) {
