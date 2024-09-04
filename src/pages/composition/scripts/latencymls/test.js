@@ -241,8 +241,9 @@ export class TestLatencyMLS {
             console.log('Corr Ratio', ratioIs)
             if(ratioIs <= 1.8){
                 $('#latencyTestWarning').modal('show')
+            } else {
+                TestLatencyMLS.setCurrentLatency(roundtriplatency)
             }
-            TestLatencyMLS.setCurrentLatency(roundtriplatency)
             TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
             TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
             TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-light'>ratio: ${ratioIs.toFixed(2)}</span>`
