@@ -16,7 +16,11 @@ export const initNavigationMenu = () => {
     </li>
     <li class='nav-item'>
         <a class='dropdown-item' href='${uriCompositionPage}demopage'>Test DAW</a>
-    </li>`
+    </li>
+    <li class='nav-item'>
+        <a class='dropdown-item' href='${window.location.origin}/static/howto.html'>How-To</a>
+    </li>
+    `
 
     document.getElementById('useroptions').innerHTML = 
     `<li class='nav-item'>
@@ -27,7 +31,11 @@ export const initNavigationMenu = () => {
     </li>
     <li class='nav-item'>
         <a class='nav-link' href='#' id='openMyCollectionsButton' data-toggle='modal' data-target='#editCollectionsModal'>/ My Collections</a>
-    </li>`
+    </li>
+    <li class='nav-item'>
+        <a class='nav-link' href='${window.location.origin + '/static/howto.html'}'>/ How-to</a>
+    </li>
+    `
 }
 
 export const getLegendButtons = (numberGroupsByCollections, numberGroupsCustom, numberSinglComp, endpoint, totalcomps) => {
