@@ -32,3 +32,11 @@ body {
   text-underline-offset: 0.35em;
   font-weight: bold;
 }
+
+.modal-backdrop {
+  display: none;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.5);
+}
