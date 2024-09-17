@@ -1,7 +1,7 @@
 
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
-import {uriCompositionPage} from './home'
+import {uriCompositionPage, IS_AUTH} from './home'
 import {getCollections, getCollectionsError, createListCollections } from '../../../common/js/collectionshandler.js'
 import './editcollections'
 
@@ -9,17 +9,21 @@ const createNewButton  = document.getElementById('createNewButton')
 const createNewButtonAtHome  = document.getElementById('createNewButtonAtHome')
 
 const clickNewButtonHandler = () => {
-  document.getElementById('newtitle').value = ''
-  document.getElementById('newdescription').value = ''
-  const saveCompositionButton = document.getElementById('newcreation')
-  saveEventListener(saveCompositionButton)
-  getCollections().then( result => {
-      if(result){
-          getCompCollSuccess(result)
-      } else {
-          getCollectionsError()
-      }
-  })
+  if(!IS_AUTH){
+    window.location.href = '/login.html'
+  } else {
+    document.getElementById('newtitle').value = ''
+    document.getElementById('newdescription').value = ''
+    const saveCompositionButton = document.getElementById('newcreation')
+    saveEventListener(saveCompositionButton)
+    getCollections().then( result => {
+        if(result){
+            getCompCollSuccess(result)
+        } else {
+            getCollectionsError()
+        }
+    })
+  }  
 }
 
 createNewButton?.addEventListener('click', clickNewButtonHandler, false)
