@@ -125,11 +125,16 @@ export class TestLatencyMLS {
 
         TestLatencyMLS.signalrecorded = null
 
-        const silenceSource = TestLatencyMLS.audioContext.createBufferSource()
+        //const silenceSource = TestLatencyMLS.audioContext.createBufferSource()
 
-        silenceSource.buffer = TestLatencyMLS.silenceBuffer
+        //silenceSource.buffer = TestLatencyMLS.silenceBuffer
 
-        silenceSource.connect(TestLatencyMLS.audioContext.destination)
+        //silenceSource.connect(TestLatencyMLS.audioContext.destination)
+
+        const silenceBuffer = TestLatencyMLS.audioContext.createBuffer(1, 1, 22050);
+        const silenceNode = TestLatencyMLS.audioContext.createBufferSource();
+        silenceNode.buffer = silenceBuffer;
+
        
         const doTheTest = () => {
 
@@ -157,11 +162,15 @@ export class TestLatencyMLS {
                 TestLatencyMLS.finishTest()
             }
         }
-        silenceSource.start()
-        silenceSource.onended = function () {
-            silenceSource.disconnect(TestLatencyMLS.audioContext.destination)
+        silenceNode.start(0)
+        silenceNode.onended = function () {
+            //silenceNode.disconnect(TestLatencyMLS.audioContext.destination)
             doTheTest()
         }
+        // silenceSource.onended = function () {
+        //     silenceSource.disconnect(TestLatencyMLS.audioContext.destination)
+        //     doTheTest()
+        // }
     }
 
     static finishTest() {
