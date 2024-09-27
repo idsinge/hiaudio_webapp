@@ -32,7 +32,11 @@ export function navigate(section) {
     url.searchParams.delete('collectionid')
     history.replaceState(null, null, url)
     switch (section) {
-        case 'recent-comp':           
+        case 'recent-comp':
+            document.getElementById('legendbuttons').scrollIntoView({
+                block: 'start',
+                behavior: 'smooth'
+            })           
             getRecentCompositions()   
             break
         case 'my-comp':            
@@ -41,6 +45,10 @@ export function navigate(section) {
         case 'all-comp':
             document.getElementById('initialmessage').classList.remove('d-flex')
             document.getElementById('initialmessage').hidden = true
+            document.getElementById('legendbuttons').scrollIntoView({
+                block: 'start',
+                behavior: 'smooth'
+            })
             getAllCompositions()
             break
         default:

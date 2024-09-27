@@ -74,7 +74,8 @@
     /* Adjust as needed */
     animation:
         typing 3.5s steps(40, end),
-        blink-caret .75s step-end infinite;
+        blink-caret 0.75s step-end 3.5s 0,
+        fade-out-caret 0.1s ease-in-out 3s forwards; 
 }
 
 /* The typing effect */
@@ -121,4 +122,10 @@
         visibility: visible;
         opacity: 1;
     }
+}
+
+/* Keyframes to fade out the caret */
+@keyframes fade-out-caret {
+    from { border-color: orange; }
+    to { border-color: transparent; }
 }

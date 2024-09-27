@@ -16,7 +16,7 @@ const WELCOME_VIDEO =
     </video>  
   <div class='fullscreen-video-content'>
     <div class="typewriter">
-      <h1>Welcome ...</h1>      
+      <h1>Welcome!</h1>      
     </div>
     <div class="h-100 d-flex">
       <div class="m-auto">
@@ -155,10 +155,7 @@ export const getUICardElemForCollection = (typebadge, numitems, groupTitle, grou
 
 export const cleanWelcomeContainer = (hidetext) => {
     const welcomecontainer = document.getElementById('welcomecontainer')
-    if (welcomecontainer.lastChild?.id) {
-        welcomecontainer.removeChild(welcomecontainer.lastChild)
-    }
-    if (!hidetext) {
+    if (!hidetext && !welcomecontainer.lastChild) {
         const welcometextelem = document.createElement('div')
         welcometextelem.id = 'welcometext'
         welcometextelem.innerHTML = IS_AUTH ? '': `${WELCOME_VIDEO}`
