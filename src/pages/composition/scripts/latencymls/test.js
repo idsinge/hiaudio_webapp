@@ -237,16 +237,16 @@ export class TestLatencyMLS {
        
         if(peak.channel === 0){
             const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
-            const ratioIs = Math.log10(peak.peakValuePow / peak.mean)
+            const ratioIs = 10 * Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
-            if(ratioIs <= 1.8){
+            if(ratioIs <= 18){
                 $('#latencyTestWarning').modal('show')
             } else {
                 TestLatencyMLS.setCurrentLatency(roundtriplatency)
             }
             TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
             TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
-            TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-light'>ratio: ${ratioIs.toFixed(2)}</span>`
+            TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-light'>ratio: ${ratioIs.toFixed(2)} dB</span>`
             TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
             if(TestLatencyMLS.debugCanvas) {
                 console.log('peak energy info', peak)
@@ -270,7 +270,7 @@ export class TestLatencyMLS {
             console.log('Channel', peak.channel )
             const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
             console.log('Latency = ', roundtriplatency + ' ms')
-            const ratioIs = Math.log10(peak.peakValuePow / peak.mean)
+            const ratioIs = 10 * Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
             drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', TestLatencyMLS.correlation)
         }      
