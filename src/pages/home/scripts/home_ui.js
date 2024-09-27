@@ -15,7 +15,14 @@ const WELCOME_VIDEO =
       <source src="${homeVideoUrl}">
     </video>  
   <div class='fullscreen-video-content'>
-    <h1>Welcome</h1>
+    <div class="typewriter">
+      <h1>Welcome to our home.</h1>      
+    </div>
+    <div class="h-100 d-flex">
+      <div class="m-auto">
+        <a id="start-link" class="btn btn-link" href="/login.html" role="button"><b>LET'S START!</b></a>
+      </div>
+    </div>    
   </div>
 </div>`
 

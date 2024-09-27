@@ -59,3 +59,110 @@
     color: #333;
 
 }
+
+.typewriter h1 {
+
+    overflow: hidden;
+    /* Ensures the content is not revealed until the animation */
+    border-right: .15em solid orange;
+    /* The typwriter cursor */
+    white-space: nowrap;
+    /* Keeps the content on a single line */
+    margin: 0 auto;
+    /* Gives that scrolling effect as the typing happens */
+    letter-spacing: .15em;
+    /* Adjust as needed */
+    animation:
+        typing 3.5s steps(40, end),
+        blink-caret .75s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent
+    }
+
+    50% {
+        border-color: orange;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Fullscreen video content adjustments for mobile */
+    .fullscreen-video-content {
+        padding: 15px;
+        border-radius: 5px;
+        width: 90vw;
+        /* Adjust width to fit mobile screens */
+    }
+
+    /* Adjust the typewriter heading for mobile */
+    .typewriter h1 {
+        font-size: 2rem;
+        /* Smaller font size for better readability */
+    }
+
+    /* Typewriter adjustments for smaller screens */
+    @keyframes typing {
+        from {
+            width: 0;
+        }
+
+        to {
+            width: 100%;
+            /* Ensure the typing effect still spans the full width */
+        }
+    }
+}
+
+@media (max-width: 576px) {
+
+    /* Additional adjustments for very small screens like mobile phones */
+    .fullscreen-video-content {
+        padding: 10px;
+        width: 95vw;
+        /* Further reduce width for very small screens */
+    }
+
+    .typewriter h1 {
+        font-size: 1.5rem;
+        /* Even smaller font size for very small devices */
+    }
+}
+
+/* Fade-in link */
+#start-link {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.5s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out forwards;
+    animation-delay: 3.5s;
+    /* Matches typewriter duration */
+}
+
+/* Keyframes to fade in the link */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        visibility: visible;
+        opacity: 1;
+    }
+}
