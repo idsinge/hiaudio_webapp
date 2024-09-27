@@ -20,7 +20,7 @@ const WELCOME_VIDEO =
     </div>
     <div class="h-100 d-flex">
       <div class="m-auto">
-        <a id="start-link" class="btn btn-link" href="/login.html" role="button"><b>LET'S START?</b></a>
+        <a id="start-link" class="btn btn-link" href="/login.html" role="button"><b>LET'S JAM?</b></a>
       </div>
     </div>    
   </div>
@@ -153,7 +153,7 @@ export const getUICardElemForCollection = (typebadge, numitems, groupTitle, grou
             </div>`
 }
 
-export const cleanWelcomeContainer = (hidetext) => {
+export const cleanWelcomeContainer = (hidetext, withScroll) => {
     const welcomecontainer = document.getElementById('welcomecontainer')
     const videoContainer = document.getElementById('landing-video-container')
     if (welcomecontainer.lastChild?.id  && welcomecontainer.lastChild?.id !== 'welcometext') {
@@ -164,6 +164,11 @@ export const cleanWelcomeContainer = (hidetext) => {
         welcometextelem.id = 'welcometext'
         welcometextelem.innerHTML = IS_AUTH ? '': `${WELCOME_VIDEO}`
         document.getElementById('welcomecontainer').appendChild(welcometextelem)
+    }
+    if(withScroll){
+      document.getElementById('grid').scrollIntoView({
+          behavior: 'smooth'
+      })
     }
 }
 

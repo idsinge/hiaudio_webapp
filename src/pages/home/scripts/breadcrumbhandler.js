@@ -31,13 +31,11 @@ export function navigate(section, isauth) {
     url.searchParams.delete('userid')
     url.searchParams.delete('collectionid')
     history.replaceState(null, null, url)
+    let withScroll = false
     switch (section) {
         case 'recent-comp':
-            document.getElementById('legendbuttons').scrollIntoView({
-                block: 'start',
-                behavior: 'smooth'
-            })           
-            getRecentCompositions()   
+            withScroll = true
+            getRecentCompositions(withScroll)   
             break
         case 'my-comp':            
             getMyCompositions()
@@ -46,12 +44,9 @@ export function navigate(section, isauth) {
             document.getElementById('initialmessage').classList.remove('d-flex')
             document.getElementById('initialmessage').hidden = true
             if(!isauth.ok) {
-                document.getElementById('legendbuttons').scrollIntoView({
-                    block: 'start',
-                    behavior: 'smooth'
-                })
+                withScroll = true
             }
-            getAllCompositions()
+            getAllCompositions(withScroll)
             break
         default:
             console.log('section default')
