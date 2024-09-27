@@ -101,50 +101,6 @@
     }
 }
 
-@media (max-width: 768px) {
-
-    /* Fullscreen video content adjustments for mobile */
-    .fullscreen-video-content {
-        padding: 15px;
-        border-radius: 5px;
-        width: 90vw;
-        /* Adjust width to fit mobile screens */
-    }
-
-    /* Adjust the typewriter heading for mobile */
-    .typewriter h1 {
-        font-size: 2rem;
-        /* Smaller font size for better readability */
-    }
-
-    /* Typewriter adjustments for smaller screens */
-    @keyframes typing {
-        from {
-            width: 0;
-        }
-
-        to {
-            width: 100%;
-            /* Ensure the typing effect still spans the full width */
-        }
-    }
-}
-
-@media (max-width: 576px) {
-
-    /* Additional adjustments for very small screens like mobile phones */
-    .fullscreen-video-content {
-        padding: 10px;
-        width: 95vw;
-        /* Further reduce width for very small screens */
-    }
-
-    .typewriter h1 {
-        font-size: 1.5rem;
-        /* Even smaller font size for very small devices */
-    }
-}
-
 /* Fade-in link */
 #start-link {
     visibility: hidden;

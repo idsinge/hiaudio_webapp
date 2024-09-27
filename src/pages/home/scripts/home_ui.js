@@ -11,16 +11,16 @@ const URI_PAGE = { 'coll': uriCollectionPage, 'user': uriUserPage }
 
 const WELCOME_VIDEO = 
 `<div class="fullscreen-video-container">
-    <video autoplay loop muted>
+    <video playsinline autoplay loop muted>
       <source src="${homeVideoUrl}">
     </video>  
   <div class='fullscreen-video-content'>
     <div class="typewriter">
-      <h1>Welcome to our home.</h1>      
+      <h1>Welcome ...</h1>      
     </div>
     <div class="h-100 d-flex">
       <div class="m-auto">
-        <a id="start-link" class="btn btn-link" href="/login.html" role="button"><b>LET'S START!</b></a>
+        <a id="start-link" class="btn btn-link" href="/login.html" role="button"><b>LET'S START?</b></a>
       </div>
     </div>    
   </div>
