@@ -1,12 +1,23 @@
 import { uriCompositionPage, IS_AUTH } from './home'
 import { isuserpage, displayUserNameInCard } from './home_helper'
 import { PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
+const homeVideoUrl = new URL('../../../static/videos/home_page_video.mp4', import.meta.url)
 
 const CARD_BADGE_STYLE = { 'coll': 'badge-collection', 'user': 'badge-warning', 'collab': 'badge-collab' }
 const CARD_BORDER_STYLE = { 'coll': 'border-collection', 'user': 'border-warning', 'collab': 'border-collab' }
 const URI_PAGE = { 'coll': uriCollectionPage, 'user': uriUserPage }
 
-const WELCOME_TEXT = 'We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.'
+//const WELCOME_TEXT = 'We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.'
+
+const WELCOME_VIDEO = 
+`<div class="fullscreen-video-container">
+    <video autoplay loop muted>
+      <source src="${homeVideoUrl}">
+    </video>  
+  <div class='fullscreen-video-content'>
+    <h1>Welcome</h1>
+  </div>
+</div>`
 
 export const initNavigationMenu = () => {
     
@@ -143,9 +154,7 @@ export const cleanWelcomeContainer = (hidetext) => {
     if (!hidetext) {
         const welcometextelem = document.createElement('div')
         welcometextelem.id = 'welcometext'
-        welcometextelem.classList.add('col-sm-6')
-        welcometextelem.classList.add('mx-auto')
-        welcometextelem.innerHTML = `<em>${WELCOME_TEXT}</em>`
+        welcometextelem.innerHTML = IS_AUTH ? '': `${WELCOME_VIDEO}`
         document.getElementById('welcomecontainer').appendChild(welcometextelem)
     }
 }
