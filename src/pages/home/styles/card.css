@@ -79,3 +79,7 @@
 .badge-warning {
     color: white;
 }
+
+#infocontainer {
+    margin-top: 2em;
+}

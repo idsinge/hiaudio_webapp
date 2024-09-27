@@ -10,7 +10,7 @@ const URI_PAGE = { 'coll': uriCollectionPage, 'user': uriUserPage }
 //const WELCOME_TEXT = 'We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.'
 
 const WELCOME_VIDEO = 
-`<div class="fullscreen-video-container">
+`<div id="landing-video-container" class="fullscreen-video-container">
     <video playsinline autoplay loop muted>
       <source src="${homeVideoUrl}">
     </video>  
@@ -155,7 +155,11 @@ export const getUICardElemForCollection = (typebadge, numitems, groupTitle, grou
 
 export const cleanWelcomeContainer = (hidetext) => {
     const welcomecontainer = document.getElementById('welcomecontainer')
-    if (!hidetext && !welcomecontainer.lastChild) {
+    const videoContainer = document.getElementById('landing-video-container')
+    if (welcomecontainer.lastChild?.id  && welcomecontainer.lastChild?.id !== 'welcometext') {
+      welcomecontainer.removeChild(welcomecontainer.lastChild)
+    }
+    if (!hidetext && !welcomecontainer.lastChild && !videoContainer) {
         const welcometextelem = document.createElement('div')
         welcometextelem.id = 'welcometext'
         welcometextelem.innerHTML = IS_AUTH ? '': `${WELCOME_VIDEO}`
