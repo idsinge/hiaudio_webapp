@@ -1,7 +1,7 @@
 import { uriCompositionPage, IS_AUTH } from './home'
 import { isuserpage, displayUserNameInCard } from './home_helper'
 import { PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
-const homeVideoUrl = new URL('../../../static/videos/homepage_video_compress.mp4', import.meta.url)
+const homeVideoUrl = new URL('../../../static/videos/compress_home_page_video.mp4', import.meta.url)
 
 const CARD_BADGE_STYLE = { 'coll': 'badge-collection', 'user': 'badge-warning', 'collab': 'badge-collab' }
 const CARD_BORDER_STYLE = { 'coll': 'border-collection', 'user': 'border-warning', 'collab': 'border-collab' }
