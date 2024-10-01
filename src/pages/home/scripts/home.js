@@ -83,34 +83,34 @@ const getCompositionsByColelctionUid = async (collectionuid, auth) => {
   }  
 }
 
-export const getRecentCompositions = async () => {
+export const getRecentCompositions = async (withScroll) => {
   const endpoint = '/recentcompositions'
   const data = await callJsonApi('/recentcompositions', 'GET')
   if(data.compositions){
-    return renderHomePage(data.compositions, endpoint)
+    return renderHomePage(data.compositions, endpoint, withScroll)
   } else {
     alert('invalid return value for compisitions list')
   }
 }
 
-export const getAllCompositions = async () => {
+export const getAllCompositions = async (withScroll) => {
   const endpoint = '/compositions'
   const data = await callJsonApi('/compositions', 'GET')
   if(data.compositions){
-    return renderHomePage(data.compositions, endpoint)
+    return renderHomePage(data.compositions, endpoint, withScroll)
   } else {
     alert('invalid return value for compisitions list')
   }
 }
 
-const renderHomePage = (compositionsList, endpoint) => {
+const renderHomePage = (compositionsList, endpoint, withScroll) => {
 
   document.getElementById('loadertext').textContent = ''
   document.getElementById('grid').innerHTML = ''
   document.getElementById('legendbuttons').innerHTML = ''
   const notUserPublicPage = !endpoint.includes('/compositionsbyuserid/') && !endpoint.includes('/collectionastreebyid/')
   if(notUserPublicPage){
-    cleanWelcomeContainer(false)
+    cleanWelcomeContainer(false, withScroll)
   }
   if (!compositionsList.length && notUserPublicPage) {
     document.getElementById('initialmessage').hidden = false

@@ -40,3 +40,7 @@ body {
 .modal {
   background: rgba(0, 0, 0, 0.5);
 }
+
+#breadcrumbnavbar {
+  margin-bottom: 0;
+}

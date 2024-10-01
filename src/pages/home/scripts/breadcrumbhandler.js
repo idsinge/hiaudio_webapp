@@ -8,7 +8,7 @@ export const breadcrumbHandler = (isauth, isuserorcollection) => {
             document.querySelector('.active-breadcrumb')?.classList.remove('active-breadcrumb')            
             event.currentTarget.classList.add('active-breadcrumb')
             let section = event.currentTarget.getAttribute('data-section')
-            navigate(section)
+            navigate(section, isauth)
         })
     })
 }
@@ -26,14 +26,16 @@ const createBreadCrumbNavBar = (isauth, isuserorcollection) => {
     navBar.innerHTML = userOptions    
 }
 
-export function navigate(section) { 
+export function navigate(section, isauth) { 
     const url = new URL(window.location.href)
     url.searchParams.delete('userid')
     url.searchParams.delete('collectionid')
     history.replaceState(null, null, url)
+    let withScroll = false
     switch (section) {
-        case 'recent-comp':           
-            getRecentCompositions()   
+        case 'recent-comp':
+            withScroll = true
+            getRecentCompositions(withScroll)   
             break
         case 'my-comp':            
             getMyCompositions()
@@ -41,7 +43,10 @@ export function navigate(section) {
         case 'all-comp':
             document.getElementById('initialmessage').classList.remove('d-flex')
             document.getElementById('initialmessage').hidden = true
-            getAllCompositions()
+            if(!isauth.ok) {
+                withScroll = true
+            }
+            getAllCompositions(withScroll)
             break
         default:
             console.log('section default')
