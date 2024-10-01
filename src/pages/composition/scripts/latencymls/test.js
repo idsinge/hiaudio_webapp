@@ -86,7 +86,7 @@ export class TestLatencyMLS {
         
         const noisemls = generateMLS(15)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
-        TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
+        //TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
         const userMediaStream =  TestLatencyMLS.getCorrectStreamForSafari(inputStream)
         TestLatencyMLS.inputStream = userMediaStream
         if(TestLatencyMLS.debugCanvas){
@@ -131,7 +131,7 @@ export class TestLatencyMLS {
 
         //silenceSource.connect(TestLatencyMLS.audioContext.destination)
 
-        const silenceBuffer = TestLatencyMLS.audioContext.createBuffer(1, 1, 22050);
+        const silenceBuffer = TestLatencyMLS.audioContext.createBuffer(1, 2*TestLatencyMLS.audioContext.sampleRate, TestLatencyMLS.audioContext.sampleRate);
         const silenceNode = TestLatencyMLS.audioContext.createBufferSource();
         silenceNode.buffer = silenceBuffer;
 
@@ -163,10 +163,7 @@ export class TestLatencyMLS {
             }
         }
         silenceNode.start(0)
-        silenceNode.onended = function () {
-            //silenceNode.disconnect(TestLatencyMLS.audioContext.destination)
-            doTheTest()
-        }
+        doTheTest()
         // silenceSource.onended = function () {
         //     silenceSource.disconnect(TestLatencyMLS.audioContext.destination)
         //     doTheTest()
