@@ -122,7 +122,7 @@ export class TestLatencyMLS {
 
         TestLatencyMLS.signalrecorded = null
 
-        const silenceBuffer = TestLatencyMLS.audioContext.createBuffer(1, 2*TestLatencyMLS.audioContext.sampleRate, TestLatencyMLS.audioContext.sampleRate)
+        const silenceBuffer = TestLatencyMLS.audioContext.createBuffer(1, 4*TestLatencyMLS.audioContext.sampleRate, TestLatencyMLS.audioContext.sampleRate)
         const silenceNode = TestLatencyMLS.audioContext.createBufferSource()
         silenceNode.buffer = silenceBuffer
        
@@ -219,7 +219,7 @@ export class TestLatencyMLS {
             const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
             const ratioIs = 10 * Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
-            if(ratioIs <= 18){
+            if(isNaN(ratioIs) || ratioIs <= 18){
                 $('#latencyTestWarning').modal('show')
             } else {
                 TestLatencyMLS.setCurrentLatency(roundtriplatency)
