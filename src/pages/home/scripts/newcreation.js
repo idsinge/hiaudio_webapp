@@ -30,7 +30,7 @@ createNewButton?.addEventListener('click', clickNewButtonHandler, false)
 createNewButtonAtHome?.addEventListener('click', clickNewButtonHandler, false)
 
 const getCompCollSuccess = (list) => {
-  document.getElementById('listCollContainer').replaceChildren()                                   
+  document.getElementById('listCollContainer').innerHTML = ''
   createListCollections(list, 'listCollContainer')
 }
 

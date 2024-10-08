@@ -21,7 +21,7 @@ export const openSettingsButtonHandler = (collection_id) => {
 }
 
 const getCompCollSuccess = (list, selected_coll) => {
-    document.getElementById('listCollContainerNewColl').replaceChildren()
+    document.getElementById('listCollContainerNewColl').innerHTML = ''
     createListCollections(list, 'listCollContainerNewColl', CURRENT_PARENT_COLLECTION || selected_coll)
     if(list?.all_collections.length){
         if(selected_coll){            

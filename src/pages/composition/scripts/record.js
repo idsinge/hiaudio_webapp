@@ -5,6 +5,8 @@ import { MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 import { TestMic } from './webdictaphone/webdictaphone'
 import {initEventEmitter, enableUpdatesOnEmitter} from './eventemitter'
 
+let AudioContext = window.AudioContext || window.webkitAudioContext || false
+
 export class Recorder {
     constructor(browserId) {
         this.recordGainNode = null
