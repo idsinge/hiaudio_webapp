@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Simple Web DAW",
   "author": "Telecom Paris",
+  "browserslist": "since 2018, not ie <= 8",
   "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp",
   "scripts": {
     "prepare":"rm -rf .parcel-cache ../public",
