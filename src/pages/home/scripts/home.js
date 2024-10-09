@@ -28,7 +28,7 @@ const homePageTermsAccepted = (termsAccepted) => {
 }
 const getMyProfile = async () => {
   
-  const isAuthenticated = await callJsonApi('/profile', 'GET')
+  const isAuthenticated = await callJsonApi('/profile', 'GET', null, 'Loading profile...')
   if (isAuthenticated.ok) {
     setCurrentUserName(isAuthenticated.name)
     document.getElementById('userlogin').style.display = 'none'
@@ -41,7 +41,7 @@ const getMyProfile = async () => {
 
 export const getMyCompositions = async () => {
   const endpoint = '/mycompositions'
-  const data = await callJsonApi(endpoint, 'GET')
+  const data = await callJsonApi(endpoint, 'GET', null, 'Loading my music...')
   if(data.compositions){
     return renderHomePage(data.compositions, endpoint)
   } else {
@@ -51,7 +51,7 @@ export const getMyCompositions = async () => {
 
 const getCompositionsByUserUid = async (useruid, auth) => {
   const endpoint = '/compositionsbyuserid/'+useruid
-  const data = await callJsonApi(endpoint, 'GET')
+  const data = await callJsonApi(endpoint, 'GET', null, 'Loading user...')
   if(data.compositions){
     setCurrentUserName(data.username)
     updateUIWithUserInfo(data.username, useruid)
@@ -68,7 +68,7 @@ const getCompositionsByUserUid = async (useruid, auth) => {
 
 const getCompositionsByColelctionUid = async (collectionuid, auth) => {
   const endpoint = '/collectionastreebyid/'+collectionuid
-  const data = await callJsonApi(endpoint, 'GET')
+  const data = await callJsonApi(endpoint, 'GET', null, 'Loading collection...')
   if(data.compositions){
     setCurrentUserName(data.username)
     updateUIWithCollectionInfo(data.collection_name, data.username, data.owneruid)
@@ -85,7 +85,7 @@ const getCompositionsByColelctionUid = async (collectionuid, auth) => {
 
 export const getRecentCompositions = async (withScroll) => {
   const endpoint = '/recentcompositions'
-  const data = await callJsonApi('/recentcompositions', 'GET')
+  const data = await callJsonApi('/recentcompositions', 'GET', null, 'Loading recent...')
   if(data.compositions){
     return renderHomePage(data.compositions, endpoint, withScroll)
   } else {
@@ -95,7 +95,7 @@ export const getRecentCompositions = async (withScroll) => {
 
 export const getAllCompositions = async (withScroll) => {
   const endpoint = '/compositions'
-  const data = await callJsonApi('/compositions', 'GET')
+  const data = await callJsonApi('/compositions', 'GET', null, 'Loading all...')
   if(data.compositions){
     return renderHomePage(data.compositions, endpoint, withScroll)
   } else {
@@ -104,8 +104,6 @@ export const getAllCompositions = async (withScroll) => {
 }
 
 const renderHomePage = (compositionsList, endpoint, withScroll) => {
-
-  document.getElementById('loadertext').textContent = ''
   document.getElementById('grid').innerHTML = ''
   document.getElementById('legendbuttons').innerHTML = ''
   const notUserPublicPage = !endpoint.includes('/compositionsbyuserid/') && !endpoint.includes('/collectionastreebyid/')

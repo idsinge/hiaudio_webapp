@@ -7,7 +7,7 @@ const redirectToGoogleLogin = () => {
 }
 
 const getUser = async () => {
-    const data = await callJsonApi('/profile', 'GET')
+    const data = await callJsonApi('/profile', 'GET', null, 'Loading user...')
     if (data.ok) {
         window.location.href = window.location.origin + '/profile.html'
     }
@@ -16,7 +16,7 @@ const getUser = async () => {
 const sendVerificationCode = async () => {
     const loginEmail = document.getElementById('inputloginemail').value
     if(looksLikeMail(loginEmail)){
-        const data = await callJsonApi('/generatelogincode/'+loginEmail, 'PUT')
+        const data = await callJsonApi('/generatelogincode/'+loginEmail, 'PUT', null, 'Sending code...')
         if (data.ok) {
             TEMP_EMAIL = loginEmail
             document.getElementById('authmethodform').hidden = true
@@ -36,7 +36,7 @@ const requestCodeValidation = async () => {
     const sixDigits = /\d{6}/
     if (sixDigits.test(codeIs)){
         const body = {email: TEMP_EMAIL, code: codeIs}
-        const data = await callJsonApi('/logincodevalidation', 'POST', body)
+        const data = await callJsonApi('/logincodevalidation', 'POST', body, 'Verification in process...')
         if (data.ok) {
             TEMP_EMAIL = null
             window.location.href = window.location.origin

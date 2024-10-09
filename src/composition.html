@@ -50,10 +50,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="loader-container">
-                            <div id="settingsloader" class="settingsloader"></div>
-                            <div id="loadertext" class="loader-text">Loading settings..</div>
-                        </div>
                         <div class="form-group">
                             <label for="newtitle">Title:</label> 
                             <div class="container">
@@ -166,10 +162,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="loader-container">
-                            <div id="trackinfoloader" class="trackinfoloader"></div>
-                            <div id="loadertext" class="loader-text">Loading track info..</div>
-                        </div>
                         <table class="table trackinfo-table table-bordered">
                             <caption></caption>
                             <tbody id="trackinfotablebody">
@@ -273,8 +265,10 @@
                     <div id="playlist"></div>
                     <!-- <div class="loading-data"></div> -->
                     <div class="loader-container">
-                        <div id="loader" class="loader"></div>
-                        <div id="loadertext" class="loader-text">Loading...</div>
+                        <button id="loader" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Loading composition...
+                        </button>
                     </div>
                     <div class="playlist-bottom-bar input-group mb-3 hidden-first">
                         <form>

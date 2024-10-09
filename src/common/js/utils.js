@@ -1,7 +1,5 @@
 import { ENDPOINT } from './config'
 
-export const LOADER_ELEM_ID = 'loader'
-
 export const uriUserPage = '/index.html?userid='
 export const uriCollectionPage = '/index.html?collectionid='
 
@@ -22,19 +20,18 @@ export const LevelPrivacy = Object.freeze({
 export const PRIVACY_BADGE_STYLE = {[LevelPrivacy.public] : 'badge-public', [LevelPrivacy.onlyreg] : 'badge-onlyreg', [LevelPrivacy.private] : 'badge-private'}
 export const PRIVACY_BADGE_TEXT = {[LevelPrivacy.public] : 'PUBLIC', [LevelPrivacy.onlyreg] : 'REG USERS', [LevelPrivacy.private] : 'PRIVATE'}
 
-export const startLoader = (loaderId, loadingMessage) => {    
-    const loaderElement = document.getElementById(loaderId)    
-    loaderElement.nextElementSibling.textContent = loadingMessage
-    loaderElement.classList.add(loaderId)
+export const startLoader = (loadingMessage) => {    
+    const loaderElement = document.getElementById('loader')    
+    loaderElement.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;${loadingMessage}`
+    loaderElement.classList.remove('loader-hidden')
 }
 
-export const cancelLoader = (loaderId) => {
-    const loaderElement = document.getElementById(loaderId)
-    loaderElement.classList.remove(loaderId)
-    loaderElement.nextElementSibling.textContent = ''
+export const cancelLoader = () => {
+    const loaderElement = document.getElementById('loader')
+    loaderElement.classList.add('loader-hidden')
 }
 
-export const callJsonApi = async (apimethod, rqstmethod, body) => {
+export const callJsonApi = async (apimethod, rqstmethod, body, useLoaderWithText) => {
     const request = {
         method: rqstmethod || 'GET',
         headers: {
@@ -46,9 +43,9 @@ export const callJsonApi = async (apimethod, rqstmethod, body) => {
         request.body = JSON.stringify(body)
     }
     try {
-        startLoader(LOADER_ELEM_ID, 'Loading...')
+        useLoaderWithText && startLoader(useLoaderWithText)
         const sendRqst = await fetch(ENDPOINT + apimethod, request)
-        cancelLoader(LOADER_ELEM_ID)
+        useLoaderWithText && cancelLoader()
         const respToJson = await sendRqst.json()
         if (respToJson && !respToJson.error) {
             return respToJson
@@ -56,7 +53,7 @@ export const callJsonApi = async (apimethod, rqstmethod, body) => {
             return (respToJson?.error || 'An error occurred')
         }
     } catch (error) {
-        cancelLoader(LOADER_ELEM_ID)
+        useLoaderWithText && cancelLoader()
         return(error)
     }
 }

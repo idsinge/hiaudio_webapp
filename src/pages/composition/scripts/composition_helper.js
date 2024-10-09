@@ -1,7 +1,7 @@
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
-import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
+import { cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, playlist } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
@@ -26,7 +26,6 @@ export const getComposition = (compositionId, callback, extraParams) => {
 
     let errorIs = null
     let tracksInfo = {}
-    cancelLoader(LOADER_ELEM_ID)
     fetch(ENDPOINT + "/composition/" + compositionId, {
         method: 'GET',
         headers: {
@@ -66,6 +65,7 @@ export const getComposition = (compositionId, callback, extraParams) => {
 }
 
 export const doAfterCompositionFetched = (tracksInfo) => {
+    cancelLoader()
     if(!DB){
         openDB(tracksInfo.viewer_id || 'null').then((db) =>{
             continueAfterGetIndexDb(db, tracksInfo)

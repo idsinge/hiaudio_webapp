@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
-import { LOADER_ELEM_ID, startLoader, cancelLoader } from '../../../common/js/utils'
+import { startLoader, cancelLoader } from '../../../common/js/utils'
 import { CURRENT_USER_ID } from './composition_helper'
 import { playlist } from './composition'
 import { createTrackInfoTable } from './trackinfo/trackinfo'
@@ -134,18 +134,18 @@ export class TrackHandler {
         }
     }
     sendDeleteRequest(pos,  track_id, doAfterDeleted) {
-        startLoader(LOADER_ELEM_ID, 'Deleting track...')
+        startLoader('Deleting track...')
         fetch(ENDPOINT+'/deletetrack/' + track_id, {
             method: 'DELETE',
         }).then(res => res.json()).then(res => {
             doAfterDeleted(res, pos)
         }).catch(err =>{
             console.log(err)
-            cancelLoader(LOADER_ELEM_ID)
+            cancelLoader()
         })       
     }
     doAfterDeleted(deleteTrackResult, pos) {
-        cancelLoader(LOADER_ELEM_ID)
+        cancelLoader()
         if (deleteTrackResult.ok) {
             const role = deleteTrackResult.role
             const arrayTracks = playlist.tracks            

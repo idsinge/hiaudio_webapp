@@ -1,4 +1,4 @@
-import { callJsonApi, looksLikeMail, cancelLoader, LOADER_ELEM_ID, activateGoHomeLink } from '../../common/js/utils'
+import { callJsonApi, looksLikeMail, cancelLoader, activateGoHomeLink } from '../../common/js/utils'
 
 let params = new URLSearchParams(document.location.search);
 let code = params.get('code')
@@ -15,7 +15,7 @@ const sendRemovalRequest = async () => {
     if(looksLikeMail(toRemoveEmail)){
         const refusalCode = document.getElementById('inputrefusalcode').value
         const rqstBody = {email:toRemoveEmail, refusal_code:refusalCode}
-        const data = await callJsonApi('/refuseinvitation', 'POST', rqstBody)
+        const data = await callJsonApi('/refuseinvitation', 'POST', rqstBody, 'Sending request...')
         if(data.ok){
             alert('Your information has been sucessfully removed.')
             window.location.href = window.location.origin
@@ -33,4 +33,4 @@ activateGoHomeLink()
 
 document.getElementById('requestremovalbutton').onclick = sendRemovalRequest
 
-cancelLoader(LOADER_ELEM_ID)
+cancelLoader()
