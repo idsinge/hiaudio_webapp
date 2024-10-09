@@ -83,3 +83,19 @@
 #infocontainer {
     margin-top: 2em;
 }
+
+.hidden-first {
+    visibility: hidden;
+    animation: 5s fadeIn;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        visibility: visible;
+        opacity: 1;
+    }
+}

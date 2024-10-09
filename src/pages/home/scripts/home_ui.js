@@ -196,7 +196,7 @@ export const updateUIWithUserInfo = (username, useruid) => {
     userInfoContainer.innerHTML = `<div class="card mb-3" style="max-width: 540px;">
                                     <div class="row no-gutters">
                                       <div class="col-md-4">
-                                        <img class="img-fluid" src="https://picsum.photos/seed/${useruid}/200" alt="User Picture">
+                                        <img class="img-fluid hidden-first" src="https://picsum.photos/seed/${useruid}/200" alt="User Picture" width="200" height="200">
                                       </div>
                                       <div class="col-md-8">
                                         <div class="card-body">
