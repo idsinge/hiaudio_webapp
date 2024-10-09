@@ -192,7 +192,7 @@
                 </header>
                 <div class="post-content">
                     <div class="sound-status"></div>
-                    <form class="form-inline">
+                    <form class="form-inline hidden-first">
                         <label for="master-gain" class="mr-sm-2">Master Volume</label>
                         <input type="range" min="0" max="100" value="100" class="master-gain form-control mr-sm-2"
                             id="master-gain" />
@@ -204,7 +204,7 @@
                         </div>
                     </form>
                     <div id="top-bar" class="playlist-top-bar">
-                        <div class="playlist-toolbar">
+                        <div class="playlist-toolbar hidden-first">
                             <div class="btn-group">
                                 <button type="button" class="btn-pause btn btn-outline-warning" title="Pause">
                                     <i class="fas fa-pause"></i>
@@ -271,11 +271,12 @@
                         </div>
                     </p>
                     <div id="playlist"></div>
+                    <!-- <div class="loading-data"></div> -->
                     <div class="loader-container">
                         <div id="loader" class="loader"></div>
                         <div id="loadertext" class="loader-text">Loading...</div>
                     </div>
-                    <div class="playlist-bottom-bar input-group mb-3">
+                    <div class="playlist-bottom-bar input-group mb-3 hidden-first">
                         <form>
                             <div class="form-group">
                                 <div id="dropContainer" class="track-drop" hidden></div>

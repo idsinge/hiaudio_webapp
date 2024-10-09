@@ -231,7 +231,7 @@ const getCollectionLabel = (compInfo) => {
 }
 
 const drawCompositionDetailInfo = (tracksInfo) => {
-    let contentHtml = '<h1 class="post-title">Test DAW</h1>'
+    let contentHtml = '<br><h1 class="post-title">Test DAW</h1>'
     if (tracksInfo.title) {
         contentHtml = '<br>'
         contentHtml += getUserNameLabel(tracksInfo)

@@ -72,8 +72,19 @@ const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `${triggerTestLatencyButton()}${testMicButtonForSafari()}`
 }
 
+export const displayHiddenControls = () => {
+  console.log('displayHiddenControls')
+  const hiddenElems = document.querySelectorAll('.hidden-first')
+  if(hiddenElems.length){
+    for(let i = 0 ; i < hiddenElems.length; i++){
+      hiddenElems[i].classList.add('visible-animate')
+    }
+  }
+}
+
 activateGoHomeLink()
 createTestButtons()
+recorder.init(compositionId)
 
 if (compositionId === 'demopage') {
   DynamicModal.dynamicModalDialog(
@@ -82,8 +93,7 @@ if (compositionId === 'demopage') {
     '',
     'Close',
     'Warning!',
-    'bg-warning'
+    'bg-warning',
+    displayHiddenControls
   )
 }
-
-recorder.init(compositionId)

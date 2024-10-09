@@ -3,7 +3,7 @@
  * This enables projects to create/control the useability of the project.
 */
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
-import { playlist, fileUploader, USER_PERMISSION } from './composition'
+import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls } from './composition'
 import { CURRENT_USER_ID, NUM_TRACKS } from './composition_helper'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
@@ -457,6 +457,7 @@ export const enableUpdatesOnEmitter = () => {
   let fileCounter = 0
   let processTracks = []
   ee.on("audiosourcesrendered", function() {
+    displayHiddenControls()
     const downloadProgressElem = document.getElementById('download-progress-elems')
     if(downloadProgressElem && !downloadProgressElem.hidden){
       downloadProgressElem.remove()
