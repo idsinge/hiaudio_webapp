@@ -1,6 +1,7 @@
 
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
+import { startLoader, cancelLoader } from '../../../common/js/utils'
 import {uriCompositionPage, IS_AUTH} from './home'
 import {getCollections, getCollectionsError, createListCollections } from '../../../common/js/collectionshandler.js'
 import './editcollections'
@@ -66,7 +67,7 @@ const saveEventListenerHandler = (e) => {
   })
 
   let errorIs = null
-
+  startLoader('Creating...')
   fetch(ENDPOINT + apiMethod, {
     method: 'POST',
     headers: {
@@ -82,13 +83,15 @@ const saveEventListenerHandler = (e) => {
       return r.json()
     })
     .then(data => {
+      cancelLoader()
       if (data) {
         verifyResponse(data)
       } else {
         throw new Error(data)
       }
-    }).catch((error) => {
+    }).catch((error) => {      
       errorIs = error
+      cancelLoader()
     })
 }
 

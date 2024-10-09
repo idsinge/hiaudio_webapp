@@ -31,7 +31,7 @@ export const enableCompositionSettings = (tracksInfo) => {
 }
 
 const createSettingsButton = () => {
-    cancelLoader('settingsloader')
+    cancelLoader()
     const ulElem = document.getElementById('useroptions')
     const liElem = document.createElement('li')
     liElem.innerHTML = `<li class="nav-item">
@@ -91,11 +91,11 @@ const cancelButtonHandler = (compInfo) => {
 const saveButtonHandler = async (compId) => {
     const confirmSettingsButton = document.getElementById('updatecompositionbutton')
     confirmSettingsButton?.addEventListener('click', async (e) => {
-        startLoader('settingsloader', 'Updating Settings...')
+        startLoader('Updating Settings...')
         const deleteComp = document.getElementById('deleteComposition').checked
         if (deleteComp === true) {
             await deleteComposition(compId)
-            cancelLoader('settingsloader')
+            cancelLoader()
         } else {
             await saveTitle(compId)
             await saveDescription(compId)
@@ -106,7 +106,7 @@ const saveButtonHandler = async (compId) => {
             await saveParentCollection(compId)
             updateContributorsAtCompPage()
             $('#settingsModal').modal('hide')
-            cancelLoader('settingsloader')
+            cancelLoader()
         }
     })
 }

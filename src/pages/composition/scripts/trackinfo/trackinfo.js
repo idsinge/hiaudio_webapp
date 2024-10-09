@@ -22,7 +22,7 @@ export const createTrackInfoTable = async (trackpos, trackname, trackid) => {
     CURRENT_TRACKPOS = trackpos
     CURRENT_TRACKID = trackid
     editButton.innerText = 'Edit'
-    startLoader('trackinfoloader', 'Loading track info...')
+    startLoader('Loading track info...')
     const data = await callJsonApi('/getinfotrack/' + trackid, 'GET')
     if (typeof data === 'object') {
         CURRENT_TRACKINFO = data
@@ -111,7 +111,7 @@ const getReservedKeysFromResp = (resp) => {
 }
 
 const renderTable = async (trackinfo, currenttrackname) => {
-    cancelLoader('trackinfoloader')
+    cancelLoader()
     const tableContainer = document.getElementById('trackinfotablebody')
     let html = ''
     if (trackinfo) {
@@ -229,11 +229,11 @@ const saveButtonHandler = async () => {
     confirmTrackInfoButton?.addEventListener('click', async (e) => {
         const editedObject = getEditedFields()
         if (editedObject.title || editedObject.annotations.length > 0) {
-            startLoader('trackinfoloader', 'Updating track info...')
+            startLoader('Updating track info...')
             const bodyrqst = {trackid:CURRENT_TRACKID}
             const data = await callJsonApi('/updatetrackinfo', 'PATCH', {...editedObject, ...bodyrqst})
             handleUpdatetrackInfo(data, editedObject)
-            cancelLoader('trackinfoloader')
+            cancelLoader()
         }
         $('#trackInfoModal').modal('hide')
     })
