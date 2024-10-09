@@ -57,3 +57,22 @@
     cursor: pointer;
     width: 10%;
 }
+
+.hidden-first {
+    visibility: hidden;
+}
+
+.visible-animate {
+    animation: 2s fadeIn;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        visibility: visible;
+        opacity: 1;
+    }
+}
