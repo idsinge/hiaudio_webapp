@@ -73,7 +73,6 @@ const createTestButtons = () => {
 }
 
 export const displayHiddenControls = () => {
-  console.log('displayHiddenControls')
   const hiddenElems = document.querySelectorAll('.hidden-first')
   if(hiddenElems.length){
     for(let i = 0 ; i < hiddenElems.length; i++){
