@@ -58,10 +58,14 @@
                             <div class="row justify-center">
                               <div class="">
                                 <div id="" class="input-group mb-3">
-                                    <select class="custom-select" id="typeOfNewCreation">
-                                        <option value="comp">Composition</option>
-                                        <option value="coll">Collection</option>
-                                    </select>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="newMusicTypeRadioButton" id="newMusicTypeRadioButton1" value="comp" checked>
+                                        <label class="form-check-label" for="newMusicTypeRadioButton1"><i class="fas fa-music"></i>&nbsp;Composition</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="newMusicTypeRadioButton" id="newMusicTypeRadioButton2" value="coll">
+                                        <label class="form-check-label" for="newMusicTypeRadioButton2"><i class="fas fa-folder"></i>&nbsp;Collection</label>
+                                    </div>
                                 </div>
                               </div>
                             </div>

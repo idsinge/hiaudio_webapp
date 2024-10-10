@@ -40,7 +40,7 @@ const saveEventListener = (saveCompositionButton) =>{
 }
 
 const saveEventListenerHandler = (e) => {
-  const newCreation = document.getElementById('typeOfNewCreation').value
+  const newCreation = document.querySelector('input[name="newMusicTypeRadioButton"]:checked').value
   let apiMethod = '/newcomposition'
   if(newCreation === 'coll'){
     apiMethod = '/newcollection'
