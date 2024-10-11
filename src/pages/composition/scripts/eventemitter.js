@@ -274,7 +274,9 @@ $container.on("click", ".btn.print", function() {
 });
 
 $container.on("click", ".btn-download", function () {
-  ee.emit('startaudiorendering', 'wav');
+  if(playlist.tracks.length){
+    ee.emit('startaudiorendering', 'wav');
+  }
 });
 
 $container.on("click", ".btn-seektotime", function () {
