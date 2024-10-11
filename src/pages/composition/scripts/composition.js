@@ -86,6 +86,7 @@ createTestButtons()
 recorder.init(compositionId)
 
 if (compositionId === 'demopage') {
+  document.getElementById('download-mix-btn').hidden = false
   DynamicModal.dynamicModalDialog(
     `Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`,
     null,
