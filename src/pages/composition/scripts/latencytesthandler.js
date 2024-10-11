@@ -3,7 +3,7 @@ import { TestLatScriptProc } from './latencymeasure/testlatency'
 import { TestLatRingBuf } from './latencyadenot/testlatency'
 import DynamicModal from '../../../common/js/modaldialog'
 import detectBrowser from '../../../common/js/detect-browser.js'
-import { playlist, MIC_ERROR } from './composition'
+import { playlist, MIC_ERROR, displayMicErrorPopUp } from './composition'
 
 export const TEST_LAT_BTN_ID = 'testlatencybtn'
 
@@ -147,15 +147,7 @@ export const triggerLatencyTestHandler = (stream) => {
             }
             openLatencyTestDialog(stream)
         } else {
-            DynamicModal.dynamicModalDialog(
-                `<p>Please, verify the following error related to your microphone/input: &#10;&#13;</p>
-                <p><b><i>${MIC_ERROR}</i></b></p>`,
-                null,
-                '',
-                'Close',
-                'Warning!',
-                'bg-warning'
-            )
+            displayMicErrorPopUp()
         }
     } 
 }

@@ -3,7 +3,7 @@
  * This enables projects to create/control the useability of the project.
 */
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
-import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR } from './composition'
+import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp } from './composition'
 import { CURRENT_USER_ID, NUM_TRACKS } from './composition_helper'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
@@ -202,10 +202,14 @@ const startRecording = (currentLatency) => {
 }
 
 $container.on("click", ".btn-record", function() {
-  if(!MIC_ERROR && !isRecording){
-    let currentLatency = localStorage.getItem('latency')
-    currentLatency = currentLatency? parseInt(currentLatency):0
-    startRecording(currentLatency)
+  if(!MIC_ERROR) {
+    if(!isRecording){
+      let currentLatency = localStorage.getItem('latency')
+      currentLatency = currentLatency? parseInt(currentLatency):0
+      startRecording(currentLatency)
+    }    
+  } else {
+    displayMicErrorPopUp()
   }
 });
 
