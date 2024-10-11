@@ -148,7 +148,8 @@ export const triggerLatencyTestHandler = (stream) => {
             openLatencyTestDialog(stream)
         } else {
             DynamicModal.dynamicModalDialog(
-                `Please, grant access to the microphone from your browser settings.`,
+                `<p>Please, verify the following error related to your microphone/input: &#10;&#13;</p>
+                <p><b><i>${MIC_ERROR}</i></b></p>`,
                 null,
                 '',
                 'Close',
