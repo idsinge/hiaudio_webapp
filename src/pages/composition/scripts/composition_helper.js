@@ -127,7 +127,8 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     if (canUpload) {
         playlist.controls.widgets.remove = false
         setUserPermission(true)
-        if (userRole === 1) {
+        if (userRole === UserRole.owner) {
+            document.getElementById('download-mix-btn').hidden = false
             enableCompositionSettings(tracksInfo)
         }
     }
