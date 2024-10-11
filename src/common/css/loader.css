@@ -15,5 +15,18 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
+  width:max-content;
+}
+
+@media only screen 
+  and (min-device-width: 320px) 
+  and (max-device-width: 355px)
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (orientation: portrait) {
+    .loader-container {
+      top: 20%;
+    }
+    .download-progress-elems {
+      top: 80%;
+    }
 }
