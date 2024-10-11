@@ -182,6 +182,10 @@
                 <header id="post-header" class="post-header">
                     <p class="lead"></p>
                 </header>
+                <div id="download-progress-elems" class="download-progress-elems" hidden>
+                    Downloading: &nbsp;<span id="download-percentage">0%</span><br>
+                    <progress id="download-progress-bar"></progress>
+                </div>
                 <div class="post-content">
                     <div class="sound-status"></div>
                     <form class="form-inline hidden-first">
@@ -256,12 +260,6 @@
                             </div>
                         </div>
                     </div>
-                    <p>
-                        <div id="download-progress-elems" hidden>
-                            Downloading: &nbsp;<span id="download-percentage">0%</span><br>
-                            <progress id="download-progress-bar"></progress>
-                        </div>
-                    </p>
                     <div id="playlist"></div>
                     <!-- <div class="loading-data"></div> -->
                     <div class="loader-container">
