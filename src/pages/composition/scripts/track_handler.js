@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
-import { startLoader, cancelLoader } from '../../../common/js/utils'
+import { startLoader, cancelLoader, UserRole } from '../../../common/js/utils'
 import { CURRENT_USER_ID } from './composition_helper'
 import { playlist } from './composition'
 import { createTrackInfoTable } from './trackinfo/trackinfo'
@@ -30,7 +30,7 @@ export class TrackHandler {
                 composition_id: audio.composition_id
             }
             playlist.tracks[pos].customClass = customClass
-            this.createMenuOptButton(controlsList, pos, title, track_id)
+            this.createMenuOptButton(controlsList, pos, title, track_id, UserRole.owner)
         }
     }
     displayOptMenuForTracks(role) {
@@ -42,16 +42,19 @@ export class TrackHandler {
         const arrayTracks = playlist.getInfo().tracks
 
         for (let i = 0; i < arrayTracks.length; i++) {
-            if(arrayTracks[i]?.customClass){                
-                if ((role === 1 || role === 2)||(role === 3 && arrayTracks[i].customClass.user_uid === CURRENT_USER_ID)){                   
-                    const name = arrayTracks[i].customClass.name
-                    const track_id = arrayTracks[i].customClass.track_id
-                    this.createMenuOptButton(controlsList, i, name, track_id)
+            if(arrayTracks[i]?.customClass){
+                let userRole = role
+                if (role === UserRole.member && arrayTracks[i].customClass.user_uid === CURRENT_USER_ID){
+                    userRole = UserRole.owner
                 }                
+                const name = arrayTracks[i].customClass.name
+                const track_id = arrayTracks[i].customClass.track_id
+                this.createMenuOptButton(controlsList, i, name, track_id, userRole)
+                
             }            
         }
     }
-    createMenuOptButton(controlsList, pos, name, track_id){
+    createMenuOptButton(controlsList, pos, name, track_id, role){
         const menuBtnId = 'menuoptbtn-' + pos
         const menuDrpDownId = 'menuDropdown' + pos
         const buttonMenu = document.createElement('button')
@@ -63,18 +66,20 @@ export class TrackHandler {
         buttonMenu.id = menuBtnId
         buttonMenu.appendChild(txt)
         controlsList[pos].appendChild(buttonMenu)
-        const listOptions = this.createListMenuOpt(menuDrpDownId, pos, name, track_id)
+        const listOptions = this.createListMenuOpt(menuDrpDownId, pos, name, track_id, role)
         document.getElementById(menuBtnId).appendChild(listOptions)
         const spanTitle = controlsList[pos].getElementsByClassName('track-header')[0].getElementsByTagName('span')[0]        
         spanTitle.style['margin-left'] = '3em'
     }
-    createListMenuOpt(menuDrpDownId, pos, name, track_id){
+    createListMenuOpt(menuDrpDownId, pos, name, track_id, role){
         const listOptions = document.createElement('ul')
         listOptions.id = menuDrpDownId
         listOptions.className = 'dropdown-menu'        
-        const deleteMenuOpt = this.createDeleteMenuOpt(pos, name, track_id)
-        const trackInfoMenuOpt = this.createTrackInfoMenuOpt(pos, name, track_id)        
-        listOptions.appendChild(deleteMenuOpt)
+        if ((role === UserRole.owner || role === UserRole.admin)){
+            const deleteMenuOpt = this.createDeleteMenuOpt(pos, name, track_id)
+            listOptions.appendChild(deleteMenuOpt)
+        }       
+        const trackInfoMenuOpt = this.createTrackInfoMenuOpt(pos, name, track_id, role)        
         listOptions.appendChild(trackInfoMenuOpt)
         return listOptions
     }
@@ -90,13 +95,13 @@ export class TrackHandler {
         deleteMenuOpt.appendChild(document.createTextNode('Delete'))
         return deleteMenuOpt
     }
-    createTrackInfoMenuOpt(pos, name, track_id){
+    createTrackInfoMenuOpt(pos, name, track_id, role){
         const trackInfoMenuOpt = document.createElement('li')
         trackInfoMenuOpt.className = 'dropdown-item btn-light'        
         trackInfoMenuOpt.dataset.target = '#trackInfoModal'
         trackInfoMenuOpt.dataset.toggle = 'modal'
         trackInfoMenuOpt.onclick = (event) => {            
-            createTrackInfoTable(pos, name, track_id)            
+            createTrackInfoTable(pos, name, track_id, role)            
         }              
         trackInfoMenuOpt.appendChild(document.createTextNode('Track Info'))
         return trackInfoMenuOpt

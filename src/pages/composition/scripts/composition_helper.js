@@ -1,7 +1,7 @@
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
-import { cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
+import { cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage, UserRole } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, playlist } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
@@ -41,7 +41,7 @@ export const getComposition = (compositionId, callback, extraParams) => {
     })
     .then((data) => {
         
-        if (data) {
+        if (data && compositionId !== 'demopage') {
             tracksInfo = data
         }
     })
@@ -117,7 +117,7 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     // if(!isSafari){
     //     inputElement.accept inputElement.accept = ['.mp3','.wav','.m4a','.flac','.aac','.ogg']
     // }
-    const canUpload = tracksInfo.owner || (1<=tracksInfo.role && tracksInfo.role <= 3) || false
+    const canUpload = tracksInfo.owner || (UserRole.owner<=tracksInfo.role && tracksInfo.role <= UserRole.member) || false
     const userRole = tracksInfo.role
     CURRENT_USER_ID = tracksInfo.viewer_id
     let tracksAsObj = null
@@ -231,7 +231,7 @@ const getCollectionLabel = (compInfo) => {
 }
 
 const drawCompositionDetailInfo = (tracksInfo) => {
-    let contentHtml = '<br><h1 class="post-title">Test DAW</h1>'
+    let contentHtml = `<br><h1 class="post-title">${tracksInfo.error || 'Test DAW'}</h1>`
     if (tracksInfo.title) {
         contentHtml = '<br>'
         contentHtml += getUserNameLabel(tracksInfo)
