@@ -10,9 +10,14 @@ import detectBrowser from '../../../common/js/detect-browser.js'
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
 export let USER_PERMISSION = false
+export let MIC_ERROR = null
 
 export const setUserPermission = (permission) => {
   USER_PERMISSION = permission
+}
+
+export const setMicError = (err) => {
+  MIC_ERROR = err
 }
 
 export let playlist = null

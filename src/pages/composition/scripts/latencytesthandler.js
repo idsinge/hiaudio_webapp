@@ -3,7 +3,7 @@ import { TestLatScriptProc } from './latencymeasure/testlatency'
 import { TestLatRingBuf } from './latencyadenot/testlatency'
 import DynamicModal from '../../../common/js/modaldialog'
 import detectBrowser from '../../../common/js/detect-browser.js'
-import { playlist } from './composition'
+import { playlist, MIC_ERROR } from './composition'
 
 export const TEST_LAT_BTN_ID = 'testlatencybtn'
 
@@ -141,9 +141,20 @@ export const triggerLatencyTestHandler = (stream) => {
         active_lat_test.ringbuf = false
     }
     document.getElementById('trigger-lat-test-btn').onclick =  async() => {
-        if(wakeLock === null){
-            await enableWakeLock()
+        if(!MIC_ERROR){
+            if(wakeLock === null){
+                await enableWakeLock()
+            }
+            openLatencyTestDialog(stream)
+        } else {
+            DynamicModal.dynamicModalDialog(
+                `Please, grant access to the microphone from your browser settings.`,
+                null,
+                '',
+                'Close',
+                'Warning!',
+                'bg-warning'
+            )
         }
-        openLatencyTestDialog(stream)
     } 
 }
