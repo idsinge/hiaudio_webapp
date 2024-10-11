@@ -1,5 +1,5 @@
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/record.js */
-import { createWaveformPlaylist, playlist } from './composition'
+import { createWaveformPlaylist, playlist, setMicError } from './composition'
 import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 import { TestMic } from './webdictaphone/webdictaphone'
@@ -39,6 +39,7 @@ export class Recorder {
 
         const logError = (err) => {
             console.error(err)
+            setMicError(err)
             const audCtxt = new AudioContext({ latencyHint: 0 })
             createWaveformPlaylist(audCtxt)
             initEventEmitter()
