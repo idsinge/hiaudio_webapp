@@ -30,9 +30,9 @@ export class FileUploader {
         XHR.addEventListener('load', (event) => {
             if(event.target && event.target.response){
                 const respJson = JSON.parse(event.target.response)
+                // fileInput is not declared here but refers to the input file for audio
+                fileInput.value = ''
                 if(respJson.ok){
-                    // fileInput is not declared here but refers to the input file for audio
-                    fileInput.value =''
                     respJson.trackuid = trackuid
                     trackHandler.displayOptMenuForNewTrack(respJson)
                 } else {
