@@ -76,7 +76,7 @@ const openLatencyTestDialog = (stream) => {
     const debugCanvas = document.location.search.indexOf('debug') !== -1
     const currentLat = localStorage.getItem('latency')    
     DynamicModal.dynamicModalDialog(
-        `<img src='${imageUrl}' class='img-fluid' alt='...'>
+        `<img src='${imageUrl}' class='img-fluid visible-animate' alt='...' width='266' height='266'>
         <p>Place your mic as close as possible to the speakers/headphones.</p>
         <p class='alert alert-danger'><b>WARNING!</b> Be careful with the volume as a noise will be played through the speakers.</p>
         <p>${currentLat ? '<i>Current latency: ' + '<span id="current-lat-val">'+currentLat+'</span>' + ' ms.</i>': ''}</p>
