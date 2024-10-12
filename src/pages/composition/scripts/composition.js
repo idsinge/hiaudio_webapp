@@ -86,6 +86,18 @@ export const displayHiddenControls = () => {
   }
 }
 
+export const displayMicErrorPopUp =  (err) => {
+  DynamicModal.dynamicModalDialog(
+      `<p>Please, verify the following error related to your microphone/input: &#10;&#13;</p>
+      <p><b><i>${err || MIC_ERROR}</i></b></p>`,
+      null,
+      '',
+      'Close',
+      'Warning!',
+      'bg-warning'
+  )
+}
+
 activateGoHomeLink()
 createTestButtons()
 recorder.init(compositionId)
