@@ -3,7 +3,7 @@
  * This enables projects to create/control the useability of the project.
 */
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
-import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp } from './composition'
+import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp, displayAudioSourceErrorPopUp } from './composition'
 import { CURRENT_USER_ID, NUM_TRACKS } from './composition_helper'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
@@ -495,7 +495,9 @@ export const enableUpdatesOnEmitter = () => {
   });
 
   ee.on("audiosourceserror", function(e) {
-    displayLoadingData(e.message);
+    console.log("audiosourceserror", e)
+    displayAudioSourceErrorPopUp(e)
+    //displayLoadingData(e.message);
   });
 
   ee.on('audiorenderingfinished', function (type, data, trackPos) {

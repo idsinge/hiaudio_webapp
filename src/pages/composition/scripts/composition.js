@@ -114,6 +114,18 @@ export const displayMicErrorPopUp =  (err) => {
   )
 }
 
+export const displayAudioSourceErrorPopUp =  (err) => {
+  DynamicModal.dynamicModalDialog(
+      `<p>There was a problem while loading the data: &#10;&#13;</p>
+      <p><b><i>${err }</i></b></p>`,
+      null,
+      '',
+      'Close',
+      'Error!',
+      'bg-danger'
+  )
+}
+
 activateGoHomeLink()
 createTestButtons()
 recorder.init(compositionId)
