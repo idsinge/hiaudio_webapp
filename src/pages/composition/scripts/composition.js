@@ -64,7 +64,7 @@ const testMicButtonForSafari = () => {
   const browserVersion = parseInt(recorder.browserId.version)
   if((recorder.browserId.browser === 'safari') && (browserVersion >= 16)) {
     return `<li class='nav-item'>
-              <a class='nav-link' href='#' id='testmicrophone' data-toggle='modal' data-target='#testMicrophoneModal'>
+              <a class='nav-link' href='#' id='testmicrophone'>
                 <i class='fa-solid fa-microphone'></i> TEST MIC
               </a>
             </li>`
@@ -75,6 +75,22 @@ const testMicButtonForSafari = () => {
 
 const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `${triggerTestLatencyButton()}${testMicButtonForSafari()}`
+  const testMicBtn = document.getElementById('testmicrophone')  
+  if(testMicBtn){
+    testMicButtonClickHandler(testMicBtn)
+  }
+}
+
+const testMicButtonClickHandler = (testMicBtn) => {  
+  testMicBtn.onclick = openTestMicModalDialog
+}
+
+const openTestMicModalDialog = () => {  
+  if(MIC_ERROR){
+    displayMicErrorPopUp()
+  } else {
+    $('#testMicrophoneModal').modal('show')
+  }
 }
 
 export const displayHiddenControls = () => {
