@@ -6301,8 +6301,7 @@ class IdentityLoader extends loader_Loader {
           .then((audioBuffer) => {
             resolve(audioBuffer);
           })
-          .catch((err) => {
-            reject(err)});
+          .catch(reject);
       });
 
       xhr.addEventListener("error", () => {
