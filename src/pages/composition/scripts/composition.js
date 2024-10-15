@@ -117,7 +117,7 @@ export const displayMicErrorPopUp =  (err) => {
 export const displayAudioSourceErrorPopUp =  (err) => {
   DynamicModal.dynamicModalDialog(
       `<p>There was a problem while loading the data, probably not supported type of media by the browser: &#10;&#13;</p>
-      <p><b><pre>${err }</pre></b></p>`,
+      <p class="breakword"><b>${err }</b></p>`,
       null,
       '',
       'Close',
