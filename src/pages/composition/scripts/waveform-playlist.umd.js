@@ -6325,7 +6325,6 @@ class IdentityLoader extends loader_Loader {
         .then((arrayBuffer) => super.fetchLoad(arrayBuffer))
         .then((decodedAudio) => resolve(decodedAudio))
         .catch((err) => {
-          console.log(err)
           reject(Error(`Track ${this.src} failed to load with error: ${err}`));
         });
     });
