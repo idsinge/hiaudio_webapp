@@ -3,7 +3,7 @@
  * This enables projects to create/control the useability of the project.
 */
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
-import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp } from './composition'
+import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp, displayAudioSourceErrorPopUp, hideDownloadProgressBar } from './composition'
 import { CURRENT_USER_ID, NUM_TRACKS } from './composition_helper'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
@@ -464,10 +464,7 @@ export const enableUpdatesOnEmitter = () => {
   let processTracks = []
   ee.on("audiosourcesrendered", function() {
     displayHiddenControls()
-    const downloadProgressElem = document.getElementById('download-progress-elems')
-    if(downloadProgressElem && !downloadProgressElem.hidden){
-      downloadProgressElem.remove()
-    }
+    hideDownloadProgressBar()
     if(USER_PERMISSION){
       const theFile = document.getElementById('fileInput')
       const numberNewFiles = theFile.files.length
@@ -495,7 +492,8 @@ export const enableUpdatesOnEmitter = () => {
   });
 
   ee.on("audiosourceserror", function(e) {
-    displayLoadingData(e.message);
+    displayAudioSourceErrorPopUp(e)
+    //displayLoadingData(e.message);
   });
 
   ee.on('audiorenderingfinished', function (type, data, trackPos) {
