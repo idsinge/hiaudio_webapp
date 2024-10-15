@@ -495,7 +495,6 @@ export const enableUpdatesOnEmitter = () => {
   });
 
   ee.on("audiosourceserror", function(e) {
-    console.log("audiosourceserror", e)
     displayAudioSourceErrorPopUp(e)
     //displayLoadingData(e.message);
   });
