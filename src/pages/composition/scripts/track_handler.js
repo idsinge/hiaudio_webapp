@@ -126,7 +126,7 @@ export class TrackHandler {
     }
     deleteTrackConfirmDialog(event, callback, afterCallback) {       
         DynamicModal.dynamicModalDialog(
-            'Delete ' + event.target.dataset.name + '?',
+            `Delete <span class="breakword"><i>${event.target.dataset.name}</i></span> ?`,
             'btn-delete-track',
             'OK',
             'Cancel',

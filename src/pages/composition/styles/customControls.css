@@ -80,3 +80,7 @@
 .master-gain{
     padding: 0;
 }
+
+.breakword {
+    word-break: break-all;
+}
