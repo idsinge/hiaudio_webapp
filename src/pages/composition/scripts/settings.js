@@ -5,6 +5,7 @@ import {openSettingsButtonHandler, saveParentCollection} from './settings/setcol
 import {setUITitle, getCurrentTitle, saveTitle} from './settings/settitle'
 import {setUIDescription, getCurrentDescription, saveDescription} from './settings/setdescription'
 import {setOpenToContrib, getOpenToContrib, saveOpenToContrib} from './settings/setopentocontrib'
+import {setCompAsTemplate, getCompAsTemplate, saveCompAsTemplate} from './settings/setastemplate'
 import {getPrivacyLevel, setUIPrivacy, savePrivacyLevel, privateRadioButtonHandler} from './settings/setprivacy'
 import {setUIContributors,
     clearUIContributors,
@@ -23,6 +24,7 @@ export const enableCompositionSettings = (tracksInfo) => {
     setUIDescription(tracksInfo.description)
     setUIPrivacy(tracksInfo.privacy)
     setOpenToContrib(tracksInfo.opentocontrib)
+    setCompAsTemplate(tracksInfo.is_template)
     saveButtonHandler(tracksInfo.uuid)
     cancelButtonHandler(tracksInfo)
     createSettingsButton()
@@ -77,6 +79,7 @@ const clickCancelButtonHandler = (compInfo) => {
     setUIDescription(getCurrentDescription()||compInfo.description)        
     setUIPrivacy(getPrivacyLevel() || compInfo.privacy)         
     setOpenToContrib(getOpenToContrib() || compInfo.opentocontrib)
+    setCompAsTemplate(getCompAsTemplate() || compInfo.is_template)
     clearUIContributors()     
     setUIContributors(getCurrentContributors().length ? getCurrentContributors() : compInfo.contributors)        
     clearAuxContribArrays()
@@ -101,6 +104,7 @@ const saveButtonHandler = async (compId) => {
             await saveDescription(compId)
             await savePrivacyLevel(compId)
             await saveOpenToContrib(compId)
+            await saveCompAsTemplate(compId)
             await saveNewContributors()     
             await saveRemoveContributors(compId)
             await saveParentCollection(compId)
