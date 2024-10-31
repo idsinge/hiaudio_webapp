@@ -31,10 +31,13 @@ const getCompCollSuccess = (list, selected_coll) => {
 }
 
 export const saveParentCollection = async (compId) => {
-    const newParentColl = document.getElementById('inputGroupSelectCollect').value    
-    if(CURRENT_PARENT_COLLECTION || newParentColl !== '0'){
-        if (newParentColl !== CURRENT_PARENT_COLLECTION) {
-            await updateParentCollection(compId, newParentColl)
+    const inputGroupSelectCollect = document.getElementById('inputGroupSelectCollect')
+    if(inputGroupSelectCollect){
+        const newParentColl = inputGroupSelectCollect.value    
+        if(CURRENT_PARENT_COLLECTION || newParentColl !== '0'){
+            if (newParentColl !== CURRENT_PARENT_COLLECTION) {
+                await updateParentCollection(compId, newParentColl)
+            }
         }
     }
 }

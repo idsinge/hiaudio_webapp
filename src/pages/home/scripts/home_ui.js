@@ -75,13 +75,14 @@ export const paintMainElemsHomePage = (listElelemts, legendButtons) => {
     document.getElementById('searchInput').removeAttribute('disabled')
 }
 
-export const paintSingleComposition = (element, endpoint) => {    
+export const paintSingleComposition = (element, endpoint) => {
     const displayName = displayUserNameInCard(endpoint, element.username)
     const displayNumCollabs = element.contributors.length    
     return `<div class='card border-success'>                       
               <div class="card-body">
               ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[element.privacy]}">${PRIVACY_BADGE_TEXT[element.privacy]}</span>` : ''}
-              ${element.opentocontrib ? '<p class="badge badge-info">OPEN TO CONTRIB</p>' : ''}               
+              ${element.opentocontrib ? '<p class="badge badge-info">OPEN TO CONTRIB</p>' : ''}
+              ${element.is_template ? '<p class="badge badge-template">TEMPLATE</p>' : ''}  
                   <div>
                     <p class="list-group-item-heading">  
                       <a href='${uriCompositionPage + element.uuid}' class='card-url'>
@@ -111,7 +112,8 @@ export const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
     
     return `<div class="list-group-item ">
               ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[item.privacy]}">${PRIVACY_BADGE_TEXT[item.privacy]}</span>` : ''}
-              ${item.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}  
+              ${item.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}
+              ${item.is_template ? '<span class="badge badge-template">TEMPLATE</span>' : ''}  
               <p class="list-group-item-heading">
                 <a href='${uriCompositionPage + item.uuid}' class='card-url'>
                     <h5 class='card-title'>${item.title}</h5>

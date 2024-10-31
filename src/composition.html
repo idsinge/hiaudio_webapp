@@ -33,12 +33,74 @@
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul id="useroptions" class="navbar-nav mr-auto"></ul>
+            <div id="btn-clone-container" class="my-2 my-lg-0" hidden>
+                <button id="btn-clone-comp" class="btn btn-outline-success my-2 my-sm-0">Clone</button>
+            </div>
         </div>
     </header>
     <main class="container editor-container">
+        <div class="modal fade" id="cloneMusicModal" tabindex="-1" aria-labelledby="cloneMusicModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cloneMusicModalLabel">Clone Composition</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="clonetitle">Title:</label>
+                            <div class="container">
+                                <div class="row justify-center">
+                                    <div class="form-outline w-75">
+                                        <input class="form-control" type="text" id="clonetitle" placeholder="new title" title="clonetitle">
+                                        <div id="validationclonedtitle" class="mt-3 invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="clonedescription">Description:</label>
+                            <div class="container">
+                                <div class="row justify-center">
+                                    <div class="input-group">
+                                        <textarea class="form-control" id="clonedescription" rows="2" placeholder="new description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloneMusicFormControl">Level of Privacy:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="cloneMusicPrivacyRadios" id="cloneMusicPrivacyRadios1" value="1" checked>
+                                <label class="form-check-label" for="cloneMusicPrivacyRadios1">
+                                  Public
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="cloneMusicPrivacyRadios" id="cloneMusicPrivacyRadios2" value="2">
+                                <label class="form-check-label" for="cloneMusicPrivacyRadios2">
+                                  Only registered users
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="cloneMusicPrivacyRadios" id="cloneMusicPrivacyRadios3" value="3">
+                                <label class="form-check-label" for="cloneMusicPrivacyRadios3">
+                                  Private
+                                </label>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button id="clonecreationbtn" type="button" class="btn btn-primary">Clone</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
@@ -71,7 +133,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label id="" for="listCollectionsFormControl">Select parent collection:</label>                            
+                            <label id="" for="listCollectionsFormControl">Parent collection:</label>                            
                             <div class="container">
                                 <div class="row justify-center">
                                   <div class="">                                  
@@ -102,6 +164,12 @@
                                 <label class="form-check-label" for="settingsPrivacyRadios3">
                                     Private
                                 </label>
+                            </div>
+                        </div>
+                        <div id="form-group-marktemplate" class="form-group" hidden>                            
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="markastemplatebtn">
+                                <label class="custom-control-label" for="markastemplatebtn">Mark as template</label>
                             </div>
                         </div>
                         <div class="form-group">                            

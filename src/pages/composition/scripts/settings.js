@@ -5,6 +5,7 @@ import {openSettingsButtonHandler, saveParentCollection} from './settings/setcol
 import {setUITitle, getCurrentTitle, saveTitle} from './settings/settitle'
 import {setUIDescription, getCurrentDescription, saveDescription} from './settings/setdescription'
 import {setOpenToContrib, getOpenToContrib, saveOpenToContrib} from './settings/setopentocontrib'
+import {setCompAsTemplate, getCompAsTemplate, saveCompAsTemplate} from './settings/setastemplate'
 import {getPrivacyLevel, setUIPrivacy, savePrivacyLevel, privateRadioButtonHandler} from './settings/setprivacy'
 import {setUIContributors,
     clearUIContributors,
@@ -17,17 +18,25 @@ import {setUIContributors,
 } from './settings/setcontributors'
 
 export const enableCompositionSettings = (tracksInfo) => {
+    if(tracksInfo.user_isadmin && !tracksInfo.cloned_from){
+        document.getElementById('form-group-marktemplate').hidden = false
+    }
     setUIContributors(tracksInfo.contributors)
     addContributorButtonHandler(tracksInfo.uuid)
     setUITitle(tracksInfo.title)
     setUIDescription(tracksInfo.description)
     setUIPrivacy(tracksInfo.privacy)
     setOpenToContrib(tracksInfo.opentocontrib)
+    setCompAsTemplate(tracksInfo.is_template)
     saveButtonHandler(tracksInfo.uuid)
     cancelButtonHandler(tracksInfo)
     createSettingsButton()
     privateRadioButtonHandler()
-    openSettingsButtonHandler(tracksInfo?.collection_id)    
+    if(!tracksInfo.cloned_from){
+        openSettingsButtonHandler(tracksInfo?.collection_id)
+    } else {
+        document.getElementById('listCollContainerNewColl').innerHTML = `<h5><span class="badge badge-secondary">${tracksInfo.parent_collection}</span></h5>`
+    }
 }
 
 const createSettingsButton = () => {
@@ -77,6 +86,7 @@ const clickCancelButtonHandler = (compInfo) => {
     setUIDescription(getCurrentDescription()||compInfo.description)        
     setUIPrivacy(getPrivacyLevel() || compInfo.privacy)         
     setOpenToContrib(getOpenToContrib() || compInfo.opentocontrib)
+    setCompAsTemplate(getCompAsTemplate() || compInfo.is_template)
     clearUIContributors()     
     setUIContributors(getCurrentContributors().length ? getCurrentContributors() : compInfo.contributors)        
     clearAuxContribArrays()
@@ -101,6 +111,7 @@ const saveButtonHandler = async (compId) => {
             await saveDescription(compId)
             await savePrivacyLevel(compId)
             await saveOpenToContrib(compId)
+            await saveCompAsTemplate(compId)
             await saveNewContributors()     
             await saveRemoveContributors(compId)
             await saveParentCollection(compId)
