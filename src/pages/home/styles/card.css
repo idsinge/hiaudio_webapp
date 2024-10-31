@@ -80,6 +80,11 @@
     background-color: #e9858a;
 }
 
+.badge-template {
+    color: white;
+    background-color: #e06b3c;
+}
+
 .border-collab {
     border-color: #e9858a;
 }

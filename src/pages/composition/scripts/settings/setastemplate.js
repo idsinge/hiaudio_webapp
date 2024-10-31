@@ -36,18 +36,9 @@ const updateCompAsTemplate = async (compId, newstatus) => {
     if (resultNewCompAsTemplate.ok) {
         CURRENT_ISTEMPLATE = newstatus
         if (newstatus) {
-            console.log('ADD CLONE BUTTON TO UI')
-            // const privacybadgetext = document.getElementById('privacybadgetext')
-            // const badgeHtml = '&nbsp;<span class="badge badge-light">STATUS:&nbsp;</span><span class="badge badge-info">OPEN TO CONTRIB</span>'
-            // privacybadgetext.insertAdjacentHTML('afterend', badgeHtml)           
+            document.getElementById('btn-clone-container').hidden = false
         } else {
-            console.log('REMOVE CLONE BUTTON FROM UI')
-            // if(document.querySelector('.badge-info')){
-            // const openToContribBadgeText = document.getElementById('privacybadgetext').nextSibling.nextSibling                
-            // const openToContribBadgeStatus = openToContribBadgeText.nextSibling
-            // openToContribBadgeText.remove()
-            // openToContribBadgeStatus.remove()                
-            // }
+            document.getElementById('btn-clone-container').hidden = true
         }
     }
 }

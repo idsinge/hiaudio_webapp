@@ -121,6 +121,9 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     const userRole = tracksInfo.role
     CURRENT_USER_ID = tracksInfo.viewer_id
     let tracksAsObj = null
+    if(CURRENT_USER_ID && tracksInfo.is_template){
+        document.getElementById('btn-clone-container').hidden = false
+    }
     if(stored_tracks?.length){       
         tracksAsObj = convertArrayStoredCompToObj(stored_tracks)        
     }

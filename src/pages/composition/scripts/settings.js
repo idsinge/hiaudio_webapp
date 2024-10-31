@@ -18,6 +18,9 @@ import {setUIContributors,
 } from './settings/setcontributors'
 
 export const enableCompositionSettings = (tracksInfo) => {
+    if(tracksInfo.user_isadmin && !tracksInfo.cloned_from){
+        document.getElementById('form-group-marktemplate').hidden = false
+    }
     setUIContributors(tracksInfo.contributors)
     addContributorButtonHandler(tracksInfo.uuid)
     setUITitle(tracksInfo.title)
@@ -29,7 +32,11 @@ export const enableCompositionSettings = (tracksInfo) => {
     cancelButtonHandler(tracksInfo)
     createSettingsButton()
     privateRadioButtonHandler()
-    openSettingsButtonHandler(tracksInfo?.collection_id)    
+    if(!tracksInfo.cloned_from){
+        openSettingsButtonHandler(tracksInfo?.collection_id)
+    } else {
+        document.getElementById('listCollContainerNewColl').innerHTML = `<h5><span class="badge badge-secondary">${tracksInfo.parent_collection}</span></h5>`
+    }
 }
 
 const createSettingsButton = () => {
