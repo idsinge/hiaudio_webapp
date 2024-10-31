@@ -6,6 +6,7 @@ import { setUserPermission, trackHandler, playlist } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
 import { trackInfoHandler } from './trackinfo/trackinfo'
+import { cloneComposition } from './clonecomposition'
 
 export let CURRENT_USER_ID = null
 export let NUM_TRACKS = 0
@@ -117,6 +118,7 @@ const cloneCompBtnHandler = (compinfo) => {
     document.getElementById('btn-clone-comp').onclick = () => {
         $('#cloneMusicModal').modal('show')
     }
+    document.getElementById('clonecreationbtn').onclick = () => {cloneComposition(compinfo)}
 }
 
 const createArrayOfTracks = (tracksInfo, stored_tracks) => {
