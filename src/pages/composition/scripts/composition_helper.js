@@ -110,6 +110,15 @@ const createNewTrack = (element, tracksInfo, tracksAsObj) => {
     return new Track(element.uuid, title, muted, soloed, gain, stereoPan, customClass)    
 }
 
+const cloneCompBtnHandler = (compinfo) => {
+    document.getElementById('clonetitle').value = compinfo.title + ' (Copy)'
+    document.getElementById('clonedescription').value = compinfo.description + ' (Copy)'
+    document.getElementById('btn-clone-container').hidden = false
+    document.getElementById('btn-clone-comp').onclick = () => {
+        $('#cloneMusicModal').modal('show')
+    }
+}
+
 const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     const inputElement = document.getElementById('fileInput')
     // TODO:issue-169 if Safari then ogg is not allowed in accept. Server should deliver m4a instead
@@ -122,7 +131,7 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     CURRENT_USER_ID = tracksInfo.viewer_id
     let tracksAsObj = null
     if(CURRENT_USER_ID && tracksInfo.is_template){
-        document.getElementById('btn-clone-container').hidden = false
+        cloneCompBtnHandler(tracksInfo)
     }
     if(stored_tracks?.length){       
         tracksAsObj = convertArrayStoredCompToObj(stored_tracks)        

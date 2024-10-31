@@ -25,5 +25,6 @@ const updateTitle = async (compId, newtitle) => {
     if (resultNewTitle.ok) {
         CURRENT_TITLE = newtitle
         document.getElementById('comp-title').innerHTML = newtitle
+         document.getElementById('clonetitle').value = newtitle + ' (Copy)'
     }
 }
