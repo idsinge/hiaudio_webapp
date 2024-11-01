@@ -3,7 +3,17 @@ import DynamicModal from '../../../common/js/modaldialog'
 
 const uriCompositionPage = '/composition.html?compositionId='
 
-export const cloneComposition = async (compinfo) => {
+export const cloneCompBtnHandler = (compinfo) => {
+    document.getElementById('clonetitle').value = compinfo.title + ' (Copy)'
+    document.getElementById('clonedescription').value = compinfo.description + ' (Copy)'
+    document.getElementById('btn-clone-container').hidden = false
+    document.getElementById('btn-clone-comp').onclick = () => {
+        $('#cloneMusicModal').modal('show')
+    }
+    document.getElementById('clonecreationbtn').onclick = () => {cloneComposition(compinfo)}
+}
+
+const cloneComposition = async (compinfo) => {
     document.getElementById('clonetitle').classList.remove('is-invalid')
     document.getElementById('validationclonedtitle').innerText = ''
     const clonetitle = document.getElementById('clonetitle').value
