@@ -1,4 +1,5 @@
 import { updateSettings } from '../settings'
+import { cloneCompBtnHandler } from '../clonecomposition'
 
 let CURRENT_ISTEMPLATE = null
 
@@ -12,10 +13,10 @@ export const setCompAsTemplate = (status) => {
     checkbox.checked = status
 }
 
-export const saveCompAsTemplate = async (compId) => {
+export const saveCompAsTemplate = async (compInfo) => {
     const newCompAsTemplate = document.getElementById('markastemplatebtn').checked
     if (newCompAsTemplate !== CURRENT_ISTEMPLATE) {
-        await updateCompAsTemplate(compId, newCompAsTemplate)
+        await updateCompAsTemplate(compInfo, newCompAsTemplate)
     }
 }
 
@@ -29,14 +30,15 @@ export const changeCompAsTemplate = (newstate) => {
     }
 }
 
-const updateCompAsTemplate = async (compId, newstatus) => {
+const updateCompAsTemplate = async (compInfo, newstatus) => {
 
-    const data = { uuid: compId, is_template: newstatus }
+    const data = { uuid: compInfo.uuid, is_template: newstatus }
     const resultNewCompAsTemplate = await updateSettings('PATCH', '/updatecompastemplate', data)
     if (resultNewCompAsTemplate.ok) {
         CURRENT_ISTEMPLATE = newstatus
         if (newstatus) {
             document.getElementById('btn-clone-container').hidden = false
+            cloneCompBtnHandler(compInfo)
         } else {
             document.getElementById('btn-clone-container').hidden = true
         }
