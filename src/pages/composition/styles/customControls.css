@@ -30,13 +30,16 @@
   
 .dropdown-content li:hover {background-color: #ddd;}
   
-.show {display: block;}
+.dropdown-show {
+    display: block;
+    transform: translateY(-40px);
+}
 
 .btn-solo, .btn-mute {
     z-index: 0 !important;
 }
 .dropdown-menu{
-    background-color:#efeaea;    
+    background-color:#efeaea;
 }
 .italic {
    font-style: italic;

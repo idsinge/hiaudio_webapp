@@ -61,7 +61,7 @@ export class TrackHandler {
         const txt = document.createTextNode('...')
         buttonMenu.className = 'menuoptbtn'
         buttonMenu.onclick = () => {
-            document.getElementById(menuDrpDownId).classList.toggle('show')
+            document.getElementById(menuDrpDownId).classList.toggle('dropdown-show')
         }
         buttonMenu.id = menuBtnId
         buttonMenu.appendChild(txt)
@@ -77,7 +77,9 @@ export class TrackHandler {
         listOptions.className = 'dropdown-menu'        
         if ((role === UserRole.owner || role === UserRole.admin)){
             const deleteMenuOpt = this.createDeleteMenuOpt(pos, name, track_id)
+            const downloadMenuOpt = this.createDownloadMenuOpt(track_id)
             listOptions.appendChild(deleteMenuOpt)
+            listOptions.appendChild(downloadMenuOpt)
         }       
         const trackInfoMenuOpt = this.createTrackInfoMenuOpt(pos, name, track_id, role)        
         listOptions.appendChild(trackInfoMenuOpt)
@@ -95,6 +97,16 @@ export class TrackHandler {
         deleteMenuOpt.appendChild(document.createTextNode('Delete'))
         return deleteMenuOpt
     }
+    createDownloadMenuOpt(track_id){
+        const downloadMenuOpt = document.createElement('li')
+        downloadMenuOpt.className = 'dropdown-item btn-light'
+        downloadMenuOpt.dataset.trackId = track_id
+        downloadMenuOpt.onclick = (event) => {
+            window.open( window.location.protocol+'//'+window.location.host+'/trackfile/'+track_id, '_blank')
+        }
+        downloadMenuOpt.appendChild(document.createTextNode('Download'))
+        return downloadMenuOpt
+    }
     createTrackInfoMenuOpt(pos, name, track_id, role){
         const trackInfoMenuOpt = document.createElement('li')
         trackInfoMenuOpt.className = 'dropdown-item btn-light'        
@@ -108,7 +120,7 @@ export class TrackHandler {
     }
     detectClickOutsideMenuOpt(){
         window.onclick = function(event) {
-            const dropdownDisplayed = document.getElementsByClassName('dropdown-menu show')           
+            const dropdownDisplayed = document.getElementsByClassName('dropdown-menu dropdown-show')           
             if((dropdownDisplayed.length > 0) && (event.target.className!=='menuoptbtn')){                
                 Array.from(dropdownDisplayed).forEach(function(item) {
                     item.className = 'dropdown-menu'
