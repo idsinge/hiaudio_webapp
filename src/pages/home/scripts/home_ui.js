@@ -38,6 +38,9 @@ export const initNavigationMenu = () => {
     <li class='nav-item'>
         <a class='dropdown-item' href='${window.location.origin}/static/howto.html'>How-To</a>
     </li>
+    <li class='nav-item'>
+        <a class='dropdown-item' href='#' id='openNewsModalButton' data-toggle='modal' data-target='#newsModal'><b>News<b></a>
+    </li>
     `
 
     document.getElementById('useroptions').innerHTML = 
@@ -53,7 +56,20 @@ export const initNavigationMenu = () => {
     <li class='nav-item'>
         <a class='nav-link' href='${window.location.origin + '/static/howto.html'}'>/ How-to</a>
     </li>
+    <li class='nav-item'>
+        <a class='nav-link' href='#' id='openNewsModalButton' data-toggle='modal' data-target='#newsModal'>/ News</a>
+    </li>
     `
+  handleNewsPopUpClose()
+}
+
+const handleNewsPopUpClose = () => {
+  $('#newsModal').on('hidden.bs.modal', function (event) {
+    const videoPromo = document.getElementById('promo-video')
+    if (!videoPromo.paused) {
+      videoPromo.pause()
+    }
+  })
 }
 
 export const getLegendButtons = (numberGroupsByCollections, numberGroupsCustom, numberSinglComp, endpoint, totalcomps) => {
