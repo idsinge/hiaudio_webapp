@@ -14,16 +14,10 @@ var scheduleAheadTime = 0.1;    // How far ahead to schedule audio (sec)
 var nextNoteTime = 0.0;     // when the next note is due.
 // var noteResolution = 0;     // 0 == 16th, 1 == 8th, 2 == quarter note
 var noteLength = 0.05;      // length of "beep" (in seconds)
-var canvas,                 // the canvas element
-    canvasContext;          // canvasContext is the canvas' context 2D
-var last16thNoteDrawn = -1; // the last "box" we drew on the screen
 var notesInQueue = [];      // the notes that have been put into the web audio,
 // and may or may not have played yet. {note, time}
 var timerWorker = null;     // The Web Worker used to fire timer messages
 
-
-// First, let's shim the requestAnimationFrame API, with a setTimeout fallback
-window.requestAnimFrame = window.requestAnimationFrame;
 
 function nextNote() {
     // Advance current note and time by a 16th note...
@@ -95,59 +89,7 @@ export function playMetronome() {
     }
 }
 
-function resetCanvas(e) {
-    // resize the canvas - but remember - this clears the canvas too.
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    //make sure we scroll to the top left.
-    window.scrollTo(0, 0);
-}
-
-function draw() {
-    var currentNote = last16thNoteDrawn;
-    if (audioContext) {
-        var currentTime = audioContext.currentTime;
-
-        while (notesInQueue.length && notesInQueue[0].time < currentTime) {
-            currentNote = notesInQueue[0].note;
-            notesInQueue.splice(0, 1);   // remove note from queue
-        }
-
-        // We only need to draw if the note has moved.
-        if (last16thNoteDrawn != currentNote) {
-            var x = Math.floor(canvas.width / 18);
-            canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-            for (var i = 0; i < 16; i++) {
-                canvasContext.fillStyle = (currentNote == i) ?
-                    ((currentNote % 4 === 0) ? "red" : "blue") : "black";
-                canvasContext.fillRect(x * (i + 1), x, x / 2, x / 2);
-            }
-            last16thNoteDrawn = currentNote;
-        }
-    }
-    // set up to draw again
-    //requestAnimFrame(draw);
-}
-
 export function initMetronome() {
-    var container = document.createElement('div');
-
-    container.className = "container";
-    canvas = document.createElement('canvas');
-    canvasContext = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    document.body.appendChild(container);
-    container.appendChild(canvas);
-    canvasContext.strokeStyle = "#ffffff";
-    canvasContext.lineWidth = 2;
-
-    //window.onorientationchange = resetCanvas;
-    //window.onresize = resetCanvas;
-
-    /* TODO: change animation, disabled by the moment */
-    //requestAnimFrame(draw);    // start the drawing loop.
 
     timerWorker = new Worker(
         new URL('metronomeworker.js', import.meta.url),
@@ -164,5 +106,3 @@ export function initMetronome() {
     };
     timerWorker.postMessage({ "interval": lookahead });
 }
-
-//window.addEventListener("load", init );
