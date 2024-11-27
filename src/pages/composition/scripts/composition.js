@@ -134,7 +134,6 @@ export const hideDownloadProgressBar = () => {
   if(downloadProgressElem && !downloadProgressElem.hidden){
     downloadProgressElem.remove()
   }
-  document.getElementById('useroptions').innerHTML = `${triggerTestLatencyButton()}${testMicButtonForSafari()}${triggerMetronomeButton()}`
 }
 
 activateGoHomeLink()
