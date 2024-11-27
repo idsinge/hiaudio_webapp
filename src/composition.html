@@ -4,11 +4,12 @@
 <html lang="en">
 
 <head>
-    <title>hiaudio</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="hiaudio">
+    <title>hi-audio</title>
+    <meta name="description" content="hi-audio">
+    <link rel="icon" type="image/x-icon" href="common/img/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous" />
     <script src="https://kit.fontawesome.com/d6bd427cae.js" crossorigin="anonymous"></script>
@@ -32,12 +33,74 @@
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul id="useroptions" class="navbar-nav mr-auto"></ul>
+            <div id="btn-clone-container" class="my-2 my-lg-0" hidden>
+                <button id="btn-clone-comp" class="btn btn-outline-success my-2 my-sm-0">Clone</button>
+            </div>
         </div>
     </header>
     <main class="container editor-container">
+        <div class="modal fade" id="cloneMusicModal" tabindex="-1" aria-labelledby="cloneMusicModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cloneMusicModalLabel">Clone Composition</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="clonetitle">Title:</label>
+                            <div class="container">
+                                <div class="row justify-center">
+                                    <div class="form-outline w-75">
+                                        <input class="form-control" type="text" id="clonetitle" placeholder="new title" title="clonetitle">
+                                        <div id="validationclonedtitle" class="mt-3 invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="clonedescription">Description:</label>
+                            <div class="container">
+                                <div class="row justify-center">
+                                    <div class="input-group">
+                                        <textarea class="form-control" id="clonedescription" rows="2" placeholder="new description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cloneMusicFormControl">Level of Privacy:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="cloneMusicPrivacyRadios" id="cloneMusicPrivacyRadios1" value="1" checked>
+                                <label class="form-check-label" for="cloneMusicPrivacyRadios1">
+                                  Public
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="cloneMusicPrivacyRadios" id="cloneMusicPrivacyRadios2" value="2">
+                                <label class="form-check-label" for="cloneMusicPrivacyRadios2">
+                                  Only registered users
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="cloneMusicPrivacyRadios" id="cloneMusicPrivacyRadios3" value="3">
+                                <label class="form-check-label" for="cloneMusicPrivacyRadios3">
+                                  Private
+                                </label>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button id="clonecreationbtn" type="button" class="btn btn-primary">Clone</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
@@ -49,10 +112,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="loader-container">
-                            <div id="settingsloader" class="settingsloader"></div>
-                            <div id="loadertext" class="loader-text">Loading settings..</div>
-                        </div>
                         <div class="form-group">
                             <label for="newtitle">Title:</label> 
                             <div class="container">
@@ -74,7 +133,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label id="" for="listCollectionsFormControl">Select parent collection:</label>                            
+                            <label id="" for="listCollectionsFormControl">Parent collection:</label>                            
                             <div class="container">
                                 <div class="row justify-center">
                                   <div class="">                                  
@@ -105,6 +164,12 @@
                                 <label class="form-check-label" for="settingsPrivacyRadios3">
                                     Private
                                 </label>
+                            </div>
+                        </div>
+                        <div id="form-group-marktemplate" class="form-group" hidden>                            
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="markastemplatebtn">
+                                <label class="custom-control-label" for="markastemplatebtn">Mark as template</label>
                             </div>
                         </div>
                         <div class="form-group">                            
@@ -165,10 +230,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="loader-container">
-                            <div id="trackinfoloader" class="trackinfoloader"></div>
-                            <div id="loadertext" class="loader-text">Loading track info..</div>
-                        </div>
                         <table class="table trackinfo-table table-bordered">
                             <caption></caption>
                             <tbody id="trackinfotablebody">
@@ -177,7 +238,7 @@
                         </table>
                         <button id="btn-add-new-annot" type="button" class="btn btn-outline-info float-right">Add New</button>
                     </div>
-                    <div class="modal-footer">
+                    <div id="trackinfo-modal-footer" class="modal-footer">
                         <button id="canceltrackinfobutton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button id="updatetrackinfobutton" type="button" class="btn btn-primary">Confirm</button>
                     </div>
@@ -189,9 +250,13 @@
                 <header id="post-header" class="post-header">
                     <p class="lead"></p>
                 </header>
+                <div id="download-progress-elems" class="download-progress-elems" hidden>
+                    Downloading: &nbsp;<span id="download-percentage">0%</span><br>
+                    <progress id="download-progress-bar"></progress>
+                </div>
                 <div class="post-content">
                     <div class="sound-status"></div>
-                    <form class="form-inline">
+                    <form class="form-inline hidden-first">
                         <label for="master-gain" class="mr-sm-2">Master Volume</label>
                         <input type="range" min="0" max="100" value="100" class="master-gain form-control mr-sm-2"
                             id="master-gain" />
@@ -203,7 +268,7 @@
                         </div>
                     </form>
                     <div id="top-bar" class="playlist-top-bar">
-                        <div class="playlist-toolbar">
+                        <div class="playlist-toolbar hidden-first">
                             <div class="btn-group">
                                 <button type="button" class="btn-pause btn btn-outline-warning" title="Pause">
                                     <i class="fas fa-pause"></i>
@@ -255,7 +320,7 @@
                                     <i class="fas fa-redo-alt"></i>
                                 </button>
                             </div>
-                            <div class="btn-group">
+                            <div id="download-mix-btn" class="btn-group" hidden>
                                 <button type="button" title="Download the current work as Wav file"
                                     class="btn btn-download btn-outline-primary">
                                     <i class="fas fa-download"></i>
@@ -263,18 +328,15 @@
                             </div>
                         </div>
                     </div>
-                    <p>
-                        <div id="download-progress-elems" hidden>
-                            Downloading: &nbsp;<span id="download-percentage">0%</span><br>
-                            <progress id="download-progress-bar"></progress>
-                        </div>
-                    </p>
                     <div id="playlist"></div>
+                    <!-- <div class="loading-data"></div> -->
                     <div class="loader-container">
-                        <div id="loader" class="loader"></div>
-                        <div id="loadertext" class="loader-text">Loading...</div>
+                        <button id="loader" class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Loading composition...
+                        </button>
                     </div>
-                    <div class="playlist-bottom-bar input-group mb-3">
+                    <div class="playlist-bottom-bar input-group mb-3 hidden-first">
                         <form>
                             <div class="form-group">
                                 <div id="dropContainer" class="track-drop" hidden></div>

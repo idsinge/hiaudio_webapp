@@ -30,13 +30,16 @@
   
 .dropdown-content li:hover {background-color: #ddd;}
   
-.show {display: block;}
+.dropdown-show {
+    display: block;
+    transform: translateY(-40px);
+}
 
 .btn-solo, .btn-mute {
     z-index: 0 !important;
 }
 .dropdown-menu{
-    background-color:#efeaea;    
+    background-color:#efeaea;
 }
 .italic {
    font-style: italic;
@@ -56,4 +59,31 @@
 .delete-row{
     cursor: pointer;
     width: 10%;
+}
+
+.hidden-first {
+    visibility: hidden;
+}
+
+.visible-animate {
+    animation: 2s fadeIn;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+.master-gain{
+    padding: 0;
+}
+
+.breakword {
+    word-break: break-all;
 }

@@ -2,12 +2,14 @@ import { callJsonApi, looksLikeMail, activateGoHomeLink } from '../../common/js/
 
 let TEMP_EMAIL = null
 
+const sendCodeButton = document.getElementById('sendcodebutton')
+
 const redirectToGoogleLogin = () => {
     window.location.href = '/googlelogin'
 }
 
 const getUser = async () => {
-    const data = await callJsonApi('/profile', 'GET')
+    const data = await callJsonApi('/profile', 'GET', null, 'Loading user...')
     if (data.ok) {
         window.location.href = window.location.origin + '/profile.html'
     }
@@ -16,7 +18,9 @@ const getUser = async () => {
 const sendVerificationCode = async () => {
     const loginEmail = document.getElementById('inputloginemail').value
     if(looksLikeMail(loginEmail)){
-        const data = await callJsonApi('/generatelogincode/'+loginEmail, 'PUT')
+        sendCodeButton.disabled = true
+        const data = await callJsonApi('/generatelogincode/'+loginEmail, 'PUT', null, 'Sending code...')
+        sendCodeButton.disabled = false
         if (data.ok) {
             TEMP_EMAIL = loginEmail
             document.getElementById('authmethodform').hidden = true
@@ -36,7 +40,7 @@ const requestCodeValidation = async () => {
     const sixDigits = /\d{6}/
     if (sixDigits.test(codeIs)){
         const body = {email: TEMP_EMAIL, code: codeIs}
-        const data = await callJsonApi('/logincodevalidation', 'POST', body)
+        const data = await callJsonApi('/logincodevalidation', 'POST', body, 'Verification in process...')
         if (data.ok) {
             TEMP_EMAIL = null
             window.location.href = window.location.origin
@@ -55,7 +59,7 @@ activateGoHomeLink()
 
 document.getElementById('googleLoginButton').onclick = redirectToGoogleLogin
 
-document.getElementById('sendcodebutton').onclick = sendVerificationCode
+sendCodeButton.onclick = sendVerificationCode
 document.getElementById('inputloginemail').onkeydown = function(e) {
     if (e.key == "Enter") {
         return sendVerificationCode()

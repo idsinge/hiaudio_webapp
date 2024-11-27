@@ -3,7 +3,7 @@
  * This enables projects to create/control the useability of the project.
 */
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
-import { playlist, fileUploader, USER_PERMISSION } from './composition'
+import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp, displayAudioSourceErrorPopUp, hideDownloadProgressBar } from './composition'
 import { CURRENT_USER_ID, NUM_TRACKS } from './composition_helper'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
@@ -202,10 +202,14 @@ const startRecording = (currentLatency) => {
 }
 
 $container.on("click", ".btn-record", function() {
-  if(!isRecording){
-    let currentLatency = localStorage.getItem('latency')
-    currentLatency = currentLatency? parseInt(currentLatency):0
-    startRecording(currentLatency)
+  if(!MIC_ERROR) {
+    if(!isRecording){
+      let currentLatency = localStorage.getItem('latency')
+      currentLatency = currentLatency? parseInt(currentLatency):0
+      startRecording(currentLatency)
+    }    
+  } else {
+    displayMicErrorPopUp()
   }
 });
 
@@ -274,7 +278,9 @@ $container.on("click", ".btn.print", function() {
 });
 
 $container.on("click", ".btn-download", function () {
-  ee.emit('startaudiorendering', 'wav');
+  if(playlist.tracks.length){
+    ee.emit('startaudiorendering', 'wav');
+  }
 });
 
 $container.on("click", ".btn-seektotime", function () {
@@ -457,10 +463,8 @@ export const enableUpdatesOnEmitter = () => {
   let fileCounter = 0
   let processTracks = []
   ee.on("audiosourcesrendered", function() {
-    const downloadProgressElem = document.getElementById('download-progress-elems')
-    if(downloadProgressElem && !downloadProgressElem.hidden){
-      downloadProgressElem.remove()
-    }
+    displayHiddenControls()
+    hideDownloadProgressBar()
     if(USER_PERMISSION){
       const theFile = document.getElementById('fileInput')
       const numberNewFiles = theFile.files.length
@@ -488,7 +492,8 @@ export const enableUpdatesOnEmitter = () => {
   });
 
   ee.on("audiosourceserror", function(e) {
-    displayLoadingData(e.message);
+    displayAudioSourceErrorPopUp(e)
+    //displayLoadingData(e.message);
   });
 
   ee.on('audiorenderingfinished', function (type, data, trackPos) {

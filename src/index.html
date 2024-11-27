@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hiaudio</title>
-    <meta name="description" content="hiaudio">
+    <title>hi-audio</title>
+    <meta name="description" content="hi-audio">
+    <link rel="icon" type="image/x-icon" href="common/img/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
     integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous" />
     <script src="https://kit.fontawesome.com/d6bd427cae.js" crossorigin="anonymous"></script>
@@ -14,6 +15,7 @@
     <link rel="stylesheet" href="common/css/badge.css">
     <link rel="stylesheet" href="pages/home/styles/header.css">
     <link rel="stylesheet" href="pages/home/styles/card.css">
+    <link rel="stylesheet" href="pages/home/styles/landingvideo.css">
 </head>
 
 <body>
@@ -40,6 +42,41 @@
             </form>
         </div>
     </header>
+    <div class="modal fade" id="newsModal" tabindex="-1" aria-labelledby="newsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newsModalLabel"><b>News</b></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="jumbotron">
+                        <div class="container">
+                          <h5><b>ISMIR 2024</b></h5>
+                          <p>Late Breaking Demo (LBD) at 25th International Society for Music Information Retrieval (ISMIR) Conference.</p>
+                          <p><a href="https://ismir2024program.ismir.net/lbd_448.html" target="_blank">More info.</a></p>
+                        </div>
+                      </div>
+                      <div class="jumbotron">
+                        <div class="container">
+                          <h5><b>Happy Birthday Collection</b></h5>
+                          <p><br>
+                            <video id="promo-video" width="100%" controls="controls" preload="none" playsinline="true" poster="static/videos/poster/birthday_poster.png">
+                                <source src="static/videos/video_promo_final.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                          </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="newMusicModal" tabindex="-1" aria-labelledby="newMusicModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -51,15 +88,18 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="listCompCollsFormControl">Type:</label>
                         <div class="container">
                             <div class="row justify-center">
-                              <div class="">
+                              <div class="mt-3">
                                 <div id="" class="input-group mb-3">
-                                    <select class="custom-select" id="typeOfNewCreation">
-                                        <option value="comp">Composition</option>
-                                        <option value="coll">Collection</option>
-                                    </select>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="newMusicTypeRadioButton" id="newMusicTypeRadioButton1" value="comp" checked>
+                                        <label class="form-check-label" for="newMusicTypeRadioButton1"><i class="fas fa-music"></i>&nbsp;Composition</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="newMusicTypeRadioButton" id="newMusicTypeRadioButton2" value="coll">
+                                        <label class="form-check-label" for="newMusicTypeRadioButton2"><i class="fas fa-folder"></i>&nbsp;Collection</label>
+                                    </div>
                                 </div>
                               </div>
                             </div>
@@ -148,7 +188,7 @@
         </ol>
     </nav>
     <div class="d-flex justify-content-center">
-        <div id="welcomecontainer" class="mx-auto p-2"></div>
+        <div id="welcomecontainer" class="mx-auto"></div>
     </div>
     <div id="initialmessage" class="justify-content-center jumbotron bg-white" hidden>
         <div class="col-sm-6">
@@ -162,8 +202,10 @@
     <div id="legendbuttons" class="legendbuttons"></div>
     <ul id="grid" class="listing"></ul>
     <div class="loader-container">
-        <div id="loader" class="loader"></div>
-        <div id="loadertext" class="loader-text">Loading...</div>
+        <button id="loader" class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+        </button>
     </div>
     <div class="modal fade" id="bugReportModal" tabindex="-1" role="dialog" aria-labelledby="bugReportModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">

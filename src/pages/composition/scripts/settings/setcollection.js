@@ -21,7 +21,7 @@ export const openSettingsButtonHandler = (collection_id) => {
 }
 
 const getCompCollSuccess = (list, selected_coll) => {
-    document.getElementById('listCollContainerNewColl').replaceChildren()
+    document.getElementById('listCollContainerNewColl').innerHTML = ''
     createListCollections(list, 'listCollContainerNewColl', CURRENT_PARENT_COLLECTION || selected_coll)
     if(list?.all_collections.length){
         if(selected_coll){            
@@ -31,10 +31,13 @@ const getCompCollSuccess = (list, selected_coll) => {
 }
 
 export const saveParentCollection = async (compId) => {
-    const newParentColl = document.getElementById('inputGroupSelectCollect').value    
-    if(CURRENT_PARENT_COLLECTION || newParentColl !== '0'){
-        if (newParentColl !== CURRENT_PARENT_COLLECTION) {
-            await updateParentCollection(compId, newParentColl)
+    const inputGroupSelectCollect = document.getElementById('inputGroupSelectCollect')
+    if(inputGroupSelectCollect){
+        const newParentColl = inputGroupSelectCollect.value    
+        if(CURRENT_PARENT_COLLECTION || newParentColl !== '0'){
+            if (newParentColl !== CURRENT_PARENT_COLLECTION) {
+                await updateParentCollection(compId, newParentColl)
+            }
         }
     }
 }

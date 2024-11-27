@@ -13,9 +13,7 @@ export class TestLatencyMLS {
 
     currentlatency = null
 
-    noiseBuffer = null
-
-    silenceBuffer = null
+    noiseBuffer = null    
 
     debugCanvas = false
     
@@ -86,7 +84,6 @@ export class TestLatencyMLS {
         
         const noisemls = generateMLS(15)
         TestLatencyMLS.noiseBuffer = TestLatencyMLS.generateAudio(noisemls, TestLatencyMLS.audioContext.sampleRate)
-        TestLatencyMLS.silenceBuffer = TestLatencyMLS.generateSilence(noisemls, TestLatencyMLS.audioContext.sampleRate)
         const userMediaStream =  TestLatencyMLS.getCorrectStreamForSafari(inputStream)
         TestLatencyMLS.inputStream = userMediaStream
         if(TestLatencyMLS.debugCanvas){
@@ -125,11 +122,9 @@ export class TestLatencyMLS {
 
         TestLatencyMLS.signalrecorded = null
 
-        const silenceSource = TestLatencyMLS.audioContext.createBufferSource()
-
-        silenceSource.buffer = TestLatencyMLS.silenceBuffer
-
-        silenceSource.connect(TestLatencyMLS.audioContext.destination)
+        const silenceBuffer = TestLatencyMLS.audioContext.createBuffer(1, 4*TestLatencyMLS.audioContext.sampleRate, TestLatencyMLS.audioContext.sampleRate)
+        const silenceNode = TestLatencyMLS.audioContext.createBufferSource()
+        silenceNode.buffer = silenceBuffer
        
         const doTheTest = () => {
 
@@ -150,18 +145,14 @@ export class TestLatencyMLS {
             }
 
             mediaRecorder.start()
-
             noiseSource.start()
             noiseSource.onended = function () {
                 mediaRecorder.stop()
                 TestLatencyMLS.finishTest()
             }
         }
-        silenceSource.start()
-        silenceSource.onended = function () {
-            silenceSource.disconnect(TestLatencyMLS.audioContext.destination)
-            doTheTest()
-        }
+        silenceNode.start(0)
+        doTheTest()
     }
 
     static finishTest() {
@@ -220,33 +211,22 @@ export class TestLatencyMLS {
             bufferData[i] = mlsSequence[i] === 1 ? 1.0 : -1.0  // Map 1 to 1.0 and 0 to -1.0
         }
         return audioBuffer
-    }
-
-    static generateSilence(mlsSequence, frequency) {  
-
-        const audioBuffer = TestLatencyMLS.audioContext.createBuffer(1, mlsSequence.length, frequency)
-        let bufferData = audioBuffer.getChannelData(0)        
-        const silenght = Math.trunc(mlsSequence.length/8)
-        for (let i = 0; i < silenght ; i++) {
-            bufferData[i] = 0
-        }
-        return audioBuffer
-    }
+    }    
 
     static displayresults(peak, signalrecorded, mlssignal, correlation) {
        
         if(peak.channel === 0){
             const roundtriplatency = Number(peak.peakIndex / mlssignal.sampleRate * 1000).toFixed(2)
-            const ratioIs = Math.log10(peak.peakValuePow / peak.mean)
+            const ratioIs = 10 * Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
-            if(ratioIs <= 1.8){
+            if(isNaN(ratioIs) || ratioIs <= 18){
                 $('#latencyTestWarning').modal('show')
             } else {
                 TestLatencyMLS.setCurrentLatency(roundtriplatency)
             }
             TestLatencyMLS.startbutton.innerText = 'TEST AGAIN '
             TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-info'>lat: ${roundtriplatency} ms.</span>`
-            TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-light'>ratio: ${ratioIs.toFixed(2)}</span>`
+            TestLatencyMLS.startbutton.innerHTML += `<span class='badge badge-light'>ratio: ${ratioIs.toFixed(2)} dB</span>`
             TestLatencyMLS.startbutton.classList.remove('btn-outline-danger')
             if(TestLatencyMLS.debugCanvas) {
                 console.log('peak energy info', peak)
@@ -270,7 +250,7 @@ export class TestLatencyMLS {
             console.log('Channel', peak.channel )
             const roundtriplatency = peak.peakIndex / mlssignal.sampleRate * 1000
             console.log('Latency = ', roundtriplatency + ' ms')
-            const ratioIs = Math.log10(peak.peakValuePow / peak.mean)
+            const ratioIs = 10 * Math.log10(peak.peakValuePow / peak.mean)
             console.log('Corr Ratio', ratioIs)
             drawResults(signalrecorded.getChannelData(1),  'rightChannelCanvas', 'autocorrelationCanvas2', TestLatencyMLS.correlation)
         }      

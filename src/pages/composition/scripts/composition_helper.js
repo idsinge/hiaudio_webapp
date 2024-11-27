@@ -1,11 +1,12 @@
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
-import { LOADER_ELEM_ID, cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
+import { cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage, UserRole } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, playlist } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
 import { trackInfoHandler } from './trackinfo/trackinfo'
+import { cloneCompBtnHandler } from './clonecomposition'
 
 export let CURRENT_USER_ID = null
 export let NUM_TRACKS = 0
@@ -26,7 +27,6 @@ export const getComposition = (compositionId, callback, extraParams) => {
 
     let errorIs = null
     let tracksInfo = {}
-    cancelLoader(LOADER_ELEM_ID)
     fetch(ENDPOINT + "/composition/" + compositionId, {
         method: 'GET',
         headers: {
@@ -42,7 +42,7 @@ export const getComposition = (compositionId, callback, extraParams) => {
     })
     .then((data) => {
         
-        if (data) {
+        if (data && compositionId !== 'demopage') {
             tracksInfo = data
         }
     })
@@ -66,6 +66,7 @@ export const getComposition = (compositionId, callback, extraParams) => {
 }
 
 export const doAfterCompositionFetched = (tracksInfo) => {
+    cancelLoader()
     if(!DB){
         openDB(tracksInfo.viewer_id || 'null').then((db) =>{
             continueAfterGetIndexDb(db, tracksInfo)
@@ -117,17 +118,21 @@ const createArrayOfTracks = (tracksInfo, stored_tracks) => {
     // if(!isSafari){
     //     inputElement.accept inputElement.accept = ['.mp3','.wav','.m4a','.flac','.aac','.ogg']
     // }
-    const canUpload = tracksInfo.owner || (1<=tracksInfo.role && tracksInfo.role <= 3) || false
+    const canUpload = tracksInfo.owner || (UserRole.owner<=tracksInfo.role && tracksInfo.role <= UserRole.member) || false
     const userRole = tracksInfo.role
     CURRENT_USER_ID = tracksInfo.viewer_id
     let tracksAsObj = null
+    if(CURRENT_USER_ID && tracksInfo.is_template){
+        cloneCompBtnHandler(tracksInfo)
+    }
     if(stored_tracks?.length){       
         tracksAsObj = convertArrayStoredCompToObj(stored_tracks)        
     }
     if (canUpload) {
         playlist.controls.widgets.remove = false
         setUserPermission(true)
-        if (userRole === 1) {
+        if (userRole === UserRole.owner) {
+            document.getElementById('download-mix-btn').hidden = false
             enableCompositionSettings(tracksInfo)
         }
     }
@@ -231,7 +236,7 @@ const getCollectionLabel = (compInfo) => {
 }
 
 const drawCompositionDetailInfo = (tracksInfo) => {
-    let contentHtml = '<h1 class="post-title">Test DAW</h1>'
+    let contentHtml = `<br><h1 class="post-title">${tracksInfo.error || 'Test DAW'}</h1>`
     if (tracksInfo.title) {
         contentHtml = '<br>'
         contentHtml += getUserNameLabel(tracksInfo)

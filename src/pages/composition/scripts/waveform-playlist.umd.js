@@ -7410,7 +7410,7 @@ const MAX_CANVAS_WIDTH = 1000;
   }
 
   isPlaying() {
-    return this.playout.isPlaying();
+    return this.playout?.isPlaying();
   }
 
   setShouldPlay(bool) {

@@ -1,12 +1,30 @@
 import { uriCompositionPage, IS_AUTH } from './home'
 import { isuserpage, displayUserNameInCard } from './home_helper'
 import { PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage } from '../../../common/js/utils'
+const homeVideoUrl = new URL('../../../static/videos/compress_home_page_video.mp4', import.meta.url)
 
 const CARD_BADGE_STYLE = { 'coll': 'badge-collection', 'user': 'badge-warning', 'collab': 'badge-collab' }
 const CARD_BORDER_STYLE = { 'coll': 'border-collection', 'user': 'border-warning', 'collab': 'border-collab' }
 const URI_PAGE = { 'coll': uriCollectionPage, 'user': uriUserPage }
 
-const WELCOME_TEXT = 'We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.'
+//const WELCOME_TEXT = 'We present Hi-Audio Online Platform a web application for musicians, researchers and an open community of enthusiasts of audio and music with a view to build a public database of music recordings from a wide variety of styles and different cultures.'
+
+const WELCOME_VIDEO = 
+`<div id="landing-video-container" class="fullscreen-video-container">
+    <video playsinline autoplay loop muted>
+      <source src="${homeVideoUrl}">
+    </video>  
+  <div class='fullscreen-video-content'>
+    <div class="typewriter">
+      <h1>Welcome!</h1>      
+    </div>
+    <div class="h-100 d-flex">
+      <div class="m-auto">
+        <a id="start-link" class="btn btn-link" href="/login.html" role="button"><b>LET'S JAM?</b></a>
+      </div>
+    </div>    
+  </div>
+</div>`
 
 export const initNavigationMenu = () => {
     
@@ -19,6 +37,9 @@ export const initNavigationMenu = () => {
     </li>
     <li class='nav-item'>
         <a class='dropdown-item' href='${window.location.origin}/static/howto.html'>How-To</a>
+    </li>
+    <li class='nav-item'>
+        <a class='dropdown-item' href='#' id='openNewsModalButton' data-toggle='modal' data-target='#newsModal'><b>News<b></a>
     </li>
     `
 
@@ -35,7 +56,20 @@ export const initNavigationMenu = () => {
     <li class='nav-item'>
         <a class='nav-link' href='${window.location.origin + '/static/howto.html'}'>/ How-to</a>
     </li>
+    <li class='nav-item'>
+        <a class='nav-link' href='#' id='openNewsModalButton' data-toggle='modal' data-target='#newsModal'>/ News</a>
+    </li>
     `
+  handleNewsPopUpClose()
+}
+
+const handleNewsPopUpClose = () => {
+  $('#newsModal').on('hidden.bs.modal', function (event) {
+    const videoPromo = document.getElementById('promo-video')
+    if (!videoPromo.paused) {
+      videoPromo.pause()
+    }
+  })
 }
 
 export const getLegendButtons = (numberGroupsByCollections, numberGroupsCustom, numberSinglComp, endpoint, totalcomps) => {
@@ -57,13 +91,14 @@ export const paintMainElemsHomePage = (listElelemts, legendButtons) => {
     document.getElementById('searchInput').removeAttribute('disabled')
 }
 
-export const paintSingleComposition = (element, endpoint) => {    
+export const paintSingleComposition = (element, endpoint) => {
     const displayName = displayUserNameInCard(endpoint, element.username)
     const displayNumCollabs = element.contributors.length    
     return `<div class='card border-success'>                       
               <div class="card-body">
               ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[element.privacy]}">${PRIVACY_BADGE_TEXT[element.privacy]}</span>` : ''}
-              ${element.opentocontrib ? '<p class="badge badge-info">OPEN TO CONTRIB</p>' : ''}               
+              ${element.opentocontrib ? '<p class="badge badge-info">OPEN TO CONTRIB</p>' : ''}
+              ${element.is_template ? '<p class="badge badge-template">TEMPLATE</p>' : ''}  
                   <div>
                     <p class="list-group-item-heading">  
                       <a href='${uriCompositionPage + element.uuid}' class='card-url'>
@@ -93,7 +128,8 @@ export const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
     
     return `<div class="list-group-item ">
               ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[item.privacy]}">${PRIVACY_BADGE_TEXT[item.privacy]}</span>` : ''}
-              ${item.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}  
+              ${item.opentocontrib ? '<span class="badge badge-info">OPEN TO CONTRIB</span>' : ''}
+              ${item.is_template ? '<span class="badge badge-template">TEMPLATE</span>' : ''}  
               <p class="list-group-item-heading">
                 <a href='${uriCompositionPage + item.uuid}' class='card-url'>
                     <h5 class='card-title'>${item.title}</h5>
@@ -135,18 +171,22 @@ export const getUICardElemForCollection = (typebadge, numitems, groupTitle, grou
             </div>`
 }
 
-export const cleanWelcomeContainer = (hidetext) => {
+export const cleanWelcomeContainer = (hidetext, withScroll) => {
     const welcomecontainer = document.getElementById('welcomecontainer')
-    if (welcomecontainer.lastChild?.id) {
-        welcomecontainer.removeChild(welcomecontainer.lastChild)
+    const videoContainer = document.getElementById('landing-video-container')
+    if (welcomecontainer.lastChild?.id  && welcomecontainer.lastChild?.id !== 'welcometext') {
+      welcomecontainer.removeChild(welcomecontainer.lastChild)
     }
-    if (!hidetext) {
+    if (!hidetext && !welcomecontainer.lastChild && !videoContainer) {
         const welcometextelem = document.createElement('div')
         welcometextelem.id = 'welcometext'
-        welcometextelem.classList.add('col-sm-6')
-        welcometextelem.classList.add('mx-auto')
-        welcometextelem.innerHTML = `<em>${WELCOME_TEXT}</em>`
+        welcometextelem.innerHTML = IS_AUTH ? '': `${WELCOME_VIDEO}`
         document.getElementById('welcomecontainer').appendChild(welcometextelem)
+    }
+    if(withScroll){
+      document.getElementById('grid').scrollIntoView({
+          behavior: 'smooth'
+      })
     }
 }
 
@@ -174,7 +214,7 @@ export const updateUIWithUserInfo = (username, useruid) => {
     userInfoContainer.innerHTML = `<div class="card mb-3" style="max-width: 540px;">
                                     <div class="row no-gutters">
                                       <div class="col-md-4">
-                                        <img class="img-fluid" src="https://picsum.photos/seed/${useruid}/200" alt="User Picture">
+                                        <img class="img-fluid hidden-first" src="https://picsum.photos/seed/${useruid}/200" alt="User Picture" width="200" height="200">
                                       </div>
                                       <div class="col-md-8">
                                         <div class="card-body">

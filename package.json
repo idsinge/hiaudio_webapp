@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "description": "Simple Web DAW",
   "author": "Telecom Paris",
+  "browserslist": "since 2018, not ie <= 8",
   "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp",
   "scripts": {
-    "prepare":"rm -rf .parcel-cache ../public",
-    "dev": "npm run prepare && parcel --no-cache src/*.html src/static/*.html 'src/static/videos/*.MP4' --port 8000 --https --dist-dir ../public",
-    "build": "npm run prepare && parcel build 'src/*.html' 'src/static/*.html' 'src/static/videos/*.MP4' --dist-dir ../public",
+    "prepare": "rm -rf .parcel-cache ../public",
+    "dev": "npm run prepare && parcel --no-cache src/*.html src/static/*.html 'src/static/videos/*.mp4' --port 8000 --https --dist-dir ../public",
+    "build": "npm run prepare && parcel build 'src/*.html' 'src/static/*.html' 'src/static/videos/*.mp4' --dist-dir ../public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

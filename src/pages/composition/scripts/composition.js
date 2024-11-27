@@ -11,9 +11,14 @@ import { triggerMetronomeButton, triggerLMetronomeHandler } from './metronome/me
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
 export let USER_PERMISSION = false
+export let MIC_ERROR = null
 
 export const setUserPermission = (permission) => {
   USER_PERMISSION = permission
+}
+
+export const setMicError = (err) => {
+  MIC_ERROR = err
 }
 
 export let playlist = null
@@ -61,7 +66,7 @@ const testMicButtonForSafari = () => {
   const browserVersion = parseInt(recorder.browserId.version)
   if((recorder.browserId.browser === 'safari') && (browserVersion >= 16)) {
     return `<li class='nav-item'>
-              <a class='nav-link' href='#' id='testmicrophone' data-toggle='modal' data-target='#testMicrophoneModal'>
+              <a class='nav-link' href='#' id='testmicrophone'>
                 <i class='fa-solid fa-microphone'></i> TEST MIC
               </a>
             </li>`
@@ -72,20 +77,79 @@ const testMicButtonForSafari = () => {
 
 const createTestButtons = () => {
   document.getElementById('useroptions').innerHTML = `${triggerTestLatencyButton()}${testMicButtonForSafari()}${triggerMetronomeButton()}`
+  const testMicBtn = document.getElementById('testmicrophone')  
+  if(testMicBtn){
+    testMicButtonClickHandler(testMicBtn)
+  }
+}
+
+const testMicButtonClickHandler = (testMicBtn) => {  
+  testMicBtn.onclick = openTestMicModalDialog
+}
+
+const openTestMicModalDialog = () => {  
+  if(MIC_ERROR){
+    displayMicErrorPopUp()
+  } else {
+    $('#testMicrophoneModal').modal('show')
+  }
+}
+
+export const displayHiddenControls = () => {
+  const hiddenElems = document.querySelectorAll('.hidden-first')
+  if(hiddenElems.length){
+    for(let i = 0 ; i < hiddenElems.length; i++){
+      hiddenElems[i].classList.add('visible-animate')
+    }
+  }
+}
+
+export const displayMicErrorPopUp =  (err) => {
+  DynamicModal.dynamicModalDialog(
+      `<p>Please, verify the following error related to your microphone/input: &#10;&#13;</p>
+      <p><b><i>${err || MIC_ERROR}</i></b></p>`,
+      null,
+      '',
+      'Close',
+      'Warning!',
+      'bg-warning'
+  )
+}
+
+export const displayAudioSourceErrorPopUp =  (err) => {
+  DynamicModal.dynamicModalDialog(
+      `<p>There was a problem while loading the data, probably not supported type of media by the browser: &#10;&#13;</p>
+      <p class="breakword"><b>${err }</b></p>`,
+      null,
+      '',
+      'Close',
+      'Error',
+      'bg-danger',
+      hideDownloadProgressBar
+  )
+}
+
+export const hideDownloadProgressBar = () => {
+  const downloadProgressElem = document.getElementById('download-progress-elems')
+  if(downloadProgressElem && !downloadProgressElem.hidden){
+    downloadProgressElem.remove()
+  }
+  document.getElementById('useroptions').innerHTML = `${triggerTestLatencyButton()}${testMicButtonForSafari()}${triggerMetronomeButton()}`
 }
 
 activateGoHomeLink()
 createTestButtons()
+recorder.init(compositionId)
 
 if (compositionId === 'demopage') {
+  document.getElementById('download-mix-btn').hidden = false
   DynamicModal.dynamicModalDialog(
     `Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`,
     null,
     '',
     'Close',
     'Warning!',
-    'bg-warning'
+    'bg-warning',
+    displayHiddenControls
   )
 }
-
-recorder.init(compositionId)

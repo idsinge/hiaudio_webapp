@@ -25,5 +25,6 @@ const updateDescription = async (compId, newdescription) => {
     if (resultNewDescription.ok) {
         CURRENT_DESCRIPTION = newdescription
         document.getElementById('comp-description').innerHTML = newdescription
+        document.getElementById('clonedescription').value = newdescription + ' (Copy)'
     }
 }

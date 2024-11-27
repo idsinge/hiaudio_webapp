@@ -5,6 +5,17 @@
     border-radius: 5px;
 }
 
+@media only screen 
+  and (min-device-width: 320px) 
+  and (max-device-width: 355px)
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (orientation: portrait) {
+
+    .card {
+        width: 90%;
+    }
+}
+
 .card:hover {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
@@ -31,6 +42,7 @@
     list-style: none;
     margin: 2em;
     display: grid;
+    grid-gap: 20px;
     gap: 20px;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
@@ -68,6 +80,11 @@
     background-color: #e9858a;
 }
 
+.badge-template {
+    color: white;
+    background-color: #e06b3c;
+}
+
 .border-collab {
     border-color: #e9858a;
 }
@@ -78,4 +95,24 @@
 
 .badge-warning {
     color: white;
+}
+
+#infocontainer {
+    margin-top: 2em;
+}
+
+.hidden-first {
+    visibility: hidden;
+    animation: 5s fadeIn;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        visibility: visible;
+        opacity: 1;
+    }
 }

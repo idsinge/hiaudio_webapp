@@ -1,7 +1,7 @@
-import { LOADER_ELEM_ID, cancelLoader, callJsonApi } from './utils'
+import { cancelLoader, callJsonApi } from './utils'
 
 export const checkIfTermsAccepted = (userprofile, callback) => {
-    cancelLoader(LOADER_ELEM_ID)
+    cancelLoader()
     callback(userprofile?.terms_accepted)
 }
 
@@ -17,13 +17,13 @@ export const handleTermsNotAccepted = () => {
 }
 
 const rqstAcceptTerms = async () => {
-    const data = await callJsonApi('/acceptterms', 'PUT')
+    const data = await callJsonApi('/acceptterms', 'PUT', null, 'Welcome...')
     if (data.ok) {
         $('#acceptTermsModal').modal('hide')
     }
 }
 const rqstRejectTerms = async () => {
-    const data = await callJsonApi('/rejectterms', 'PUT')
+    const data = await callJsonApi('/rejectterms', 'PUT', null, 'Deleting information...')
     if (data.ok) {
         $('#acceptTermsModal').modal('hide')
         window.location.href = window.location.origin

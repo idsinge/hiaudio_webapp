@@ -101,7 +101,7 @@ const disableEdition = async () => {
     setBackToReadOnly()    
   } else {
     const body = {user_name: newname}
-    const resultNewName = await callJsonApi('/updateusername', 'PATCH', body)  
+    const resultNewName = await callJsonApi('/updateusername', 'PATCH', body, 'Updating user...')  
     if(!resultNewName.ok){    
       usernameinput.classList.add('is-invalid')     
       document.getElementById('validationusernameresult').innerText = 'Sorry, ' + resultNewName

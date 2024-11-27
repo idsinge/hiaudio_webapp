@@ -1,4 +1,4 @@
-import { startLoader, cancelLoader, callJsonApi } from '../../../../common/js/utils'
+import { startLoader, cancelLoader, callJsonApi, UserRole } from '../../../../common/js/utils'
 import DynamicModal  from '../../../../common/js/modaldialog'
 import { playlist } from '../composition'
 
@@ -9,6 +9,8 @@ let CURRENT_TRACKID = null
 let RESERVED_KEYS = null
 
 const editButton = document.getElementById('edittrackinfobutton')
+const buttonCreateNew = document.getElementById('btn-add-new-annot')
+const trackinfoModalFooter = document.getElementById('trackinfo-modal-footer')
 
 export const trackInfoHandler = () => {
     saveButtonHandler()
@@ -17,13 +19,14 @@ export const trackInfoHandler = () => {
     editButton.addEventListener('click', clickEditButtonHandler, false)
 }
 
-export const createTrackInfoTable = async (trackpos, trackname, trackid) => {
+export const createTrackInfoTable = async (trackpos, trackname, trackid, role) => {
     EDIT_STATUS = false    
     CURRENT_TRACKPOS = trackpos
     CURRENT_TRACKID = trackid
     editButton.innerText = 'Edit'
-    startLoader('trackinfoloader', 'Loading track info...')
-    const data = await callJsonApi('/getinfotrack/' + trackid, 'GET')
+    startLoader('Loading track info...')
+    const data = await callJsonApi('/getinfotrack/' + trackid, 'GET')    
+    handleUIeditMode(role)
     if (typeof data === 'object') {
         CURRENT_TRACKINFO = data
         renderTable(data, null)
@@ -40,8 +43,19 @@ export const createTrackInfoTable = async (trackpos, trackname, trackid) => {
     }
 }
 
+const handleUIeditMode = (role) => {
+    if(role !== UserRole.owner && role !== UserRole.admin){
+        editButton.hidden = true
+        buttonCreateNew.hidden = true
+        trackinfoModalFooter.hidden = true
+    } else {
+        editButton.hidden = false
+        buttonCreateNew.hidden = false
+        trackinfoModalFooter.hidden = false
+    }
+}
+
 const createNewAnnotationBtnHandler = () => {
-    const buttonCreateNew = document.getElementById('btn-add-new-annot')
     buttonCreateNew.onclick = () => {
         const uniqueId = Date.now()
         const tableContainer = document.getElementById('trackinfotablebody')
@@ -111,7 +125,7 @@ const getReservedKeysFromResp = (resp) => {
 }
 
 const renderTable = async (trackinfo, currenttrackname) => {
-    cancelLoader('trackinfoloader')
+    cancelLoader()
     const tableContainer = document.getElementById('trackinfotablebody')
     let html = ''
     if (trackinfo) {
@@ -229,11 +243,11 @@ const saveButtonHandler = async () => {
     confirmTrackInfoButton?.addEventListener('click', async (e) => {
         const editedObject = getEditedFields()
         if (editedObject.title || editedObject.annotations.length > 0) {
-            startLoader('trackinfoloader', 'Updating track info...')
+            startLoader('Updating track info...')
             const bodyrqst = {trackid:CURRENT_TRACKID}
             const data = await callJsonApi('/updatetrackinfo', 'PATCH', {...editedObject, ...bodyrqst})
             handleUpdatetrackInfo(data, editedObject)
-            cancelLoader('trackinfoloader')
+            cancelLoader()
         }
         $('#trackInfoModal').modal('hide')
     })

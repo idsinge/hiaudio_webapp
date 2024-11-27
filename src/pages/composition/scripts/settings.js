@@ -5,6 +5,7 @@ import {openSettingsButtonHandler, saveParentCollection} from './settings/setcol
 import {setUITitle, getCurrentTitle, saveTitle} from './settings/settitle'
 import {setUIDescription, getCurrentDescription, saveDescription} from './settings/setdescription'
 import {setOpenToContrib, getOpenToContrib, saveOpenToContrib} from './settings/setopentocontrib'
+import {setCompAsTemplate, getCompAsTemplate, saveCompAsTemplate} from './settings/setastemplate'
 import {getPrivacyLevel, setUIPrivacy, savePrivacyLevel, privateRadioButtonHandler} from './settings/setprivacy'
 import {setUIContributors,
     clearUIContributors,
@@ -17,21 +18,29 @@ import {setUIContributors,
 } from './settings/setcontributors'
 
 export const enableCompositionSettings = (tracksInfo) => {
+    if(tracksInfo.user_isadmin && !tracksInfo.cloned_from){
+        document.getElementById('form-group-marktemplate').hidden = false
+    }
     setUIContributors(tracksInfo.contributors)
     addContributorButtonHandler(tracksInfo.uuid)
     setUITitle(tracksInfo.title)
     setUIDescription(tracksInfo.description)
     setUIPrivacy(tracksInfo.privacy)
     setOpenToContrib(tracksInfo.opentocontrib)
-    saveButtonHandler(tracksInfo.uuid)
+    setCompAsTemplate(tracksInfo.is_template)
+    saveButtonHandler(tracksInfo)
     cancelButtonHandler(tracksInfo)
     createSettingsButton()
     privateRadioButtonHandler()
-    openSettingsButtonHandler(tracksInfo?.collection_id)    
+    if(!tracksInfo.cloned_from){
+        openSettingsButtonHandler(tracksInfo?.collection_id)
+    } else {
+        document.getElementById('listCollContainerNewColl').innerHTML = tracksInfo.parent_collection ? `<h5><span class="badge badge-secondary">${tracksInfo.parent_collection}</span></h5>` : ''
+    }
 }
 
 const createSettingsButton = () => {
-    cancelLoader('settingsloader')
+    cancelLoader()
     const ulElem = document.getElementById('useroptions')
     const liElem = document.createElement('li')
     liElem.innerHTML = `<li class="nav-item">
@@ -77,6 +86,7 @@ const clickCancelButtonHandler = (compInfo) => {
     setUIDescription(getCurrentDescription()||compInfo.description)        
     setUIPrivacy(getPrivacyLevel() || compInfo.privacy)         
     setOpenToContrib(getOpenToContrib() || compInfo.opentocontrib)
+    setCompAsTemplate(getCompAsTemplate() || compInfo.is_template)
     clearUIContributors()     
     setUIContributors(getCurrentContributors().length ? getCurrentContributors() : compInfo.contributors)        
     clearAuxContribArrays()
@@ -88,25 +98,27 @@ const cancelButtonHandler = (compInfo) => {
     cancelSettingsButton?.addEventListener('click', () => { clickCancelButtonHandler(compInfo)})       
 }
 
-const saveButtonHandler = async (compId) => {
+const saveButtonHandler = async (compinfo) => {
+    const compId = compinfo.uuid
     const confirmSettingsButton = document.getElementById('updatecompositionbutton')
     confirmSettingsButton?.addEventListener('click', async (e) => {
-        startLoader('settingsloader', 'Updating Settings...')
+        startLoader('Updating Settings...')
         const deleteComp = document.getElementById('deleteComposition').checked
         if (deleteComp === true) {
             await deleteComposition(compId)
-            cancelLoader('settingsloader')
+            cancelLoader()
         } else {
             await saveTitle(compId)
             await saveDescription(compId)
             await savePrivacyLevel(compId)
             await saveOpenToContrib(compId)
+            await saveCompAsTemplate(compinfo)
             await saveNewContributors()     
             await saveRemoveContributors(compId)
             await saveParentCollection(compId)
             updateContributorsAtCompPage()
             $('#settingsModal').modal('hide')
-            cancelLoader('settingsloader')
+            cancelLoader()
         }
     })
 }

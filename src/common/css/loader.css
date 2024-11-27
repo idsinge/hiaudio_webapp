@@ -1,36 +1,19 @@
-/* https://www.w3schools.com/howto/howto_css_loader.asp */
 .loader-container {
   position: absolute;
   left: 50%;
-  top: 50%;
-  z-index: 1;
+  top: 100px;
+  z-index: 1055;
   transform: translate(-50%, -50%);
   text-align: center;
 }
-.loader-text {
-  margin-top: 10px;
-  color: #db5834;
-  background-color: white;
-  font-size: 16px;
-}
-.loader, .settingsloader {
-  width: 150px;
-  height: 150px;
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  margin: 0 auto;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
+.loader-hidden {
+  display: none; 
 }
 
-/* Safari */
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.download-progress-elems {
+  position: absolute;
+  left: 50%;
+  top: 80%;
+  transform: translate(-50%, -50%);
+  width:max-content;
 }

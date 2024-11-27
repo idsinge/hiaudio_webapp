@@ -1,6 +1,7 @@
 
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
+import { startLoader, cancelLoader } from '../../../common/js/utils'
 import {uriCompositionPage, IS_AUTH} from './home'
 import {getCollections, getCollectionsError, createListCollections } from '../../../common/js/collectionshandler.js'
 import './editcollections'
@@ -30,7 +31,7 @@ createNewButton?.addEventListener('click', clickNewButtonHandler, false)
 createNewButtonAtHome?.addEventListener('click', clickNewButtonHandler, false)
 
 const getCompCollSuccess = (list) => {
-  document.getElementById('listCollContainer').replaceChildren()                                   
+  document.getElementById('listCollContainer').innerHTML = ''
   createListCollections(list, 'listCollContainer')
 }
 
@@ -39,7 +40,7 @@ const saveEventListener = (saveCompositionButton) =>{
 }
 
 const saveEventListenerHandler = (e) => {
-  const newCreation = document.getElementById('typeOfNewCreation').value
+  const newCreation = document.querySelector('input[name="newMusicTypeRadioButton"]:checked').value
   let apiMethod = '/newcomposition'
   if(newCreation === 'coll'){
     apiMethod = '/newcollection'
@@ -66,7 +67,7 @@ const saveEventListenerHandler = (e) => {
   })
 
   let errorIs = null
-
+  startLoader('Creating...')
   fetch(ENDPOINT + apiMethod, {
     method: 'POST',
     headers: {
@@ -82,13 +83,15 @@ const saveEventListenerHandler = (e) => {
       return r.json()
     })
     .then(data => {
+      cancelLoader()
       if (data) {
         verifyResponse(data)
       } else {
         throw new Error(data)
       }
-    }).catch((error) => {
+    }).catch((error) => {      
       errorIs = error
+      cancelLoader()
     })
 }
 
