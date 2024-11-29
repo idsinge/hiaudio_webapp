@@ -129,6 +129,28 @@ export const displayAudioSourceErrorPopUp =  (err) => {
   )
 }
 
+export const displayWarningTestDAW = () => {
+  DynamicModal.dynamicModalDialog(
+    `Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`,
+    null,
+    '',
+    'Close',
+    'Warning!',
+    'bg-warning',
+    displayHiddenControls
+  )
+}
+
+export const displayWarningNotLoggedIn = () => {
+  document.getElementById('toastNotLoggedIn').style.display = ''
+  $('#toastNotLoggedIn').toast('show');
+}
+
+export const displayWarningNotMember = () => {
+  document.getElementById('toastNotPermission').style.display = ''
+  $('#toastNotPermission').toast('show');
+}
+
 export const hideDownloadProgressBar = () => {
   const downloadProgressElem = document.getElementById('download-progress-elems')
   if(downloadProgressElem && !downloadProgressElem.hidden){
@@ -142,13 +164,5 @@ recorder.init(compositionId)
 
 if (compositionId === 'demopage') {
   document.getElementById('download-mix-btn').hidden = false
-  DynamicModal.dynamicModalDialog(
-    `Be careful, the music you record or upload won't be saved, as you are not a registered user and this is only a test feature!`,
-    null,
-    '',
-    'Close',
-    'Warning!',
-    'bg-warning',
-    displayHiddenControls
-  )
+  displayWarningTestDAW()
 }

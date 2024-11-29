@@ -3,7 +3,7 @@
  * This enables projects to create/control the useability of the project.
 */
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
-import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp, displayAudioSourceErrorPopUp, hideDownloadProgressBar } from './composition'
+import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp, displayAudioSourceErrorPopUp, hideDownloadProgressBar, displayWarningNotLoggedIn, displayWarningNotMember } from './composition'
 import { CURRENT_USER_ID, NUM_TRACKS } from './composition_helper'
 import { metronome } from './metronome/metronomehandler'
 
@@ -217,6 +217,11 @@ const startRecording = (currentLatency) => {
 $container.on("click", ".btn-record", function() {
   if(!MIC_ERROR) {
     if(!isRecording){
+      if(!CURRENT_USER_ID){
+        displayWarningNotLoggedIn()
+      } else if(!USER_PERMISSION){
+        displayWarningNotMember()
+      }
       let currentLatency = localStorage.getItem('latency')
       currentLatency = currentLatency? parseInt(currentLatency):0
       startRecording(currentLatency)
