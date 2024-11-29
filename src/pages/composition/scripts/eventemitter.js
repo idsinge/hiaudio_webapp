@@ -5,6 +5,7 @@
 import { DB, openDB, updateTable } from '../../../common/js/indexedDB'
 import { playlist, fileUploader, USER_PERMISSION, displayHiddenControls, MIC_ERROR, displayMicErrorPopUp, displayAudioSourceErrorPopUp, hideDownloadProgressBar } from './composition'
 import { CURRENT_USER_ID, NUM_TRACKS } from './composition_helper'
+import { metronome } from './metronome/metronomehandler'
 
 /* https://github.com/naomiaro/waveform-playlist/blob/master/dist/waveform-playlist/js/emitter.js */
 //var ee = playlist.getEventEmitter();
@@ -151,6 +152,9 @@ $container.on("click", ".btn-loop", function() {
 });
 
 $container.on("click", ".btn-play", function() {
+  if(metronome?.activate && !metronome?.isRunning){
+    metronome.start()
+  }
   ee.emit("play");
   $(".btn-group .btn-record").prop('disabled', true);
 });
@@ -162,6 +166,9 @@ $container.on("click", ".btn-pause", function() {
 });
 
 $container.on("click", ".btn-stop", function() {
+  if(metronome?.activate && metronome?.isRunning){
+    metronome.stop()
+  }
   isLooping = false;
   if(isRecording){
     isRecording = false
@@ -193,6 +200,12 @@ $container.on("click", ".btn-clear", function() {
 
 const startRecording = (currentLatency) => {
   if(!isRecording){
+    if(metronome?.activate){
+      if(metronome?.isRunning){
+        metronome.stop()
+      }      
+      metronome.start()
+    }
     isRecording = true;  
     const latencyInSeconds = currentLatency/1000;
     $(".btn-group button").prop('disabled', true);

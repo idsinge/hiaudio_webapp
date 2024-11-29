@@ -6,6 +6,7 @@ import { triggerTestLatencyButton, triggerLatencyTestHandler } from './latencyte
 import DynamicModal from '../../../common/js/modaldialog'
 import { activateGoHomeLink } from '../../../common/js/utils'
 import detectBrowser from '../../../common/js/detect-browser.js'
+import { triggerMetronomeButton, triggerLMetronomeHandler } from './metronome/metronomehandler'
 
 const queryString = window.location.search
 export const COMPOSITION_ID = queryString.split('compositionId=')[1]
@@ -53,6 +54,7 @@ export const createWaveformPlaylist = (audCtxt, stream) => {
   trackHandler = new TrackHandler()
   fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
   triggerLatencyTestHandler(stream)
+  triggerLMetronomeHandler()
 }
 
 const browserId = detectBrowser()
@@ -74,7 +76,7 @@ const testMicButtonForSafari = () => {
 }
 
 const createTestButtons = () => {
-  document.getElementById('useroptions').innerHTML = `${triggerTestLatencyButton()}${testMicButtonForSafari()}`
+  document.getElementById('useroptions').innerHTML = `${triggerTestLatencyButton()}${testMicButtonForSafari()}${triggerMetronomeButton()}`
   const testMicBtn = document.getElementById('testmicrophone')  
   if(testMicBtn){
     testMicButtonClickHandler(testMicBtn)
