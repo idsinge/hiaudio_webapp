@@ -73,6 +73,13 @@ const swingChangeHandler = () => {
     }
 }
 
+const animateMetronomeIcon = () => {
+    document.getElementById('metronome-stick').classList.add('metronome-animated')
+}
+
+const stopMetronomeIcon = () => {
+    document.getElementById('metronome-stick').classList.remove('metronome-animated')
+}
 
 const playButtonHandler = () => {
     
@@ -159,6 +166,8 @@ const openMetronomeDialog = () => {
     if (!metronome) {
         metronome = new Metronome()
         metronome.init()
+        metronome.callback_start = animateMetronomeIcon
+        metronome.callback_stop = stopMetronomeIcon
     }
     if (metronome.isRunning) {
         document.getElementById('play-pause-icon').className = 'pause-metronome-icon'

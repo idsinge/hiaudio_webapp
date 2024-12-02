@@ -14,6 +14,8 @@ export default class Metronome {
     barLength = 8
     currentEighthNote = 0
     activate = false
+    callback_start = null
+    callback_stop = null
 
     init() {
         this.timerWorker = new Worker(
@@ -32,17 +34,17 @@ export default class Metronome {
         const sw = this.swing / 100
         // Advance current note and time by a quarter note (crotchet if you're posh)
         const secondsPerBeat = 60.0 / this.tempo // Notice this picks up the CURRENT tempo value to calculate beat length.     
-        if (this.currentEighthNote == 0) {
+        if (this.currentEighthNote === 0) {
             this.nextNoteTime += secondsPerBeat * sw
         }
         else {
             this.nextNoteTime += secondsPerBeat * (1 - sw)
         }
         this.currentQuarterNote++    // Advance the beat number, wrap to zero
-        if (this.currentQuarterNote == (this.barLength)) {
+        if (this.currentQuarterNote === (this.barLength)) {
             this.currentQuarterNote = 0
         }
-        if (this.currentEighthNote == 0) {
+        if (this.currentEighthNote === 0) {
             this.currentEighthNote = 1
         }
         else { this.currentEighthNote = 0 }
@@ -53,11 +55,11 @@ export default class Metronome {
         this.notesInQueue.push({ note: beatNumber, time: time })        
         const osc = this.audioContext.createOscillator()
         const envelope = this.audioContext.createGain()
-        if (this.currentQuarterNote == 0) {
+        if (this.currentQuarterNote === 0) {
             osc.frequency.value = 2000
         }
         else {
-            osc.frequency.value = (beatNumber % this.accent == 0) ? 1000 : 800
+            osc.frequency.value = (beatNumber % this.accent === 0) ? 1000 : 800
         }
         envelope.gain.value = 1
         envelope.gain.exponentialRampToValueAtTime(1, time + 0.001)
@@ -79,7 +81,7 @@ export default class Metronome {
     start() {
         if (this.isRunning) return
 
-        if (this.audioContext == null) {
+        if (this.audioContext === null) {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
         }
 
@@ -90,13 +92,13 @@ export default class Metronome {
 
         this.timerWorker.postMessage('start')
 
-        document.getElementById('metronome-stick').classList.add('metronome-animated')
+        this.callback_start()
     }
 
     stop() {
         this.isRunning = false
         this.timerWorker.postMessage('stop')
-        document.getElementById('metronome-stick').classList.remove('metronome-animated')
+        this.callback_stop()
     }
 
     startStop() {
