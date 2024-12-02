@@ -175,7 +175,7 @@ const openMetronomeDialog = () => {
 }
 
 export const triggerMetronomeButton = () => {
-    return `<li class='nav-item' hidden>
+    return `<li class='nav-item'>
     <a class='nav-link' href='#' id='trigger-metronome-btn' data-toggle='modal' 
       data-toggle='popover' data-placement='bottom'  title='Tic Tac...' data-content='Volume please'>
       METRONOME</a>
