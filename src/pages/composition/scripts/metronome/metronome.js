@@ -89,11 +89,14 @@ export default class Metronome {
         this.nextNoteTime = this.audioContext.currentTime + 0.05
 
         this.timerWorker.postMessage('start')
+
+        document.getElementById('metronome-stick').classList.add('metronome-animated')
     }
 
     stop() {
         this.isRunning = false
         this.timerWorker.postMessage('stop')
+        document.getElementById('metronome-stick').classList.remove('metronome-animated')
     }
 
     startStop() {

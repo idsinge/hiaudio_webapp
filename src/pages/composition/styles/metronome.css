@@ -61,3 +61,49 @@
 .metronome-switch {
   transform: scale(1.4);
 }
+
+.m-container {
+  position: relative;
+  display: inline-block;
+}
+.m-container .m-stick {
+  width: 2px;
+  height: 20px;
+  background: silver;
+  position: absolute;
+  top: -4px;
+  left: 10px;
+  transform-origin: 50% 100%;
+}
+.m-container .m-stick:after {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 5px;
+  background: silver;
+  position: absolute;
+  left: -3px;
+  top: 2px;
+  -webkit-clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
+  clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
+}
+.m-body {  
+  -webkit-clip-path: polygon(37% 0, 63% 0, 100% 97%, 93% 97%, 91% 100%, 10% 100%, 7% 97%, 0 97%);
+  clip-path: polygon(37% 0, 63% 0, 100% 97%, 93% 97%, 91% 100%, 10% 100%, 7% 97%, 0 97%);
+  background: gray;
+  width: 20px;
+  height: 17px;
+}
+
+.metronome-animated {
+animation: metronome 1.5s ease-in-out infinite;
+}
+
+@keyframes metronome {
+  0%, 100% {
+    transform: rotate(35deg);
+  }
+  50% {
+    transform: rotate(-35deg);
+  }
+}
