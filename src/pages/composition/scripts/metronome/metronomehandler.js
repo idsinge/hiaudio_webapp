@@ -88,6 +88,7 @@ const playButtonHandler = () => {
 
 const activationHandler = () => {
     metronome.activate = !metronome.activate
+    document.getElementById('metronome-icon').hidden = !metronome.activate
 }
 
 const openMetronomeDialog = () => {
@@ -165,6 +166,7 @@ const openMetronomeDialog = () => {
     
     const metronomeSwitch = document.getElementById('metronomeSwitch')    
     metronomeSwitch.checked = metronome.activate
+    document.getElementById('metronome-icon').hidden = !metronome.activate
     
     document.getElementById('play-button').onclick = playButtonHandler
     tempoChangeHandler()
@@ -178,7 +180,12 @@ export const triggerMetronomeButton = () => {
     return `<li class='nav-item'>
     <a class='nav-link' href='#' id='trigger-metronome-btn' data-toggle='modal' 
       data-toggle='popover' data-placement='bottom'  title='Tic Tac...' data-content='Volume please'>
-      METRONOME</a>
+      METRONOME <div id="metronome-icon" class="m-container" hidden>
+        <div class="m-body">
+        </div>
+        <div id="metronome-stick" class="m-stick"></div>
+      </div>
+    </a>
   </li>`}
 
 export const triggerLMetronomeHandler = () => {
