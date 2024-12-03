@@ -1,17 +1,6 @@
-.metronome-button {
-  padding: 6px;
-  border: none;
-  border-radius: 100%;
-  width: 40px;
-  height: 40px;
-  margin: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
 .play-pause-metronome-button {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,18 +32,18 @@
 .play-metronome-icon {
   width: 0;
   height: 0;
-  border-top: 30px solid transparent;
-  border-bottom: 30px solid transparent;
-  border-left: 50px solid #e9e9e9;
-  margin-left: 15px;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-left: 30px solid #e9e9e9;
+  margin-left: 5px;
 }
 
 .pause-metronome-icon {
-  width: 15px;
-  height: 60px;
+  width: 10px;
+  height: 30px;
   border: none;
-  border-left: 15px solid #e9e9e9;
-  border-right: 15px solid #e9e9e9;
+  border-left: 10px solid #e9e9e9;
+  border-right: 10px solid #e9e9e9;
   box-sizing: revert;
 }
 
@@ -62,6 +51,10 @@
   transform: scale(1.4);
 }
 
+[data-id="beatsperbar-change"]{
+  margin-left: 7px;
+  margin-right: 7px;
+}
 .m-container {
   position: relative;
   display: inline-block;
