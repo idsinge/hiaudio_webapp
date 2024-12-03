@@ -155,6 +155,7 @@ const openMetronomeDialog = () => {
     metronomeSwitch.onclick = activationHandler
     document.getElementById('topnumbersignature').textContent = metronome.beatsPerBar
     document.getElementById('bottomnumbersignature').textContent = metronome.noteDuration
+    document.getElementById('notedurationselectable').value = metronome.noteDuration
     document.getElementById('noteMusicSymbol').textContent = notes_duration_symbols[metronome.noteDuration]
 }
 
