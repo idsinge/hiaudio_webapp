@@ -87,30 +87,30 @@ const openMetronomeDialog = () => {
             </div>
         </div>
         <div class="metronome-controls">
-            <button id="play-button" class="metronome-button play-pause-metronome-button btn-success">
+            <button id="play-button" type="button" class="btn metronome-button play-pause-metronome-button btn-success">
                 <div id="play-pause-icon" class="play-metronome-icon"></div>
             </button>
         </div>        
         <div class="metronome-controls">
         
-            <button data-id="tempo-change" class="metronome-button" data-change="-5">-5</button>
-            <button data-id="tempo-change" class="metronome-button" data-change="-1">-</button>
+            <button data-id="tempo-change" type="button" class="btn btn-secondary metronome-button" data-change="-5">-5</button>
+            <button data-id="tempo-change" type="button" class="btn btn-light metronome-button" data-change="-1">-</button>
 
             <div class="tempo-container">
                 <div id="tempo" class="number-metronome">120</div>
                 <div class="subtext-metronome">bpm</div>
             </div>
 
-            <button data-id="tempo-change" class="metronome-button" data-change="+1">+</button>
-            <button data-id="tempo-change" class="metronome-button" data-change="+5">+5</button>
+            <button data-id="tempo-change" type="button" class="btn btn-light metronome-button" data-change="+1">+</button>
+            <button data-id="tempo-change" type="button" class="btn btn-secondary metronome-button" data-change="+5">+5</button>
         </div>
         <div class="metronome-controls">
-            <button data-id="beatsperbar-change" class="metronome-button" data-change="-1">-</button>
+            <button data-id="beatsperbar-change" type="button" class="btn btn-light metronome-button" data-change="-1">-</button>
             <div class="bar-container">
                 <div id="beatsperbar" class="number-metronome">4</div>
-                <div class="subtext-metronome">beats / bar</div>
+                <div class="subtext-metronome">&nbsp;beats / bar</div>                
             </div>
-            <button data-id="beatsperbar-change" class="metronome-button" data-change="+1">+</button>
+            <button data-id="beatsperbar-change" type="button" class="btn btn-light metronome-button" data-change="+1">+</button>            
         </div>
         <div class="metronome-controls">
             <div class="tempo-container">
