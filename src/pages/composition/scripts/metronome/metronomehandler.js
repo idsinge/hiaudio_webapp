@@ -25,54 +25,40 @@ const tempoChangeHandler = () => {
     }
 }
 
-const accentChangeHandler = () => {
-    const accent = document.getElementById('accent')
-    accent.textContent = metronome.accent
-    const accentChangeButtons = document.querySelectorAll(`[data-id='accent-change']`)
-    for (let i = 0; i < accentChangeButtons.length; i++) {
-        accentChangeButtons[i].addEventListener('click', function() {
+const beatsperbarChangeHandler = () => {
+    const beatsperbar = document.getElementById('beatsperbar')
+    beatsperbar.textContent = metronome.beatsPerBar
+    const beatsperbarChangeButtons = document.querySelectorAll(`[data-id='beatsperbar-change']`)
+    for (let i = 0; i < beatsperbarChangeButtons.length; i++) {
+        beatsperbarChangeButtons[i].addEventListener('click', function() {
             const val_add = parseInt(this.dataset.change)
-            const valid_num = metronome.accent + val_add
+            const valid_num = metronome.beatsPerBar + val_add
             if(valid_num >= 0){
-                metronome.accent = valid_num
-                accent.textContent = metronome.accent
+                metronome.beatsPerBar = valid_num
+                beatsperbar.textContent = metronome.beatsPerBar
+                document.getElementById('topnumbersignature').textContent = metronome.beatsPerBar
             }
         })
     }
 }
 
-const barChangeHandler = () => {
-    const bar = document.getElementById('bar')
-    bar.textContent = metronome.barLength
-    const barChangeButtons = document.querySelectorAll(`[data-id='bar-change']`)
-    for (let i = 0; i < barChangeButtons.length; i++) {
-        barChangeButtons[i].addEventListener('click', function() {
-            const val_add = parseInt(this.dataset.change)
-            const valid_num = metronome.barLength + val_add
-            if(valid_num >= 0){
-                metronome.barLength = valid_num
-                bar.textContent = metronome.barLength
-            }
-        })
+const notes_duration_symbols = {1:'\uE1D2', 2:'\uE1D3', 4:'\uE1D5', 8:'\uE1D7',16:'\uE1D9'} //Standard Music Font Layout: Unicode for musical symbols
+const noteDurationChangeHandler = () => {
+    const notedurationselectable = document.getElementById('notedurationselectable')
+    notedurationselectable.onchange = () => {
+        metronome.noteDuration = notedurationselectable.value
+        document.getElementById('bottomnumbersignature').textContent = notedurationselectable.value
+        document.getElementById('noteMusicSymbol').textContent = notes_duration_symbols[notedurationselectable.value]
     }
 }
 
-const swingChangeHandler = () => {
-    const swing = document.getElementById('swing')
-    swing.textContent = metronome.swing
-    const swingChangeButtons = document.querySelectorAll(`[data-id='swing-change']`)
-    for (let i = 0; i < swingChangeButtons.length; i++) {
-        swingChangeButtons[i].addEventListener('click', function() {
-            const val_add = parseInt(this.dataset.change)
-            const valid_num = metronome.swing + val_add
-            if(valid_num >= 0){
-                metronome.swing = valid_num
-                swing.textContent = metronome.swing
-            }
-        })
-    }
+const animateMetronomeIcon = () => {
+    document.getElementById('metronome-stick').classList.add('metronome-animated')
 }
 
+const stopMetronomeIcon = () => {
+    document.getElementById('metronome-stick').classList.remove('metronome-animated')
+}
 
 const playButtonHandler = () => {
     
@@ -93,7 +79,8 @@ const activationHandler = () => {
 
 const openMetronomeDialog = () => {
     DynamicModal.dynamicModalDialog(
-        `<div class="metronome-controls">
+        `<div class="subtext-metronome">Time signature: <span id="topnumbersignature">4</span>/<span id="bottomnumbersignature">4</span></div>
+        <div class="metronome-controls">
             <div class="metronome-switch custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="metronomeSwitch">
                 <label class="custom-control-label" for="metronomeSwitch">Activate</label>
@@ -116,39 +103,30 @@ const openMetronomeDialog = () => {
 
             <button data-id="tempo-change" class="metronome-button" data-change="+1">+</button>
             <button data-id="tempo-change" class="metronome-button" data-change="+5">+5</button>
-        </div>    
-
+        </div>
         <div class="metronome-controls">
-            <button data-id="accent-change" class="metronome-button" data-change="-1">-</button>
+            <button data-id="beatsperbar-change" class="metronome-button" data-change="-1">-</button>
             <div class="bar-container">
-                <div id="accent" class="number-metronome">4</div>
-                <div class="subtext-metronome">accent</div>
+                <div id="beatsperbar" class="number-metronome">4</div>
+                <div class="subtext-metronome">beats / bar</div>
             </div>
-            <button data-id="accent-change" class="metronome-button" data-change="+1">+</button>
+            <button data-id="beatsperbar-change" class="metronome-button" data-change="+1">+</button>
         </div>
-
         <div class="metronome-controls">
-            <button data-id="bar-change" class="metronome-button" data-change="-1">-</button>
             <div class="tempo-container">
-                <div id="bar" class="number-metronome">0</div>
-                <div class="subtext-metronome">1/8 in bar</div>
+                <label class="subtext-metronome" for="notedurationselectable">Note value:&nbsp;</label>
+                <span id="noteMusicSymbol" class="music-symbols">
+                    &#xE1D3;
+                </span>
+                <select class="custom-select" id="notedurationselectable">
+                    <option value="1">1 = Whole note (semibreve)</option>
+                    <option value="2">2 = Minim</option>
+                    <option value="4" selected>4 = Crotchet</option>
+                    <option value="8">8 = Quaver</option>
+                    <option value="16">16 = Semi-Quaver</option>
+                </select>
             </div>
-            <button data-id="bar-change" class="metronome-button" data-change="+1">+</button>
-        </div>
-
-        <div class="metronome-controls">
-            <button data-id="swing-change" class="metronome-button" data-change="-5">-5</button>
-            <button data-id="swing-change" class="metronome-button" data-change="-1">-</button>
-
-            <div class="tempo-container">
-                <div id="swing" class="number-metronome">0</div>
-                <div class="subtext-metronome">swing</div>
-            </div>
-
-            <button data-id="swing-change" class="metronome-button" data-change="+1">+</button>
-            <button data-id="swing-change" class="metronome-button" data-change="+5">+5</button>
-        </div>
-       `,
+        </div>`,
         null,
         '',
         'Close',
@@ -159,6 +137,8 @@ const openMetronomeDialog = () => {
     if (!metronome) {
         metronome = new Metronome()
         metronome.init()
+        metronome.callback_start = animateMetronomeIcon
+        metronome.callback_stop = stopMetronomeIcon
     }
     if (metronome.isRunning) {
         document.getElementById('play-pause-icon').className = 'pause-metronome-icon'
@@ -170,10 +150,12 @@ const openMetronomeDialog = () => {
     
     document.getElementById('play-button').onclick = playButtonHandler
     tempoChangeHandler()
-    accentChangeHandler()
-    barChangeHandler()
-    swingChangeHandler()
+    beatsperbarChangeHandler()
+    noteDurationChangeHandler()
     metronomeSwitch.onclick = activationHandler
+    document.getElementById('topnumbersignature').textContent = metronome.beatsPerBar
+    document.getElementById('bottomnumbersignature').textContent = metronome.noteDuration
+    document.getElementById('noteMusicSymbol').textContent = notes_duration_symbols[metronome.noteDuration]
 }
 
 export const triggerMetronomeButton = () => {

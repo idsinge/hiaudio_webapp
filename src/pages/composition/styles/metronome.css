@@ -68,25 +68,14 @@
 }
 .m-container .m-stick {
   width: 2px;
-  height: 20px;
+  height: 15px;
   background: silver;
   position: absolute;
-  top: -4px;
-  left: 10px;
+  top: 0px;
+  left: 9.5px;
   transform-origin: 50% 100%;
 }
-.m-container .m-stick:after {
-  content: "";
-  display: block;
-  width: 8px;
-  height: 5px;
-  background: silver;
-  position: absolute;
-  left: -3px;
-  top: 2px;
-  -webkit-clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
-  clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
-}
+
 .m-body {  
   -webkit-clip-path: polygon(37% 0, 63% 0, 100% 97%, 93% 97%, 91% 100%, 10% 100%, 7% 97%, 0 97%);
   clip-path: polygon(37% 0, 63% 0, 100% 97%, 93% 97%, 91% 100%, 10% 100%, 7% 97%, 0 97%);
@@ -96,7 +85,7 @@
 }
 
 .metronome-animated {
-animation: metronome 1.5s ease-in-out infinite;
+  animation: metronome 1.5s ease-in-out infinite;
 }
 
 @keyframes metronome {
@@ -106,4 +95,13 @@ animation: metronome 1.5s ease-in-out infinite;
   50% {
     transform: rotate(-35deg);
   }
+}
+
+@font-face {
+  font-family: "Bravura";
+  src: url("../../../common/fonts/Bravura.otf") format("opentype");
+}
+.music-symbols {
+  font-family: "Bravura", serif;
+  font-size: 34px;
 }
