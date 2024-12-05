@@ -56,40 +56,6 @@
   margin-left: 7px;
   margin-right: 7px;
 }
-.m-container {
-  position: relative;
-  display: inline-block;
-}
-.m-container .m-stick {
-  width: 2px;
-  height: 15px;
-  background: silver;
-  position: absolute;
-  top: 0px;
-  left: 9.5px;
-  transform-origin: 50% 100%;
-}
-
-.m-body {  
-  -webkit-clip-path: polygon(37% 0, 63% 0, 100% 97%, 93% 97%, 91% 100%, 10% 100%, 7% 97%, 0 97%);
-  clip-path: polygon(37% 0, 63% 0, 100% 97%, 93% 97%, 91% 100%, 10% 100%, 7% 97%, 0 97%);
-  background: gray;
-  width: 20px;
-  height: 17px;
-}
-
-.metronome-animated {
-  animation: metronome 1.5s ease-in-out infinite;
-}
-
-@keyframes metronome {
-  0%, 100% {
-    transform: rotate(35deg);
-  }
-  50% {
-    transform: rotate(-35deg);
-  }
-}
 
 @font-face {
   font-family: "Bravura";
@@ -98,4 +64,10 @@
 .music-symbols {
   font-family: "Bravura", serif;
   font-size: 34px;
+}
+
+@keyframes blink {
+  0% {    
+    background-color: #ffc107;
+  }
 }
