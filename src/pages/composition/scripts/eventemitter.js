@@ -153,7 +153,7 @@ $container.on("click", ".btn-loop", function() {
 
 $container.on("click", ".btn-play", function() {
   if(metronome?.activate && !metronome?.isRunning){
-    metronome.start()
+    metronome.start(playlist.cursor)
   }
   ee.emit("play");
   $(".btn-group .btn-record").prop('disabled', true);
@@ -204,7 +204,7 @@ const startRecording = (currentLatency) => {
       if(metronome?.isRunning){
         metronome.stop()
       }      
-      metronome.start()
+      metronome.start(playlist.cursor)
     }
     isRecording = true;  
     const latencyInSeconds = currentLatency/1000;

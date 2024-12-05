@@ -1,14 +1,13 @@
 export default class Metronome {
-
     audioContext = null
-    notesInQueue = []  // notes that have been put into the web audio and may or may not have been played yet {note, time}
+    notesInQueue = [] // Notes that have been put into the web audio and may or may not have been played yet {note, time}
     currentBeatInBar = 0
     beatsPerBar = 4
     noteDuration = 4 // Denominator: the note value of each beat (e.g., 4 = quarter, 8 = eighth, etc.)
     tempo = 120
-    lookahead = 25          // How frequently to call scheduling function (in milliseconds)
-    scheduleAheadTime = 0.1   // How far ahead to schedule audio (sec)
-    nextNoteTime = 0.0     // when the next note is due
+    lookahead = 25 // How frequently to call the scheduling function (in milliseconds)
+    scheduleAheadTime = 0.1 // How far ahead to schedule audio (sec)
+    nextNoteTime = 0.0 // When the next note is due
     isRunning = false
     timerWorker = null
     activate = false
@@ -25,7 +24,7 @@ export default class Metronome {
                 this.scheduler()
             }
         }
-        this.timerWorker.postMessage({ 'interval': this.lookahead })
+        this.timerWorker.postMessage({ interval: this.lookahead })
     }
 
     nextNote() {
@@ -39,8 +38,8 @@ export default class Metronome {
     }
 
     scheduleNote(beatNumber, time) {
-        // push the note on the queue, even if we're not playing.
-        this.notesInQueue.push({ note: beatNumber, time: time })        
+        // Push the note on the queue, even if we're not playing
+        this.notesInQueue.push({ note: beatNumber, time: time })
         const osc = this.audioContext.createOscillator()
         const envelope = this.audioContext.createGain()
         // Set a higher frequency for the first beat of the bar
@@ -55,14 +54,14 @@ export default class Metronome {
     }
 
     scheduler() {
-        // while there are notes that will need to play before the next interval, schedule them and advance the pointer.
+        // While there are notes that will need to play before the next interval, schedule them and advance the pointer
         while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
             this.scheduleNote(this.currentBeatInBar, this.nextNoteTime)
             this.nextNote()
         }
     }
 
-    start() {
+    start(startTime = 0) {
         if (this.isRunning) return
 
         if (this.audioContext === null) {
@@ -71,27 +70,30 @@ export default class Metronome {
 
         this.isRunning = true
 
-        this.currentBeatInBar = 0
+        // Calculate seconds per beat and align to the global timeline
+        const secondsPerBeat = (60.0 / this.tempo) * (4 / this.noteDuration)
+        const beatsElapsed = Math.floor(startTime / secondsPerBeat)
+        const timeInCurrentBar = startTime % (secondsPerBeat * this.beatsPerBar)
 
-        this.nextNoteTime = this.audioContext.currentTime + 0.05
+        this.currentBeatInBar = beatsElapsed % this.beatsPerBar
+        this.nextNoteTime = this.audioContext.currentTime + 0.05 - timeInCurrentBar
 
         this.timerWorker.postMessage('start')
 
-        this.callback_start()
+        if (this.callback_start) this.callback_start()
     }
 
     stop() {
         this.isRunning = false
         this.timerWorker.postMessage('stop')
-        this.callback_stop()
+        if (this.callback_stop) this.callback_stop()
     }
 
-    startStop() {
+    startStop(startTime = 0) {
         if (this.isRunning) {
             this.stop()
-        }
-        else {
-            this.start()
+        } else {
+            this.start(startTime)
         }
     }
 }
