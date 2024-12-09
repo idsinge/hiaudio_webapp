@@ -1,5 +1,5 @@
 import DynamicModal from '../../../../common/js/modaldialog'
-import Metronome from './metronome'
+import {Metronome} from './metronome'
 
 export let metronome = null
 
