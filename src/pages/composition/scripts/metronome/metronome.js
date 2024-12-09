@@ -1,18 +1,22 @@
-export default class Metronome {
-    audioContext = null
-    notesInQueue = [] // Notes that have been put into the web audio and may or may not have been played yet {note, time}
-    currentBeatInBar = 0
-    beatsPerBar = 4
-    noteDuration = 4 // Denominator: the note value of each beat (e.g., 4 = quarter, 8 = eighth, etc.)
-    tempo = 120
-    lookahead = 25 // How frequently to call the scheduling function (in milliseconds)
-    scheduleAheadTime = 0.1 // How far ahead to schedule audio (sec)
-    nextNoteTime = 0.0 // When the next note is due
-    isRunning = false
-    timerWorker = null
-    activate = false
-    callback_start = null
-    callback_stop = null
+export class Metronome {
+
+    constructor() {
+        this.audioContext = null
+        this.notesInQueue = [] // Notes that have been put into the web audio and may or may not have been played yet {note, time}
+        this.currentBeatInBar = 0
+        this.beatsPerBar = 4
+        this.noteDuration = 4 // Denominator: the note value of each beat (e.g., 4 = quarter, 8 = eighth, etc.)
+        this.tempo = 120
+        this.lookahead = 25 // How frequently to call the scheduling function (in milliseconds)
+        this.scheduleAheadTime = 0.1 // How far ahead to schedule audio (sec)
+        this.nextNoteTime = 0.0 // When the next note is due
+        this.isRunning = false
+        this.timerWorker = null
+        this.activate = false
+        this.callback_start = null
+        this.callback_stop = null
+        this.prevBeatBar = 4 // to control if you change the beat in the moment currentBeatInBar is a multiple of beatsPerBar
+    }
 
     init() {
         this.timerWorker = new Worker(
@@ -32,8 +36,9 @@ export default class Metronome {
         const secondsPerBeat = (60.0 / this.tempo) * (4 / this.noteDuration)
         this.nextNoteTime += secondsPerBeat // Add note duration time to the last beat time
         this.currentBeatInBar++ // Advance the beat number, wrap to zero
-        if (this.currentBeatInBar === this.beatsPerBar) {
+        if ((this.currentBeatInBar === this.beatsPerBar) || (this.prevBeatBar !== this.beatsPerBar)) {
             this.currentBeatInBar = 0
+            this.prevBeatBar = this.beatsPerBar
         }
     }
 
