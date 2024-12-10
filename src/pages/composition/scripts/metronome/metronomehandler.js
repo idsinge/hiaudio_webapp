@@ -56,10 +56,12 @@ const noteDurationChangeHandler = () => {
 }
 
 const updateMetronomeBlink = () => {
-    const secondsPerBeat = (60 / metronome.tempo) * (4 / metronome.noteDuration)
-    const blinkDuration = secondsPerBeat
-    const icon = document.getElementById('metronome-fonticon')
-    icon.style.animation = `blink ${blinkDuration}s infinite`
+    if(metronome?.isRunning){
+        const secondsPerBeat = (60 / metronome.tempo) * (4 / metronome.noteDuration)
+        const blinkDuration = secondsPerBeat
+        const icon = document.getElementById('metronome-fonticon')
+        icon.style.animation = `blink ${blinkDuration}s infinite`
+    }
 }
 
 const animateMetronomeIcon = () => {
@@ -151,7 +153,7 @@ const openMetronomeDialog = () => {
         null,
         '',
         'Close',
-        `<i id='metronome-fonticon' class='fas fa-music'></i>&nbsp;&nbsp;<span>Metronome</span>`,
+        `<i class='fas fa-music'></i>&nbsp;&nbsp;<span>Metronome</span>`,
         'bg-secondary',
         metronomeFinishCallback
     )
