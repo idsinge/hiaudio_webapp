@@ -94,7 +94,7 @@ export const paintMainElemsHomePage = (listElelemts, legendButtons) => {
 export const paintSingleComposition = (element, endpoint) => {
     const displayName = displayUserNameInCard(endpoint, element.username)
     const displayNumCollabs = element.contributors.length
-    const last_track = element?.tracks[element?.tracks.length - 1].uuid
+    const last_track = element?.tracks[element?.tracks.length - 1]?.uuid
     
     return `<div class='card border-success'>                       
               <div class="card-body">
@@ -132,7 +132,7 @@ export const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
 
     const displayName = displayUserNameInCard(endpoint, item.username)
     const displayNumCollabs = item.contributors.length
-    const last_track = item?.tracks[item?.tracks.length - 1].uuid
+    const last_track = item?.tracks[item?.tracks.length - 1]?.uuid
     
     return `<div class="list-group-item ">
               ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[item.privacy]}">${PRIVACY_BADGE_TEXT[item.privacy]}</span>` : ''}
