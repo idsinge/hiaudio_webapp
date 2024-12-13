@@ -119,7 +119,7 @@ export const paintSingleComposition = (element, endpoint) => {
                     <p class='card-text text-truncate'>${element.description || ''}</p>
                     ${element.tracks?.length ?
                     `<span class="play-control-card d-inline-block text-truncate" style="max-width: 200px;" ${last_track ? ` data-trackid="${last_track}"` : ''}>
-                      <i class='fa fa-play'>&nbsp;</i>Play last track added</span>&nbsp;` : ''}
+                      <i class='fa fa-play'>&nbsp;</i>Play last added track </span>&nbsp;` : ''}
                     <span class="d-inline-block text-truncate" style="max-width: 250px;">
                         <i class='fa fa-music'></i>&nbsp;${'Tracks: ' + element.tracks?.length}
                     </span>
@@ -154,7 +154,7 @@ export const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
                 ${item.description || ''}
               </p>
               ${item.tracks?.length ? `<span class="play-control-card d-inline-block text-truncate" style="max-width: 200px;" ${last_track ? ` data-trackid="${last_track}"` : ''}>
-                <i class='fa fa-play'>&nbsp;</i>Play last track added
+                <i class='fa fa-play'>&nbsp;</i>Play last added track 
               </span>&nbsp;` : ''}
               <span class="d-inline-block text-truncate" style="max-width: 200px;">
                 <i class='fa fa-music'></i>&nbsp;${'Tracks: ' + item.tracks?.length}
