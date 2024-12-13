@@ -67,7 +67,7 @@ const playTrackButtonHandler = (trackid) => {
         clickOnSameTrack(audio, trackid)
     } else {
         checkAudioPausedNotSameTrack(audio, trackid, currentTrack)
-        loadAudioTrack(trackid, doPlay = true)
+        loadAudioTrack(trackid, true)
         changeFloatingIcon(true)
     }
 }
