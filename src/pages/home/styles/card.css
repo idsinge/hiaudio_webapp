@@ -116,3 +116,7 @@
         opacity: 1;
     }
 }
+
+.play-control-card{
+    cursor: pointer;
+}

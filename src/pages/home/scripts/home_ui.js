@@ -93,7 +93,9 @@ export const paintMainElemsHomePage = (listElelemts, legendButtons) => {
 
 export const paintSingleComposition = (element, endpoint) => {
     const displayName = displayUserNameInCard(endpoint, element.username)
-    const displayNumCollabs = element.contributors.length    
+    const displayNumCollabs = element.contributors.length
+    const last_track = element?.tracks[element?.tracks.length - 1].uuid
+    
     return `<div class='card border-success'>                       
               <div class="card-body">
               ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[element.privacy]}">${PRIVACY_BADGE_TEXT[element.privacy]}</span>` : ''}
@@ -105,17 +107,22 @@ export const paintSingleComposition = (element, endpoint) => {
                         <h5 class='card-title'>${element.title}</h5>
                       </a>
                     </p>
-                    <p class='card-text text-truncate'>${element.description || ''}</p>
+                    <p>${displayName ?
+                      `<span class="d-inline-block text-truncate" style="max-width: 250px;">
+                        <i class='fa fa-user'></i>&nbsp;
+                        <a href='${uriUserPage + element.owner_uuid}' class='card-url'>
+                          ${element.username}&nbsp;
+                        </a>
+                      </span>`: ''}
+                    </p>
                     <p class='text-black-50'>${displayNumCollabs ? ('Collaborators: ' + displayNumCollabs) : ''}</p>
-                    ${displayName ? `<span class="d-inline-block text-truncate" style="max-width: 250px;">
-                    <i class='fa fa-user'></i>&nbsp;
-                    <a href='${uriUserPage + element.owner_uuid}' class='card-url'>
-                      ${element.username}&nbsp;
-                    </a>
-                  </span>`: ''}
+                    <p class='card-text text-truncate'>${element.description || ''}</p>
+                    ${element.tracks?.length ?
+                    `<span class="play-control-card d-inline-block text-truncate" style="max-width: 200px;" ${last_track ? ` data-trackid="${last_track}"` : ''}>
+                      <i class='fa fa-play'>&nbsp;</i>Play last track added</span>&nbsp;` : ''}
                     <span class="d-inline-block text-truncate" style="max-width: 250px;">
-                      <i class='fa fa-music'></i>&nbsp;${'Tracks: ' + element.tracks?.length}
-                    </span>                  
+                        <i class='fa fa-music'></i>&nbsp;${'Tracks: ' + element.tracks?.length}
+                    </span>
                   </div>                
               </div>            
           </div>`
@@ -125,6 +132,7 @@ export const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
 
     const displayName = displayUserNameInCard(endpoint, item.username)
     const displayNumCollabs = item.contributors.length
+    const last_track = item?.tracks[item?.tracks.length - 1].uuid
     
     return `<div class="list-group-item ">
               ${IS_AUTH ? `<span class="badge ${PRIVACY_BADGE_STYLE[item.privacy]}">${PRIVACY_BADGE_TEXT[item.privacy]}</span>` : ''}
@@ -135,16 +143,19 @@ export const getUIListElemInsideCollection = (item, typebadge, endpoint) => {
                     <h5 class='card-title'>${item.title}</h5>
                 </a>
               </p>
+              ${(typebadge !== 'user' && displayName) ?
+                '<p><span class="d-inline-block text-truncate" style="max-width: 220px;">' +
+                '<i class="fa fa-user"></i>&nbsp;' +
+                '<a href=' + uriUserPage + item.owner_uuid + ' class="card-url">' + item.username + '&nbsp;' +
+                '</a>' +
+                '</span></p>' : ''}
               <p class='text-black-50'>${displayNumCollabs ? ('Collaborators: ' + displayNumCollabs) : ''}</p>
               <p class="list-group-item-text text-truncate">
                 ${item.description || ''}
               </p>
-              ${(typebadge !== 'user' && displayName) ?
-            '<span class="d-inline-block text-truncate" style="max-width: 220px;">' +
-            '<i class="fa fa-user"></i>&nbsp;' +
-            '<a href=' + uriUserPage + item.owner_uuid + ' class="card-url">' + item.username + '&nbsp;' +
-            '</a>' +
-            '</span>' : ''}            
+              ${item.tracks?.length ? `<span class="play-control-card d-inline-block text-truncate" style="max-width: 200px;" ${last_track ? ` data-trackid="${last_track}"` : ''}>
+                <i class='fa fa-play'>&nbsp;</i>Play last track added
+              </span>&nbsp;` : ''}
               <span class="d-inline-block text-truncate" style="max-width: 200px;">
                 <i class='fa fa-music'></i>&nbsp;${'Tracks: ' + item.tracks?.length}
               </span>

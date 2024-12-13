@@ -207,22 +207,6 @@
             Loading...
         </button>
     </div>
-    <div class="modal fade" id="bugReportModal" tabindex="-1" role="dialog" aria-labelledby="bugReportModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bugReportModalLabel">Bug Report</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>This is a beta version of the Hi-Audio Online Platform. It is still under active development, more features and improvements are to come. You can report any issue you encounter or request a feature on the dedicated GitHub page by following the below link.</p>
-                    <a href="https://github.com/hi-paris/hiaudio/issues" target="_blank">Report a Bug</a>
-                </div>
-            </div>
-        </div>
-    </div>
     <footer clas="footer">
 		<div class="footerMenu">
 			<hr>
@@ -234,9 +218,13 @@
 			</ul>
             <span id="companyName">&copy; Hi-Audio</span>
 	    </div>       
-        <div class="fab">            
-            <a class="floatingbutton" href="#" data-toggle="modal" data-target="#bugReportModal">
-                <i class="fas fa-bug" style="color:white;"></i>
+        <div class="fab">
+            <audio id="audio_last_track">
+                <source id="audioTrackSource"></source>
+                Your browser does not support the audio format.
+            </audio>            
+            <a id="playfloatingbutton" class="floatingbutton" href="#">
+                <i class="fas fa-play" style="color:white;"></i>
             </a>
         </div>
 	</footer>

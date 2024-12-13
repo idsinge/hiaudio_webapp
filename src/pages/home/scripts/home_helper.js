@@ -156,3 +156,13 @@ export const getGroupedCompositionsWithSubCollect = (compositionsList, parent_co
         singlecomps,
     }
 }
+
+export const getAllTracksInCompositionList = (compositionsList) => {
+    const tracksList = []
+    compositionsList.forEach(composition => {
+        if(composition?.tracks.length){
+            tracksList.push(...composition.tracks)
+        }
+    })
+    return tracksList
+}

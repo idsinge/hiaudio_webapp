@@ -17,6 +17,7 @@ import {getGroupedCompositionsWithUsers,
   getGroupedCompositionsWithSubCollect,
   setCurrentUserName}
 from './home_helper'
+import {setPlayButtonsHandler, fabPlayButtonClickHandler, prepareAudioTrackPlaylist} from './audioplayer'
 
 export const uriCompositionPage = '/composition.html?compositionId='
 export let IS_AUTH = false
@@ -116,6 +117,8 @@ const renderHomePage = (compositionsList, endpoint, withScroll) => {
   } else {   
     renderHomePageWithLists(compositionsList, endpoint)
   }
+  prepareAudioTrackPlaylist(compositionsList)
+  setPlayButtonsHandler()
 }
 
 const renderHomePageWithLists = (compositionsList, endpoint) => {
@@ -213,3 +216,4 @@ const initHomPage = async () => {
 initNavigationMenu()
 activateGoHomeLink()
 initHomPage()
+fabPlayButtonClickHandler()
