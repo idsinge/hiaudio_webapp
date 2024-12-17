@@ -42,5 +42,8 @@
   "bugs": {
     "url": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/issues"
   },
-  "homepage": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt"
+  "homepage": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt",
+  "dependencies": {
+    "wavesurfer.js": "^7.8.11"
+  }
 }

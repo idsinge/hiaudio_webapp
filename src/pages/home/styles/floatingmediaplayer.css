@@ -1,0 +1,48 @@
+:root {
+    --box-shadow-color: rgb(201, 201, 201);
+}
+
+.sticky-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+}
+
+@media only screen and (min-width: 689px) {
+    .sticky-container {
+        width: 40%;
+    }
+
+    .track_comp_info {
+        max-width: 80%;
+    }
+}
+
+@media only screen and (max-width: 689px) {
+    .track_comp_info {
+        max-width: 200px;
+    }
+}
+
+.audio-player {
+    width: 100%;
+    background-color: white;
+    box-shadow: 0.2rem 0.2rem 1rem 0.2rem var(--box-shadow-color);
+}
+
+.player-body {
+    width: 100%;
+    padding: 1rem;
+}
+
+span[aria-expanded=true] .fa-chevron-up {
+    display: none;
+}
+
+span[aria-expanded=false] .fa-chevron-down {
+    display: none;
+}
+
+#playfloatingbutton {
+    width:15px;
+}

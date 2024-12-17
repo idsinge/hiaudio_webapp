@@ -159,10 +159,18 @@ export const getGroupedCompositionsWithSubCollect = (compositionsList, parent_co
 
 export const getAllTracksInCompositionList = (compositionsList) => {
     const tracksList = []
+    const compositionsDictionary = {}
+    const tracksDictionary = {}
     compositionsList.forEach(composition => {
+        compositionsDictionary[composition.uuid] = composition
         if(composition?.tracks.length){
+            for(let i = 0; i < composition.tracks.length; i++){
+                const currentTrack = composition.tracks[i]
+                currentTrack['comp_uuid'] = composition.uuid
+                tracksDictionary[currentTrack.uuid] = currentTrack
+            }
             tracksList.push(...composition.tracks)
         }
     })
-    return tracksList
+    return { tracksList, compositionsDictionary, tracksDictionary }
 }
