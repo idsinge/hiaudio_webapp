@@ -1,13 +1,27 @@
 import { getAllTracksInCompositionList } from './home_helper'
+import WaveSurfer from 'wavesurfer.js'
 
-const changeFaIcon = (trackid, isAudioPaused) => {
-    const iconElement = document.querySelector(`[data-trackid='${trackid}']`).firstChild.nextSibling
-    if (isAudioPaused) {
-        iconElement.classList.remove('fa-play')
-        iconElement.classList.add('fa-pause')
-    } else {
-        iconElement.classList.remove('fa-pause')
-        iconElement.classList.add('fa-play')
+let tracks_dictionary = null
+let composition_dictionary = null
+
+let AUTO_PLAY = false
+
+const getCurrentTrack = () => {
+    const audio = document.getElementById('waveform')
+    const currentTrack = audio.getAttribute('data-currentaudio')
+    return currentTrack
+}
+
+const changeFaIcon = (trackid, startPlaying) => {
+    const iconElement = document.querySelector(`[data-trackid='${trackid}']`)?.firstChild.nextSibling
+    if (iconElement) {
+        if (startPlaying) {
+            iconElement.classList.remove('fa-play')
+            iconElement.classList.add('fa-pause')
+        } else {
+            iconElement.classList.remove('fa-pause')
+            iconElement.classList.add('fa-play')
+        }
     }
 }
 
@@ -22,73 +36,43 @@ const changeFloatingIcon = (startPlaying) => {
     }
 }
 
-const clickOnSameTrack = (audio, trackid) => {
-    if (audio.paused) {
-        changeFaIcon(trackid, audio.paused)
-        changeFloatingIcon(true)
-        audio.play()
+const clickOnSameTrack = () => {
+    const isPlaying = wavesurfer.isPlaying()
+    if (!isPlaying) {
+        wavesurfer.play()
     } else {
-        changeFaIcon(trackid, audio.paused)
-        audio.pause()
-        changeFloatingIcon(false)
+        wavesurfer.pause()
     }
 }
 
-const handleCurrentTrack = (currentTrack, audio, trackid) => {
-    let is_same_track = false
-    if (currentTrack) {
-        if (currentTrack === trackid) {
-            is_same_track = true
-        } else {
-            audio.setAttribute('data-currentaudio', trackid)
-        }
+const checkAudioPausedNotSameTrack = (trackid) => {
+    const isPlaying = wavesurfer.isPlaying()
+    if (isPlaying) {
+        changeFaIcon(trackid, true)
+        wavesurfer.pause()
     } else {
-        audio.setAttribute('data-currentaudio', trackid)
-    }
-    return is_same_track
-}
-
-const checkAudioPausedNotSameTrack = (audio, trackid, currentTrack) => {
-    if (!audio.paused) {
-        changeFaIcon(trackid, !audio.paused)
-        changeFaIcon(currentTrack, audio.paused)
-        audio.pause()
-    } else {
-        currentTrack && changeFaIcon(currentTrack, !audio.paused)
-        changeFaIcon(trackid, audio.paused)
+        changeFaIcon(trackid, true)
     }
 }
 
 const playTrackButtonHandler = (trackid) => {
-    const audio = document.getElementById('audio_last_track')
-    const currentTrack = audio.getAttribute('data-currentaudio')
-    let is_same_track = handleCurrentTrack(currentTrack, audio, trackid)
+    const currentTrack = getCurrentTrack()
+    let is_same_track = currentTrack === trackid
     if (is_same_track) {
-        clickOnSameTrack(audio, trackid)
+        clickOnSameTrack()
     } else {
-        checkAudioPausedNotSameTrack(audio, trackid, currentTrack)
+        checkAudioPausedNotSameTrack(trackid)
         loadAudioTrack(trackid, true)
-        changeFloatingIcon(true)
+        updateCurrentPlayInfo(trackid)
     }
 }
 
 const loadTrackSuccess = (audioSrc, trackid, doPlay) => {
-    const audio = document.getElementById('audio_last_track')
-    const currentTrack = audio.getAttribute('data-currentaudio')
-    const source = document.getElementById('audioTrackSource')
-    if (!currentTrack) {
-        audio.setAttribute('data-currentaudio', trackid)
-    }
-    source.src = audioSrc
-    audio.load()
-    if (doPlay) {
-        audio.play()
-    }
-    audio.onerror = (err) => { console.log('onerror', err) } // TODO: not tested
-    audio.onended = (event) => {
-        changeFloatingIcon(false)
-        changeFaIcon(trackid, false)
-    }
+    AUTO_PLAY = doPlay
+    const audio = document.getElementById('waveform')
+    audio.setAttribute('data-currentaudio', trackid)
+    wavesurfer.seekTo(0)
+    wavesurfer.load(audioSrc)
 }
 
 const loadTrackError = (trackid) => {
@@ -101,16 +85,31 @@ const loadTrackError = (trackid) => {
     alert('Error playing track')
 }
 
+const updateCurrentPlayInfo = (track_id) => {
+    const track_title = tracks_dictionary[track_id].title
+    const comp_title = composition_dictionary[tracks_dictionary[track_id].comp_uuid].title
+    document.getElementById('current-play-info').textContent = comp_title + ' / ' + track_title
+}
+
 export const prepareAudioTrackPlaylist = (compositionsList) => {
     const all_tracks = getAllTracksInCompositionList(compositionsList)
-    if (all_tracks.length) {
-        loadAudioTrack(all_tracks[all_tracks.length - 1].uuid)
+    if (all_tracks.tracksList.length) {
+        tracks_dictionary = all_tracks.tracksDictionary
+        composition_dictionary = all_tracks.compositionsDictionary
+        const maxRandomPos = all_tracks.tracksList.length
+        const randomInt = Math.floor(Math.random() * maxRandomPos)
+        const lastTrackId = all_tracks.tracksList[randomInt].uuid
+        updateCurrentPlayInfo(lastTrackId)
+        loadAudioTrack(lastTrackId)
     }
 }
 
 export const loadAudioTrack = async (trackid, doPlay) => {
-
     const audioSrc = window.location.origin + '/trackfile/' + trackid
+    // error 1 : 
+    // const audioSrc = 'teto' +window.location.origin + '/trackfile/' + trackid
+    //error 2:
+    // const audioSrc = window.location.origin + '/trackfile/' + 'trackid'
     const response = await fetch(audioSrc)
     if (response.ok) {
         loadTrackSuccess(audioSrc, trackid, doPlay)
@@ -129,34 +128,70 @@ export const setPlayButtonsHandler = () => {
     })
 }
 
-const fabPlayButtonCurrentTrackHandler = () => {
-    const audio = document.getElementById('audio_last_track')
-    const currentTrack = audio.getAttribute('data-currentaudio')
-    if (currentTrack) {
-        fabPlayButtonIsCurrentTrack(audio, currentTrack)
+const fabPlayButtonIsCurrentTrack = () => {
+    const isPlaying = wavesurfer.isPlaying()
+    if (isPlaying) {
+        wavesurfer.pause()
     } else {
-        if(audio.readyState){
-            audio.play()
-            changeFloatingIcon(true)
-        }
-    }
-}
-
-const fabPlayButtonIsCurrentTrack = (audio, currentTrack) => {
-    if (!audio.paused) {
-        audio.pause()
-        changeFaIcon(currentTrack, !audio.paused)
-        changeFloatingIcon(false)
-    } else {
-        audio.play()
-        changeFaIcon(currentTrack, !audio.paused)
-        changeFloatingIcon(true)
+        wavesurfer.play()
     }
 }
 
 export const fabPlayButtonClickHandler = () => {
     const floatingPlayButton = document.getElementById('playfloatingbutton')
     floatingPlayButton.onclick = () => {
-        fabPlayButtonCurrentTrackHandler()
+        fabPlayButtonIsCurrentTrack()
     }
 }
+
+const initializeWavesurfer = () => {
+    return WaveSurfer.create({
+        container: '#waveform',
+        responsive: true,
+        height: 80,
+        waveColor: '#007bff',
+        progressColor: '#6610f2',
+        barWidth: 2,
+        barGap: 1,
+        barRadius: 2,
+    })
+}
+
+const wavesurfer = initializeWavesurfer()
+
+wavesurfer.on('finish', () => {
+    const currentTrack = getCurrentTrack()
+    changeFloatingIcon(false)
+    changeFaIcon(currentTrack, false)
+})
+
+wavesurfer.on('ready', (duration) => {
+    if (AUTO_PLAY) {
+        wavesurfer.play()
+    } else {
+        changeFloatingIcon(false)
+    }
+})
+
+wavesurfer.on('play', () => {
+    const currentTrack = getCurrentTrack()
+    changeFloatingIcon(true)
+    changeFaIcon(currentTrack, true)
+})
+
+wavesurfer.on('pause', () => {
+    const currentTrack = getCurrentTrack()
+    changeFloatingIcon(false)
+    changeFaIcon(currentTrack, false)
+})
+
+wavesurfer.on('error', (error) => {
+    console.log(error)
+    // if(error){
+    //     const currentTrack = getCurrentTrack()
+    //     loadTrackError(currentTrack)
+    // }
+    //wavesurfer.destroy()
+    
+   //alert('Error when trying to play media:', error)
+}) 

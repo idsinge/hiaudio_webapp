@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="pages/home/styles/header.css">
     <link rel="stylesheet" href="pages/home/styles/card.css">
     <link rel="stylesheet" href="pages/home/styles/landingvideo.css">
+    <link rel="stylesheet" href="pages/home/styles/floatingmediaplayer.css">
 </head>
 
 <body>
@@ -217,17 +218,25 @@
 				<li><a href="./static/cookies.html">Cookies</a></li>
 			</ul>
             <span id="companyName">&copy; Hi-Audio</span>
-	    </div>       
-        <div class="fab">
-            <audio id="audio_last_track">
-                <source id="audioTrackSource"></source>
-                Your browser does not support the audio format.
-            </audio>            
-            <a id="playfloatingbutton" class="floatingbutton" href="#">
-                <i class="fas fa-play" style="color:white;"></i>
-            </a>
-        </div>
+	    </div>
 	</footer>
+    <main class="sticky-container">
+        <div class="audio-player">
+            <div class="player-body">
+                <p class="d-flex align-items-center justify-content-between">
+                    <span id="playfloatingbutton">
+                        <i class="fas fa-play"></i>
+                    </span>
+                    <span id="current-play-info" class="track_comp_info text-truncate flex-grow-1 mx-2">Composition / Track</span>
+                    <span class="ml-auto" data-toggle="collapse" data-target="#waveform" aria-expanded="true">
+                        <i class="fas fa-chevron-down pull-right"></i>
+                        <i class="fas fa-chevron-up pull-right"></i>
+                    </span>
+                </p>
+                <div id="waveform" class="waveform collapse show"></div>
+            </div>
+        </div>
+    </main>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
