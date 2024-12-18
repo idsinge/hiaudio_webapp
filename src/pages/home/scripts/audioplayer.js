@@ -1,4 +1,5 @@
 import { getAllTracksInCompositionList } from './home_helper'
+import DynamicModal from '../../../common/js/modaldialog'
 
 let tracks_dictionary = null
 let composition_dictionary = null
@@ -49,8 +50,6 @@ const checkAudioPausedNotSameTrack = (trackid) => {
     if (isPlaying) {
         changeFaIcon(trackid, true)
         wavesurfer.pause()
-    } else {
-        changeFaIcon(trackid, true)
     }
 }
 
@@ -62,7 +61,6 @@ const playTrackButtonHandler = (trackid) => {
     } else {
         checkAudioPausedNotSameTrack(trackid)
         loadAudioTrack(trackid, true)
-        updateCurrentPlayInfo(trackid)
     }
 }
 
@@ -76,18 +74,38 @@ const loadTrackSuccess = (audioSrc, trackid, doPlay) => {
 
 const loadTrackError = (trackid, error) => {
     const playElemUI = document.querySelector(`[data-trackid='${trackid}']`)
-    playElemUI.onclick = null
-    const iconElement = playElemUI.firstChild.nextSibling
-    iconElement.classList.remove('fa-play')
-    iconElement.classList.add('fa-times')
+    if(playElemUI){
+        playElemUI.onclick = null
+        const iconElement = playElemUI.firstChild.nextSibling
+        iconElement.classList.remove('fa-play')
+        iconElement.classList.add('fa-times')
+    }
     changeFloatingIcon(false)
-    alert('Error playing track: ' + error)
+    const trackInfo = getTrackInfo(trackid)
+    DynamicModal.dynamicModalDialog(
+        `<p>Composition: <i>${trackInfo.comp_title}</i>&#10;&#13;</p>
+        <p>Track: <i>${trackInfo.track_title}</i> &#10;&#13;</p>
+        <p><b><i>${error}</i></b></p>`, 
+        null, 
+        '',
+        'Close',
+        'Error playing track',
+        'bg-danger'
+    )
+    delete tracks_dictionary[trackid]
+    const firstTrackIdInDictionary = Object.keys(tracks_dictionary)[0]
+    loadAudioTrack(firstTrackIdInDictionary)
 }
 
 const updateCurrentPlayInfo = (track_id) => {
+    const trackInfo =  getTrackInfo(track_id)
+    document.getElementById('current-play-info').textContent = trackInfo.comp_title + ' / ' + trackInfo.track_title
+}
+
+const getTrackInfo = (track_id) => {
     const track_title = tracks_dictionary[track_id].title
     const comp_title = composition_dictionary[tracks_dictionary[track_id].comp_uuid].title
-    document.getElementById('current-play-info').textContent = comp_title + ' / ' + track_title
+    return {track_title, comp_title}
 }
 
 export const prepareAudioTrackPlaylist = (compositionsList) => {
@@ -99,7 +117,6 @@ export const prepareAudioTrackPlaylist = (compositionsList) => {
         const maxRandomPos = all_tracks.tracksList.length
         const randomInt = Math.floor(Math.random() * maxRandomPos)
         const lastTrackId = all_tracks.tracksList[randomInt].uuid
-        updateCurrentPlayInfo(lastTrackId)
         loadAudioTrack(lastTrackId)
     }
 }
@@ -166,6 +183,8 @@ wavesurfer.on('finish', () => {
 })
 
 wavesurfer.on('ready', (duration) => {
+    const currentTrack = getCurrentTrack()
+    updateCurrentPlayInfo(currentTrack)
     if (AUTO_PLAY) {
         wavesurfer.play()
     } else {
