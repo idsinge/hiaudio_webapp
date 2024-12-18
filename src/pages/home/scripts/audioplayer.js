@@ -48,7 +48,6 @@ const clickOnSameTrack = () => {
 const checkAudioPausedNotSameTrack = (trackid) => {
     const isPlaying = wavesurfer.isPlaying()
     if (isPlaying) {
-        changeFaIcon(trackid, true)
         wavesurfer.pause()
     }
 }
@@ -122,6 +121,7 @@ export const prepareAudioTrackPlaylist = (compositionsList) => {
 }
 
 export const loadAudioTrack = async (trackid, doPlay) => {
+    document.getElementById('current-play-info').textContent = 'Loading track ...'
     const audioSrc = window.location.origin + '/trackfile/' + trackid
     // error 1 : 
     //const audioSrc = 'teto' +window.location.origin + '/trackfile/' + trackid
