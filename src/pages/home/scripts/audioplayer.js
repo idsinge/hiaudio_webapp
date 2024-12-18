@@ -1,5 +1,4 @@
 import { getAllTracksInCompositionList } from './home_helper'
-import WaveSurfer from 'wavesurfer.js'
 
 let tracks_dictionary = null
 let composition_dictionary = null
@@ -75,14 +74,14 @@ const loadTrackSuccess = (audioSrc, trackid, doPlay) => {
     wavesurfer.load(audioSrc)
 }
 
-const loadTrackError = (trackid) => {
+const loadTrackError = (trackid, error) => {
     const playElemUI = document.querySelector(`[data-trackid='${trackid}']`)
     playElemUI.onclick = null
     const iconElement = playElemUI.firstChild.nextSibling
     iconElement.classList.remove('fa-play')
     iconElement.classList.add('fa-times')
     changeFloatingIcon(false)
-    alert('Error playing track')
+    alert('Error playing track: ' + error)
 }
 
 const updateCurrentPlayInfo = (track_id) => {
@@ -94,6 +93,7 @@ const updateCurrentPlayInfo = (track_id) => {
 export const prepareAudioTrackPlaylist = (compositionsList) => {
     const all_tracks = getAllTracksInCompositionList(compositionsList)
     if (all_tracks.tracksList.length) {
+        document.querySelector('.sticky-container').style.display = 'block'
         tracks_dictionary = all_tracks.tracksDictionary
         composition_dictionary = all_tracks.compositionsDictionary
         const maxRandomPos = all_tracks.tracksList.length
@@ -107,9 +107,9 @@ export const prepareAudioTrackPlaylist = (compositionsList) => {
 export const loadAudioTrack = async (trackid, doPlay) => {
     const audioSrc = window.location.origin + '/trackfile/' + trackid
     // error 1 : 
-    // const audioSrc = 'teto' +window.location.origin + '/trackfile/' + trackid
+    //const audioSrc = 'teto' +window.location.origin + '/trackfile/' + trackid
     //error 2:
-    // const audioSrc = window.location.origin + '/trackfile/' + 'trackid'
+    //const audioSrc = window.location.origin + '/trackfile/' + 'trackid'
     const response = await fetch(audioSrc)
     if (response.ok) {
         loadTrackSuccess(audioSrc, trackid, doPlay)
@@ -186,12 +186,8 @@ wavesurfer.on('pause', () => {
 })
 
 wavesurfer.on('error', (error) => {
-    console.log(error)
-    // if(error){
-    //     const currentTrack = getCurrentTrack()
-    //     loadTrackError(currentTrack)
-    // }
-    //wavesurfer.destroy()
-    
-   //alert('Error when trying to play media:', error)
+    if(error){
+        const currentTrack = getCurrentTrack()
+        loadTrackError(currentTrack, error)
+    }
 }) 
