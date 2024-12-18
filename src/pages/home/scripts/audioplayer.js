@@ -171,6 +171,7 @@ const initializeWavesurfer = () => {
         barWidth: 2,
         barGap: 1,
         barRadius: 2,
+        cursorWidth: 0
     })
 }
 
@@ -210,3 +211,7 @@ wavesurfer.on('error', (error) => {
         loadTrackError(currentTrack, error)
     }
 }) 
+
+$('#waveform').on('shown.bs.collapse', function () {
+    wavesurfer.drawBuffer()
+})

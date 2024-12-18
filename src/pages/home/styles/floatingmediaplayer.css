@@ -22,6 +22,7 @@
 @media only screen and (max-width: 689px) {
     .track_comp_info {
         max-width: 200px;
+        width: 200px;
     }
 }
 
@@ -46,4 +47,12 @@ span[aria-expanded=false] .fa-chevron-down {
 
 #playfloatingbutton {
     width:15px;
+}
+
+.chevron-collapse{
+    padding: 5px;
+}
+
+.player-header{
+    margin-bottom: 0;
 }
