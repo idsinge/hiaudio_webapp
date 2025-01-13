@@ -56,3 +56,15 @@ span[aria-expanded=false] .fa-chevron-down {
 .player-header{
     margin-bottom: 0;
 }
+
+@keyframes beat {
+    0%, 50%, 100% { transform: scale(1, 1); }
+    30%, 80% { transform: scale(0.92, 0.95); }
+}
+.fa-beat {
+    animation: 2s linear 0s normal none infinite beat;
+}
+
+.isDisabled {   
+    pointer-events: none;
+}
