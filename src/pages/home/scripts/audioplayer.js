@@ -6,10 +6,8 @@ let composition_dictionary = null
 let AUTO_PLAY = false
 
 let wavesurfer = null
-let reader = null
 
-const controller = new AbortController()
-const signal = controller.signal
+let currentAbortController = null
 
 const waveSurferOptions = {
     container: '#waveform',
@@ -70,7 +68,9 @@ const checkAudioPausedNotSameTrack = (trackid) => {
 }
 
 const playTrackButtonHandler = (trackid) => {
-    
+    if(document.getElementById('sticky-player').hidden){
+        document.getElementById('sticky-player').hidden = false
+    }
     const currentTrack = getCurrentTrack()
     let is_same_track = (currentTrack === trackid)
     if (is_same_track) {
@@ -82,10 +82,8 @@ const playTrackButtonHandler = (trackid) => {
     }
 }
 
-const loadTrackSuccess = (audioSrc, trackid, doPlay) => {
+const loadTrackSuccess = (audioSrc, doPlay) => {
     AUTO_PLAY = doPlay
-    wavesurfer = initializeWavesurfer()
-    addEventHandlersToWavesurfer()
     wavesurfer.seekTo(0)
     wavesurfer.load(audioSrc)
 }
@@ -122,46 +120,34 @@ export const prepareAudioTrackPlaylist = (compositionsList) => {
         document.querySelector('.sticky-container').style.display = 'block'
         tracks_dictionary = all_tracks.tracksDictionary
         composition_dictionary = all_tracks.compositionsDictionary
-        const maxRandomPos = all_tracks.tracksList.length
-        const randomInt = Math.floor(Math.random() * maxRandomPos)
-        const lastTrackId = all_tracks.tracksList[randomInt].uuid
-        loadAudioTrack(lastTrackId)
     }
 }
 
 export const loadAudioTrack = async (trackid, doPlay) => {
+    if(wavesurfer){
+        unsubscribeEvents()
+        wavesurfer.destroy()
+    }
+    wavesurfer = initializeWavesurfer()
+    addEventHandlersToWavesurfer()
     const audio = document.getElementById('waveform')
     audio.setAttribute('data-currentaudio', trackid)
-    if(wavesurfer){
-        wavesurfer.destroy()
-        unsubscribeEvents()
-    }
+    
     document.getElementById('current-play-info').textContent = 'Downloading track ... 0%'
     const floatingPlayButton = document.getElementById('playfloatingbutton')
     floatingPlayButton.classList.add('isDisabled')    
     
     const audioSrc = window.location.origin + '/trackfile/' + trackid
-       
-    reader && reader.cancel()   
     
-    const response = await fetch(audioSrc, {signal})
-    reader = response.body.getReader()   
-    const contentLength = +response.headers.get('Content-Length')    
-    let receivedLength = 0
-    let chunks = []
-    while(true) {
-    const {done, value} = await reader.read()
-    if (done) {
-        document.getElementById('current-play-info').textContent = 'Loading ...'
-        break
+    if (currentAbortController) {
+        currentAbortController.abort()
     }
-    chunks.push(value)
-    receivedLength += value.length
-    const percentage = Math.round(receivedLength/contentLength*100)+'%'    
-    document.getElementById('current-play-info').textContent = `Downloading track ... ${percentage}`
-    }
+    currentAbortController = new AbortController()
+    const signal = currentAbortController.signal
+
+    const response = await fetch(audioSrc, { signal })
     if (response.ok) {
-        loadTrackSuccess(audioSrc, trackid, doPlay)
+        loadTrackSuccess(audioSrc, doPlay)
     } else {
         loadTrackError(trackid, 'Fetching error')
     }
@@ -213,6 +199,12 @@ const addEventHandlersToWavesurfer = () => {
         changeFloatingIcon(true)
         changeFaIcon(currentTrack, true)
     })
+
+
+    wavesurfer.on('loading', (percentage) => {
+        document.getElementById('current-play-info').textContent = `Downloading track ... ${percentage}%`
+    })
+
     
     wavesurfer.on('pause', () => {
         const currentTrack = getCurrentTrack()
