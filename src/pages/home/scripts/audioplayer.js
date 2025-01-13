@@ -1,10 +1,27 @@
 import { getAllTracksInCompositionList } from './home_helper'
-import DynamicModal from '../../../common/js/modaldialog'
 
 let tracks_dictionary = null
 let composition_dictionary = null
 
 let AUTO_PLAY = false
+
+let wavesurfer = null
+let reader = null
+
+const controller = new AbortController()
+const signal = controller.signal
+
+const waveSurferOptions = {
+    container: '#waveform',
+    responsive: true,
+    height: 80,
+    waveColor: '#007bff',
+    progressColor: '#6610f2',
+    barWidth: 2,
+    barGap: 1,
+    barRadius: 2,
+    cursorWidth: 0
+}
 
 const getCurrentTrack = () => {
     const audio = document.getElementById('waveform')
@@ -16,11 +33,10 @@ const changeFaIcon = (trackid, startPlaying) => {
     const iconElement = document.querySelector(`[data-trackid='${trackid}']`)?.firstChild.nextSibling
     if (iconElement) {
         if (startPlaying) {
-            iconElement.classList.remove('fa-play')
-            iconElement.classList.add('fa-pause')
+            iconElement.classList.replace('fa-play', 'fa-volume-down')
         } else {
-            iconElement.classList.remove('fa-pause')
-            iconElement.classList.add('fa-play')
+            iconElement.classList.replace('fa-volume-down','fa-play')
+            iconElement.classList.remove('fa-beat')
         }
     }
 }
@@ -46,18 +62,21 @@ const clickOnSameTrack = () => {
 }
 
 const checkAudioPausedNotSameTrack = (trackid) => {
-    const isPlaying = wavesurfer.isPlaying()
+    const isPlaying = wavesurfer?.isPlaying()
     if (isPlaying) {
+        changeFaIcon(trackid, false)
         wavesurfer.pause()
     }
 }
 
 const playTrackButtonHandler = (trackid) => {
+    
     const currentTrack = getCurrentTrack()
-    let is_same_track = currentTrack === trackid
+    let is_same_track = (currentTrack === trackid)
     if (is_same_track) {
         clickOnSameTrack()
     } else {
+        changeFaIcon(currentTrack, false)
         checkAudioPausedNotSameTrack(trackid)
         loadAudioTrack(trackid, true)
     }
@@ -65,8 +84,8 @@ const playTrackButtonHandler = (trackid) => {
 
 const loadTrackSuccess = (audioSrc, trackid, doPlay) => {
     AUTO_PLAY = doPlay
-    const audio = document.getElementById('waveform')
-    audio.setAttribute('data-currentaudio', trackid)
+    wavesurfer = initializeWavesurfer()
+    addEventHandlersToWavesurfer()
     wavesurfer.seekTo(0)
     wavesurfer.load(audioSrc)
 }
@@ -76,24 +95,14 @@ const loadTrackError = (trackid, error) => {
     if(playElemUI){
         playElemUI.onclick = null
         const iconElement = playElemUI.firstChild.nextSibling
-        iconElement.classList.remove('fa-play')
+        iconElement.classList.remove('fa-volume-down')
+        iconElement.classList.remove('fa-beat')
         iconElement.classList.add('fa-times')
     }
     changeFloatingIcon(false)
     const trackInfo = getTrackInfo(trackid)
-    DynamicModal.dynamicModalDialog(
-        `<p>Composition: <i>${trackInfo.comp_title}</i>&#10;&#13;</p>
-        <p>Track: <i>${trackInfo.track_title}</i> &#10;&#13;</p>
-        <p><b><i>${error}</i></b></p>`, 
-        null, 
-        '',
-        'Close',
-        'Error playing track',
-        'bg-danger'
-    )
-    delete tracks_dictionary[trackid]
-    const firstTrackIdInDictionary = Object.keys(tracks_dictionary)[0]
-    loadAudioTrack(firstTrackIdInDictionary)
+    document.getElementById('current-play-info').textContent = ' Error loading track at: ' + trackInfo.comp_title
+    wavesurfer.destroy()
 }
 
 const updateCurrentPlayInfo = (track_id) => {
@@ -121,17 +130,40 @@ export const prepareAudioTrackPlaylist = (compositionsList) => {
 }
 
 export const loadAudioTrack = async (trackid, doPlay) => {
-    document.getElementById('current-play-info').textContent = 'Loading track ...'
+    const audio = document.getElementById('waveform')
+    audio.setAttribute('data-currentaudio', trackid)
+    if(wavesurfer){
+        wavesurfer.destroy()
+        unsubscribeEvents()
+    }
+    document.getElementById('current-play-info').textContent = 'Downloading track ... 0%'
+    const floatingPlayButton = document.getElementById('playfloatingbutton')
+    floatingPlayButton.classList.add('isDisabled')    
+    
     const audioSrc = window.location.origin + '/trackfile/' + trackid
-    // error 1 : 
-    //const audioSrc = 'teto' +window.location.origin + '/trackfile/' + trackid
-    //error 2:
-    //const audioSrc = window.location.origin + '/trackfile/' + 'trackid'
-    const response = await fetch(audioSrc)
+       
+    reader && reader.cancel()   
+    
+    const response = await fetch(audioSrc, {signal})
+    reader = response.body.getReader()   
+    const contentLength = +response.headers.get('Content-Length')    
+    let receivedLength = 0
+    let chunks = []
+    while(true) {
+    const {done, value} = await reader.read()
+    if (done) {
+        document.getElementById('current-play-info').textContent = 'Loading ...'
+        break
+    }
+    chunks.push(value)
+    receivedLength += value.length
+    const percentage = Math.round(receivedLength/contentLength*100)+'%'    
+    document.getElementById('current-play-info').textContent = `Downloading track ... ${percentage}`
+    }
     if (response.ok) {
         loadTrackSuccess(audioSrc, trackid, doPlay)
     } else {
-        loadTrackError(trackid)
+        loadTrackError(trackid, 'Fetching error')
     }
 }
 
@@ -162,56 +194,48 @@ export const fabPlayButtonClickHandler = () => {
 }
 
 const initializeWavesurfer = () => {
-    return WaveSurfer.create({
-        container: '#waveform',
-        responsive: true,
-        height: 80,
-        waveColor: '#007bff',
-        progressColor: '#6610f2',
-        barWidth: 2,
-        barGap: 1,
-        barRadius: 2,
-        cursorWidth: 0
-    })
+    return WaveSurfer.create(waveSurferOptions)
 }
 
-const wavesurfer = initializeWavesurfer()
+const unsubscribeEvents = () => {
+    wavesurfer.unAll()
+}
 
-wavesurfer.on('finish', () => {
-    const currentTrack = getCurrentTrack()
-    changeFloatingIcon(false)
-    changeFaIcon(currentTrack, false)
-})
-
-wavesurfer.on('ready', (duration) => {
-    const currentTrack = getCurrentTrack()
-    updateCurrentPlayInfo(currentTrack)
-    if (AUTO_PLAY) {
-        wavesurfer.play()
-    } else {
-        changeFloatingIcon(false)
-    }
-})
-
-wavesurfer.on('play', () => {
-    const currentTrack = getCurrentTrack()
-    changeFloatingIcon(true)
-    changeFaIcon(currentTrack, true)
-})
-
-wavesurfer.on('pause', () => {
-    const currentTrack = getCurrentTrack()
-    changeFloatingIcon(false)
-    changeFaIcon(currentTrack, false)
-})
-
-wavesurfer.on('error', (error) => {
-    if(error){
+const addEventHandlersToWavesurfer = () => {
+    wavesurfer.on('finish', () => {
         const currentTrack = getCurrentTrack()
-        loadTrackError(currentTrack, error)
-    }
-}) 
+        changeFloatingIcon(false)
+        changeFaIcon(currentTrack, false)
+    })
+    
+    wavesurfer.on('play', () => {
+        const currentTrack = getCurrentTrack()
+        changeFloatingIcon(true)
+        changeFaIcon(currentTrack, true)
+    })
+    
+    wavesurfer.on('pause', () => {
+        const currentTrack = getCurrentTrack()
+        changeFloatingIcon(false)
+        changeFaIcon(currentTrack, false)
+    })
 
-$('#waveform').on('shown.bs.collapse', function () {
-    wavesurfer.drawBuffer()
-})
+    wavesurfer.on('ready', (duration) => {
+        const floatingPlayButton = document.getElementById('playfloatingbutton')
+        floatingPlayButton.classList.remove('isDisabled')
+        const currentTrack = getCurrentTrack()
+        updateCurrentPlayInfo(currentTrack)
+        if (AUTO_PLAY) {
+            wavesurfer.play()
+        } else {
+            changeFloatingIcon(false)
+        }
+    })
+    
+    wavesurfer.on('error', (error) => {
+        if(error){
+            const currentTrack = getCurrentTrack()
+            loadTrackError(currentTrack, error)
+        }
+    }) 
+}
