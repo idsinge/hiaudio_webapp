@@ -123,7 +123,7 @@ export const prepareAudioTrackPlaylist = (compositionsList) => {
     }
 }
 
-export const loadAudioTrack = async (trackid, doPlay) => {
+const loadAudioTrack = async (trackid, doPlay) => {
     if(wavesurfer){
         unsubscribeEvents()
         wavesurfer.destroy()
