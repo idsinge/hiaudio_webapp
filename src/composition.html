@@ -231,21 +231,41 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <table class="table trackinfo-table table-bordered">
-                            <caption></caption>
-                            <tbody id="trackinfotablebody">
-                                <th scope="col"></th>                    
-                            </tbody>
-                        </table>
-                        <div id="audio-pending-analysis" class="row">
-                            <div class="col-md-8">
-                                <div class="analysispending alert alert-info col-md-6" role="alert">
-                                    <i class="fa fa-hourglass-half"></i>
-                                    &nbsp;Audio pending of analysis
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item active" role="presentation">
+                                <button class="nav-link active" id="annotations-table-tab" data-toggle="tab" data-target="#annotations-table" type="button" role="tab" aria-controls="annotations-table" aria-selected="true">Annotations</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="metadata-table-tab" data-toggle="tab" data-target="#metadata-table" type="button" role="tab" aria-controls="metadata-table" aria-selected="false">Metadata</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="annotations-table" class="tab-pane active" role="tabpanel" aria-labelledby="annotations-table-tab">
+                                <table class="table trackinfo-table table-bordered">
+                                    <caption></caption>
+                                    <tbody id="trackinfotablebody">
+                                        <th scope="col"></th>                    
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div id="audio-pending-analysis" class="analysispending alert alert-info col-md-6" role="alert">
+                                            <i class="fa fa-hourglass-half"></i>
+                                            &nbsp;Audio pending of analysis
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button id="btn-add-new-annot" type="button" class="btn btn-outline-info float-right">Add New</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <button id="btn-add-new-annot" type="button" class="btn btn-outline-info float-right">Add New</button>
+                            <div id="metadata-table" class="tab-pane fade" role="tabpanel" aria-labelledby="metadata-table-tab">
+                                <table class="table trackinfo-table table-bordered">
+                                    <caption></caption>
+                                    <tbody id="metadatatablebody">
+                                        <th scope="col"></th>                    
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
