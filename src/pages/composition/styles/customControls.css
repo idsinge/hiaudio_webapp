@@ -87,3 +87,9 @@
 .breakword {
     word-break: break-all;
 }
+
+@media (max-width: 990px) {
+    .analysispending {
+        max-width: 100%;
+    }
+}
