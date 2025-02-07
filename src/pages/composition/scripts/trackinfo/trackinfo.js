@@ -8,6 +8,21 @@ let CURRENT_TRACKPOS = null
 let CURRENT_TRACKID = null
 let RESERVED_KEYS = null
 
+const META_DATA_KEYS = [
+    'bit_rate',
+    'bits_per_sample',
+    'channel_layout',
+    'channels',
+    'codec_long_name',
+    'codec_name',
+    'duration',
+    'format_long_name',
+    'format_name',
+    'probe_score',
+    'sample_rate',
+    'sample_fmt',
+    'size']
+
 const editButton = document.getElementById('edittrackinfobutton')
 const buttonCreateNew = document.getElementById('btn-add-new-annot')
 const trackinfoModalFooter = document.getElementById('trackinfo-modal-footer')
@@ -29,7 +44,7 @@ export const createTrackInfoTable = async (trackpos, trackname, trackid, role) =
     handleUIeditMode(role)
     if (typeof data === 'object') {
         CURRENT_TRACKINFO = data
-        renderTable(data, null)
+        renderTables(data, null)
     } else {
         DynamicModal.dynamicModalDialog(
             'Error getting track info', 
@@ -39,7 +54,7 @@ export const createTrackInfoTable = async (trackpos, trackname, trackid, role) =
             'Error',
             'bg-danger'
         )
-        renderTable(null, trackname)
+        renderTables(null, trackname)
     }
 }
 
@@ -116,6 +131,17 @@ const getAnnotationsFromResp = (resp) => {
     return html
 }
 
+const getMetadataFromResp = (resp) => {
+    let html = `<tr><th scope='row'>track_uuid</th><td data-key='track_uuid'>${CURRENT_TRACKID}</td></tr>`
+    if(resp['file_metadata']){
+        const meta_data = resp['file_metadata']
+        for(const prop of META_DATA_KEYS){
+            html += `<tr><th scope='row'>${prop}</th><td data-key='${prop}'>${meta_data[prop]}</td></tr>`
+        }
+    }
+    return html
+}
+
 const getReservedKeysFromResp = (resp) => {
     if (resp['reserved_keys']) {
         return resp['reserved_keys']
@@ -124,19 +150,23 @@ const getReservedKeysFromResp = (resp) => {
     }
 }
 
-const renderTable = async (trackinfo, currenttrackname) => {
+const renderTables = async (trackinfo, currenttrackname) => {
     cancelLoader()
-    const tableContainer = document.getElementById('trackinfotablebody')
-    let html = ''
+    const annotationsTableContainer = document.getElementById('trackinfotablebody')
+    const metadataTableContainer = document.getElementById('metadatatablebody')
+    let html_annotations = ''
+    let html_metadata = ''
     if (trackinfo) {
         document.getElementById('audio-pending-analysis').hidden = trackinfo?.is_audio_processed
         RESERVED_KEYS = getReservedKeysFromResp(trackinfo)
-        html += getTitleFromResp(trackinfo)
-        html += getAnnotationsFromResp(trackinfo)
+        html_annotations += getTitleFromResp(trackinfo)
+        html_annotations += getAnnotationsFromResp(trackinfo)
+        html_metadata += getMetadataFromResp(trackinfo)
     } else {
-        html += `<tr><th scope='row'>title</th><td data-key='title' class='linebreak'>${currenttrackname}</td></tr>`
+        html_annotations += `<tr><th scope='row'>title</th><td data-key='title' class='linebreak'>${currenttrackname}</td></tr>`
     }
-    tableContainer.innerHTML = html
+    annotationsTableContainer.innerHTML = html_annotations
+    metadataTableContainer.innerHTML = html_metadata
 }
 
 const createAnnotationsSection = (annnotations) => {
