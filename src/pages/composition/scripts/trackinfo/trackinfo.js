@@ -129,6 +129,7 @@ const renderTable = async (trackinfo, currenttrackname) => {
     const tableContainer = document.getElementById('trackinfotablebody')
     let html = ''
     if (trackinfo) {
+        document.getElementById('audio-pending-analysis').hidden = trackinfo?.is_audio_processed
         RESERVED_KEYS = getReservedKeysFromResp(trackinfo)
         html += getTitleFromResp(trackinfo)
         html += getAnnotationsFromResp(trackinfo)

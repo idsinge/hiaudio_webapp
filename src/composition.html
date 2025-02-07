@@ -221,7 +221,7 @@
         </div>
         <div class="modal fade" id="trackInfoModal" tabindex="-1" aria-labelledby="trackInfoModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header text-center border-0">
                         <button id="edittrackinfobutton" type="button" class="btn btn-primary">Edit</button>
@@ -237,7 +237,17 @@
                                 <th scope="col"></th>                    
                             </tbody>
                         </table>
-                        <button id="btn-add-new-annot" type="button" class="btn btn-outline-info float-right">Add New</button>
+                        <div id="audio-pending-analysis" class="row">
+                            <div class="col-md-8">
+                                <div class="analysispending alert alert-info col-md-6" role="alert">
+                                    <i class="fa fa-hourglass-half"></i>
+                                    &nbsp;Audio pending of analysis
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button id="btn-add-new-annot" type="button" class="btn btn-outline-info float-right">Add New</button>
+                            </div>
+                        </div>
                     </div>
                     <div id="trackinfo-modal-footer" class="modal-footer">
                         <button id="canceltrackinfobutton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
