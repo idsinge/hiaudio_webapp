@@ -21,6 +21,8 @@ const META_DATA_KEYS = [
     'probe_score',
     'sample_rate',
     'sample_fmt',
+    'uploading_date',
+    'RMS',
     'size']
 
 const editButton = document.getElementById('edittrackinfobutton')
