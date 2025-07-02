@@ -1,6 +1,6 @@
 ## About
 
-Hi-Audio online platform is a collaborative web application for musicians and researchers in the MIR (Music Information Retrieval) domain. It allows:
+Hi-Audio online platform is a collaborative web application for musicians and researchers in the MIR (Music Information Retrieval) domain, with a view to build a public database of music recordings from a wide variety of styles and different cultures. It allows:
 
 - Creating musical compositions and collections with different levels of privacy.
 - Uploading and recording audio tracks from the browser.
@@ -9,11 +9,16 @@ Hi-Audio online platform is a collaborative web application for musicians and re
 
 ![screenshot](doc/screenshot.png)
 
+This repo contains information relative to the client side or front-end, for the server side (backend API) check the following repo:
+
+https://github.com/idsinge/hiaudio_backend
 
 ## How to run it locally:
 
 Requirement: Node.js v14 or above
+
 **NOTE: currently this project needs from the backend to be running in parallel.**
+
 First clone and run backend repo. Backend can be found at: https://github.com/idsinge/hiaudio_backend
 
 0. `nvm use 14` In case you have problems with Node versions (https://github.com/nvm-sh/nvm)
