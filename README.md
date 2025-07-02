@@ -28,14 +28,14 @@ First clone and run backend repo. Backend can be found at: https://github.com/id
 3. `npm i`
 4. Duplicate and rename `src/common/js/config_template.js` to `src/common/js/config.js`. See `Note 1`.
 5. `npm run dev`
-7. Open `https://localhost:7007/`. For HTTP see `Notes 2 and 3`.
+7. Open `https://localhost:7007/`. See `Note 1` to use port `8000`. For HTTP see `Notes 2 and 3`.
 8. To build a new version for backend repo, run the command `npm run build` and the sources will be placed at `public` folder.
 
 
 #### NOTES:
-1. For a different endpoint change `MODE=DEV` at `config.js`. `DEVPORT` is `7007` by default.
+1. For a different endpoint change `MODE=DEV` at `config.js`. `DEVPORT` is `7007` by default. Open `https://localhost:8000/` to connect the local dev app to Hi-Audio prod env.
 2. For http remove the `--https` param in `package.json`: `... --port 8000 --https"`
-3. Webapp local dev version does not work isolated, it means without server instance.
+3. Webapp local dev version does not work isolated, it means without server instance. It can be used to point prod server and check info available there, but for full authenticated API methods the backend is required.
 
 ## More info:
 

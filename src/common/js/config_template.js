@@ -1,9 +1,9 @@
-const MODE = 'DEV' // 'STAGE'
+const MODE = 'PROD' // 'STAGE', 'DEV'
 
 const ENVIRONMENTS = {
     PROD:{       
-        ENDPOINT:'',
-        UPLOAD_ENDPOINT:''     
+        ENDPOINT:'https://hiaudio.fr',
+        UPLOAD_ENDPOINT:'https://hiaudio.fr/fileUpload'     
     },
     STAGE:{        
         ENDPOINT: window.location.protocol+'//'+window.location.host,
