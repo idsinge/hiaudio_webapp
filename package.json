@@ -1,10 +1,10 @@
 {
   "name": "hiaudio",
   "version": "0.0.1",
-  "description": "Simple Web DAW",
+  "description": "Collaborative online DAW",
   "author": "Telecom Paris",
   "browserslist": "since 2018, not ie <= 8",
-  "website": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/beatbytebot_webapp",
+  "website": "https://hiaudio.fr",
   "scripts": {
     "prepare": "rm -rf .parcel-cache ../public",
     "dev": "npm run prepare && parcel --no-cache src/*.html src/static/*.html 'src/static/videos/*.mp4' --port 8000 --https --dist-dir ../public",
@@ -37,10 +37,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@gitlab.enst.fr:idsinge/hiaudio/beatbytebot_webapp.git"
+    "url": "git@github.com:idsinge/hiaudio_webapp.git"
   },
   "bugs": {
-    "url": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt/-/issues"
+    "url": "https://github.com/idsinge/hiaudio_webapp/issues"
   },
-  "homepage": "https://gitlab.telecom-paris.fr/idsinge/hiaudio/musicplatform_mgmt"
+  "homepage": "https://github.com/idsinge/hiaudio_webapp"
 }
