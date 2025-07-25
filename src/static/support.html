@@ -31,9 +31,36 @@
                 <li><a href="#gnulinux">GNU/Linux</a></li>
                 <li><a href="#ios">iOS</a></li>
                 <li><a href="#android">Android</a></li>
-                <li><a href="#bluetooth">Bluetooth</a></li>
+                <li><a href="#bluetooth">Bluetooth devices</a></li>
                 <li><a href="#audioformats">Audio Formats</a></li>
             </ul>
+        </div>
+        <div class="modal fade" id="win_audio_enhancements" tabindex="-1" role="dialog" aria-labelledby="win_audio_enhancementsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-body text-center">
+                  <img src="./images/win_audio_enhancements.jpg" class="img-fluid" alt="...">
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="modal fade" id="win_SMARTAudio" tabindex="-1" role="dialog" aria-labelledby="win_SMARTAudioLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-body text-center">
+                  <img src="./images/win_SMARTAudio.jpg" class="img-fluid" alt="...">
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="modal fade" id="testmic" tabindex="-1" role="dialog" aria-labelledby="testmicLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-body text-center">
+                  <img src="./images/testmic.jpg" class="img-fluid" alt="...">
+                </div>
+              </div>
+            </div>
         </div>
         <a name="windows"></a>
         <h2><a href="#windows">Windows</a></h2>
@@ -41,15 +68,29 @@
             <tbody>
                 <tr>
                     <td width="70%">
-                        <p>Windows 10 and above. Recommendedd browsers. Tested versions.</p>
+                        <p><b>Windows versions 10 and 11</b> have been tested. For an accurate latency measurement in recording process, it is recommended to <b>deactivate built-in audio constraints</b>, at operating system level, that may interfere with the audio capture, see pictures below. <b>Firefox</b> demonstrated <b>the most stable performance in latency</b> estimation. In contrast, Chromium-based browsers, such as Chrome and Edge, exhibited significantly greater variability.</p>
                     </td>
-                    <td>Firefox, Chrome, Edge</td>
+                    <td><b>Firefox (v.139)</b>, Chrome and Edge (v.137).</td>
                 </tr>
                 <tr>
                     <td>
-                        <p>Sound settings</p>
+                        <p>
+                            <a href="#" data-toggle="modal" data-target="#win_audio_enhancements">
+                                <img src="./images/win_audio_enhancements.jpg" class="img-thumbnail" alt="..." style="cursor: pointer;">
+                            </a>
+                        </p>
                     </td>
-                    <td>Disable audio enhancements</td>
+                    <td><b>Disable audio enhancements</b></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>
+                            <a href="#" data-toggle="modal" data-target="#win_SMARTAudio">
+                                <img src="./images/win_SMARTAudio.jpg" class="img-thumbnail" alt="..." style="cursor: pointer;">
+                            </a>
+                        </p>
+                    </td>
+                    <td>Deactivate drivers and audio filters such as echo cancellation or noise reduction, i.e. <b>SMARTAudio</b>, <b>WAVES MaxxAudio Pro</b>, etc. from third-party software.</td>
                 </tr>
             </tbody>
         </table>
@@ -60,16 +101,18 @@
             <tbody>
                 <tr>
                     <td width="70%">
-                        <p>macOS versions. Tested browsers.
+                        <p>Versions <b>11.5 and 15.4 of macOS</b> have been tested, including <b>Safari 14.1 and 18.4</b> respectively. In versions <b>16 and higher</b> of Safari <b>issues with low input gain have been experienced</b>. A mechanism to manually control the microphone input and increase it has been implemented, see picture below. Firefox and Chrome have also been used for testing showing no issues.
                         </p>
                     </td>
-                    <td>Safari, Firefox and Chrome</td>
+                    <td>Safari (18.4), <b>Firefox (138)</b> and Chrome (136)</td>
                 </tr>
                 <tr>
                     <td width="70%">
-                        <p>Safari versions</p>
+                        <p><a href="#" data-toggle="modal" data-target="#testmic">
+                            <img src="./images/testmic.jpg" class="img-thumbnail" alt="..." style="cursor: pointer;">
+                        </a></p>
                     </td>
-                    <td>From 14? 15?</td>
+                    <td>From <b>Safari 16 and higher</b></td>
                 </tr>
             </tbody>
         </table>
@@ -80,9 +123,9 @@
             <tbody>
                 <tr>
                     <td width="70%">
-                        <p>Known issues. Tested browsers and operating systems.</p>
+                        <p>Ubuntu 22.04.5 (64-bit) has been used for testing. Inconsistent latency values have been obtained in Chrome and Chromium. <b>Firefox</b> demonstrated <b>the most stable performance in latency</b> estimation.</p>
                     </td>
-                    <td>Firefox, Chromium/Chrome</td>
+                    <td><b>Firefox (136)</b>, Chromium/Chrome (134)</td>
                 </tr>
             </tbody>
         </table>
@@ -93,15 +136,9 @@
             <tbody>
                 <tr>
                     <td width="70%">
-                        <p>iOS versions. Safari</p>
+                        <p>Versions <b>15.1 and 17.5 of iOS</b> have been tested. In versions 16 and higher of Safari <b>issues with low input gain have been experienced</b>. A mechanism to manually control the microphone input has been implemented, see picture above in <a href="#macos">macOS</a> section. No other alternative browsers have been tested for iOS yet due to <a href="https://developer.apple.com/support/alternative-browser-engines/" target="_blank">Apple's browser policy</a>. Some <b>memory limitations</b> have been experienced (as in Firefox for <a href="#android">Android</a>) when loading multiple tracks in devices such as <b>iPhone 13 running iOS 15.1</b>.</p>
                     </td>
-                    <td>From 14 to 17</td>
-                </tr>
-                <tr>
-                    <td width="70%">
-                        <p>Safari issues</p>
-                    </td>
-                    <td>Not working for iOS 13</td>
+                    <td>Safari <b>15 and higher</b></td>
                 </tr>
             </tbody>
         </table>
@@ -112,15 +149,9 @@
             <tbody>
                 <tr>
                     <td width="70%">
-                        <p>Device, models. Browser tested versions</p>
+                        <p>Android versions 12 and above have been tested and some issues have been encountered. Therefore <b>this operating system is not recommended for recording</b>. Inconsistent latency values have been obtained in Chrome and <b>performance problems</b> when loading multiple tracks have been reported in Firefox, due to the <i>decodeAudioData</i> Web Audio API method.</p>
                     </td>
-                    <td>Chrome, Firefox</td>
-                </tr>
-                <tr>
-                    <td width="70%">
-                        <p>Known issues</p>
-                    </td>
-                    <td>From </td>
+                    <td>Chrome (136), Firefox (139)</td>
                 </tr>
             </tbody>
         </table>
@@ -131,15 +162,9 @@
             <tbody>
                 <tr>
                     <td width="70%">
-                        <p>Bluetooth headphones, even those with built-in microphones, are generally <b>discouraged for recording</b> due to the high and variant latency they introduce, which is difficult to estimate and compensate for accurately. Furthermore, the audio capture codecs used in Bluetooth devices are often optimized for voice transmission rather than music, leading to significant degradation in input signal quality due to limited spectral fidelity.</p>
+                        <p>Bluetooth headphones, even those with built-in microphones, are generally <b>discouraged for recording</b> due to the high and variant latency they introduce, which is difficult to estimate and compensate for accurately. Furthermore, the audio capture codecs used in Bluetooth devices are often optimized for voice transmission rather than music, leading to significant degradation in input signal quality due to limited spectral fidelity. Therefore, it <b>is recommended to use wired headphones or microphones</b>.</p>
                     </td>
-                    <td>Not recommended</td>
-                </tr>
-                <tr>
-                    <td width="70%">
-                        <p>Known issues</p>
-                    </td>
-                    <td>Variant latency</td>
+                    <td>Bluetooth not recommended, only wired devices</td>
                 </tr>
             </tbody>
         </table>
@@ -150,37 +175,34 @@
             <tbody>
                 <tr>
                     <td width="70%">
-                        <p>WAV, MP3</p>
+                        <p>WAV, MP3 playback fully supported</p>
+                        <p>ALAC (Apple Lossless Audio Codec) only supported by Safari</p>
                     </td>
-                    <td>OGG not supported at Safari</td>
+                    <td>Ogg Opus and Ogg Vorbis supported from Safari 18.4</td>
                 </tr>
                 <tr>
                     <td width="70%">
-                        <p>Recording</p>
+                        <p>Recording format</p>
                     </td>
                     <td>WAV</td>
+                </tr>
+                <tr>
+                    <td width="70%">
+                        <p>Compression server-side</p>
+                    </td>
+                    <td>AAC (Advanced Audio Coding), .m4a container </td>
                 </tr>
             </tbody>
         </table>
     </main>
-    <footer clas="footer">
-		<div class="footerMenu">
-			<hr>
-			<ul>
-				<li><a href="about.html">About</a></li>
-				<li><a href="terms.html">Terms of use</a></li>
-				<li><a href="privacy.html">Privacy</a></li>
-				<li><a href="cookies.html">Cookies</a></li>
-                <li><a href="github.html">GitHub</a></li>
-			</ul>
-            <span id="companyName">&copy; Hi-Audio</span>
-	    </div>       
-        <div class="fab">            
-            <a class="floatingbutton" href="#" data-toggle="modal" data-target="#bugReportModal">
-                <i class="fas fa-bug" style="color:white;"></i>
-            </a>
-        </div>
-	</footer>
+    <hi-audio-footer></hi-audio-footer>
+    <script src="../common/js/footer-component.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
