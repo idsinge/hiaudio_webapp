@@ -179,7 +179,7 @@ const getUserNameLabel = (compInfo) => {
 
     return `<span class="badge badge-light">OWNER:&nbsp;</span>
             <i class="fa fa-user"></i>&nbsp;
-            <a href="${uriUserPage + compInfo.user_id}" class="card-url">${compInfo.username}&nbsp;</a>`
+            <a id="owner-badge" href="${uriUserPage + compInfo.user_id}" class="card-url">${compInfo.username}&nbsp;</a>`
 }
 
 const getRoleLabel = (compInfo) => {
@@ -228,11 +228,11 @@ const getPrivacyLabel = (compInfo) => {
             </span>&nbsp;`
 }
 
-const getCollectionLabel = (compInfo) => {
+export const getCollectionLabel = (collection_id, collection_name) => {
 
-    return `${compInfo.collection_id ? `<span class="badge badge-light">COLLECTION:&nbsp;</span>
+    return `${collection_id ? `<span class="badge badge-light">COLLECTION:&nbsp;</span>
     <i class="fa fa-th-list"></i>&nbsp;
-    <a href="${uriCollectionPage + compInfo.collection_id}" class="card-url">${compInfo.parent_collection}&nbsp;</a>` : ''}`
+    <a id="collection-badge" href="${uriCollectionPage + collection_id}" class="card-url">${collection_name}&nbsp;</a>` : ''}`
 }
 
 const drawCompositionDetailInfo = (tracksInfo) => {
@@ -240,7 +240,7 @@ const drawCompositionDetailInfo = (tracksInfo) => {
     if (tracksInfo.title) {
         contentHtml = '<br>'
         contentHtml += getUserNameLabel(tracksInfo)
-        contentHtml += getCollectionLabel(tracksInfo)
+        contentHtml += getCollectionLabel(tracksInfo.collection_id, tracksInfo.parent_collection)
         contentHtml += '<br>'
         contentHtml += getRoleLabel(tracksInfo)
         contentHtml += getContributorsLabel(tracksInfo)

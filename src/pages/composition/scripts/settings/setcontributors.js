@@ -260,10 +260,11 @@ export const updateContributorsAtCompPage = () => {
                 if(CURRENT_CONTRIBUTORS.length){
                     contributorsbadgetext.innerText = CURRENT_CONTRIBUTORS.length
                 } else {
-                    const prevBadge = contributorsbadgetext.previousSibling
+                    const contributorLabelBadge = contributorsbadgetext.previousSibling.previousSibling
+                    const contributorNumberBadge = contributorsbadgetext.previousSibling
+                    contributorLabelBadge.remove()
+                    contributorNumberBadge.remove()
                     contributorsbadgetext.remove()
-                    prevBadge.remove()
-                    rolebadgetext.nextSibling.remove()
                 }
             }
         }
