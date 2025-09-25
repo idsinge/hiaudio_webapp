@@ -130,6 +130,10 @@ const removeCollectionFromModalDialog = (collectionId) => {
     ids && ids.forEach(id => {
         removeCollectionFromHomePage(id)
     })
+    const collection_uid = window.location.search.split('collectionid=')[1]
+    if(collectionId === collection_uid){
+        window.location.href = window.location.origin
+    }
 }
 
 const removeCollectionFromHomePage = (collectionId) => {
