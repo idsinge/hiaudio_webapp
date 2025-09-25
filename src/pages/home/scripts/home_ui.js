@@ -172,7 +172,7 @@ export const getUICardElemForCollection = (typebadge, numitems, groupTitle, grou
                               ${url ? `<a href=${url + groupId} class="card-header-url">${groupTitle}</a>` : `${groupTitle}`}                              
                           </span>`
 
-    return `<div class='card ${borderstyle}'>                        
+    return `<div id='${groupId}' class='card ${borderstyle}'>                        
               <h4>${badgeDisplayed}</h4>        
               <div class="card-body">
                 <div class="list-group border">              
