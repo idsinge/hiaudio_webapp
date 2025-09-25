@@ -108,17 +108,34 @@ const confirmDeleteCollectionModal = async (event, collectionId, collectionTitle
 
             const response = await fetch(ENDPOINT + '/deletecollection/' + collectionId, { method: 'DELETE' })
             if (response?.ok) {
-                document.getElementById('removeCollIcon'+collectionId).remove()
-                const listElemToDelete = document.getElementById(collectionId)
-                if(listElemToDelete?.nextSibling?.tagName === 'UL'){
-                    listElemToDelete.nextSibling.remove()
-                }
-                listElemToDelete.remove()
+                removeCollectionFromModalDialog(collectionId)
             }
 
         } else {
             event.target.checked = false
         }
+    }
+}
+
+const removeCollectionFromModalDialog = (collectionId) => {
+    const listElemToDelete = document.getElementById(collectionId)
+    let ids = null
+    if(listElemToDelete?.nextSibling?.tagName === 'UL'){
+        ids = Array.from(listElemToDelete.nextSibling.querySelectorAll('li[id]')).map(li => li.id)
+        listElemToDelete.nextSibling.remove()
+    }
+    listElemToDelete.remove()
+    removeCollectionFromHomePage(collectionId)
+    document.getElementById('removeCollIcon'+collectionId).remove()
+    ids && ids.forEach(id => {
+        removeCollectionFromHomePage(id)
+    })
+}
+
+const removeCollectionFromHomePage = (collectionId) => {
+    const cardElemToDelete = document.getElementById(collectionId)
+    if(cardElemToDelete){
+        cardElemToDelete.remove()
     }
 }
 
