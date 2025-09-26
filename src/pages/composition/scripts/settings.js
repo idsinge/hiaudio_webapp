@@ -1,6 +1,6 @@
 import { ENDPOINT } from '../../../common/js/config'
 import  DynamicModal from '../../../common/js/modaldialog'
-import { startLoader, cancelLoader } from '../../../common/js/utils'
+import { startLoader, cancelLoader, UserRole } from '../../../common/js/utils'
 import {openSettingsButtonHandler, saveParentCollection} from './settings/setcollection'
 import {setUITitle, getCurrentTitle, saveTitle} from './settings/settitle'
 import {setUIDescription, getCurrentDescription, saveDescription} from './settings/setdescription'
@@ -37,6 +37,7 @@ export const enableCompositionSettings = (tracksInfo) => {
     } else {
         document.getElementById('listCollContainerNewColl').innerHTML = tracksInfo.parent_collection ? `<h5><span class="badge badge-secondary">${tracksInfo.parent_collection}</span></h5>` : ''
     }
+    document.querySelector(`${'#inputGroupSelectRole [value="'+UserRole.member+'"]'}`).selected = true
 }
 
 const createSettingsButton = () => {

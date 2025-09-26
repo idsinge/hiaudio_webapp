@@ -5,7 +5,7 @@ import {getCollections, getCollectionsError, createListCollections } from '../..
 
 let CURRENT_PARENT_COLLECTION = null
 
-const clickSettingsButtonHandler = (collection_id) => {    
+const clickSettingsButtonHandler = (collection_id) => {
     getCollections().then( result => {
         if(result){
             getCompCollSuccess(result, collection_id)
@@ -18,7 +18,7 @@ const clickSettingsButtonHandler = (collection_id) => {
 export const openSettingsButtonHandler = (collection_id) => {
     const openSettingsButton  = document.getElementById('openSettingsButton')
     openSettingsButton?.addEventListener('click', () => {
-        clickSettingsButtonHandler(collection_id)
+        clickSettingsButtonHandler(CURRENT_PARENT_COLLECTION || collection_id)
     }, false)
 }
 
@@ -66,9 +66,9 @@ const updateCollectionBadgeUI = (newParentCollId, newParentCollText) => {
 const removeCollectionBadge = (collectionBadge) => {
     const collectionLabel = collectionBadge.previousElementSibling.previousElementSibling
     const collectionIcon = collectionBadge.previousElementSibling
-    collectionLabel && collectionLabel.remove()
-    collectionIcon && collectionIcon.remove()
-    collectionBadge && collectionBadge.remove()
+    collectionLabel.remove()
+    collectionIcon.remove()
+    collectionBadge.remove()
 }
 
 const addCollectionBadge = (collectionBadge,newParentCollId, newParentCollText) => {
