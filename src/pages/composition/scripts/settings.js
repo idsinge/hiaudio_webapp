@@ -38,6 +38,13 @@ export const enableCompositionSettings = (tracksInfo) => {
         document.getElementById('listCollContainerNewColl').innerHTML = tracksInfo.parent_collection ? `<h5><span class="badge badge-secondary">${tracksInfo.parent_collection}</span></h5>` : ''
     }
     document.querySelector(`${'#inputGroupSelectRole [value="'+UserRole.member+'"]'}`).selected = true
+    
+    window.addEventListener('click', function (event) {
+        const modal = document.getElementById('settingsModal')
+        if (event.target === modal) {
+            clickCancelButtonHandler(tracksInfo)
+        }
+    })
 }
 
 const createSettingsButton = () => {
@@ -82,7 +89,7 @@ export const updateSettings = async (method, api, data) => {
     return response
 }
 
-const clickCancelButtonHandler = (compInfo) => {     
+const clickCancelButtonHandler = (compInfo) => {
     setUITitle(getCurrentTitle()||compInfo.title) 
     setUIDescription(getCurrentDescription()||compInfo.description)        
     setUIPrivacy(getPrivacyLevel() || compInfo.privacy)         
@@ -96,13 +103,19 @@ const clickCancelButtonHandler = (compInfo) => {
 
 const cancelButtonHandler = (compInfo) => {
     const cancelSettingsButton = document.getElementById('cancelsettingsbutton')
-    cancelSettingsButton?.addEventListener('click', () => { clickCancelButtonHandler(compInfo)})       
+    const closeSettingsModalButton = document.getElementById('closesettingsmodalbutton')
+    cancelSettingsButton.onclick = () => {
+        clickCancelButtonHandler(compInfo)
+    }
+    closeSettingsModalButton.onclick = () => {
+        clickCancelButtonHandler(compInfo)
+    }
 }
 
 const saveButtonHandler = async (compinfo) => {
     const compId = compinfo.uuid
     const confirmSettingsButton = document.getElementById('updatecompositionbutton')
-    confirmSettingsButton?.addEventListener('click', async (e) => {
+    confirmSettingsButton.onclick = async (e) => {
         startLoader('Updating Settings...')
         const deleteComp = document.getElementById('deleteComposition').checked
         if (deleteComp === true) {
@@ -121,7 +134,7 @@ const saveButtonHandler = async (compinfo) => {
             $('#settingsModal').modal('hide')
             cancelLoader()
         }
-    })
+    }
 }
 
 const deleteComposition = async (compId) => {
