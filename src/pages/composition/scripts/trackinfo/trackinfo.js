@@ -80,7 +80,7 @@ const createNewAnnotationBtnHandler = () => {
         <td contenteditable='true' data-key=''></td>
         <td id='btn-rem-${uniqueId}' class='delete-row' data-key=''>&nbsp;<i class="fa fa-trash text-danger"></i></td>
         </tr>`
-        tableContainer.innerHTML += html
+        tableContainer.insertAdjacentHTML('beforeend', html)
         if(!EDIT_STATUS){
             editButton.click()
         }
