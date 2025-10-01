@@ -32,10 +32,14 @@ export const enableCompositionSettings = (tracksInfo) => {
     cancelButtonHandler(tracksInfo)
     createSettingsButton()
     privateRadioButtonHandler()
-    if(!tracksInfo.cloned_from){
+    if(!tracksInfo.cloned_from && tracksInfo.owner){
         openSettingsButtonHandler(tracksInfo?.collection_id)
     } else {
         document.getElementById('listCollContainerNewColl').innerHTML = tracksInfo.parent_collection ? `<h5><span class="badge badge-secondary">${tracksInfo.parent_collection}</span></h5>` : ''
+    }
+    if(!tracksInfo.owner){
+        const selectableRoles = document.getElementById('inputGroupSelectRole')
+        selectableRoles.remove(UserRole.owner)
     }
     document.querySelector(`${'#inputGroupSelectRole [value="'+UserRole.member+'"]'}`).selected = true
     
