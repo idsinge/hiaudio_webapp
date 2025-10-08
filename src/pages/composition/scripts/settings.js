@@ -22,7 +22,7 @@ export const enableCompositionSettings = (tracksInfo) => {
         document.getElementById('form-group-marktemplate').hidden = false
     }
     setUIContributors(tracksInfo.contributors)
-    addContributorButtonHandler(tracksInfo.uuid)
+    addContributorButtonHandler(tracksInfo.uuid, tracksInfo.user_id)
     setUITitle(tracksInfo.title)
     setUIDescription(tracksInfo.description)
     setUIPrivacy(tracksInfo.privacy)
@@ -40,6 +40,8 @@ export const enableCompositionSettings = (tracksInfo) => {
     if(!tracksInfo.owner){
         const selectableRoles = document.getElementById('inputGroupSelectRole')
         selectableRoles.remove(UserRole.owner)
+    } else {
+        document.getElementById('deleteCompositionFormGroup').hidden = false
     }
     document.querySelector(`${'#inputGroupSelectRole [value="'+UserRole.member+'"]'}`).selected = true
     

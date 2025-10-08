@@ -2,6 +2,7 @@ import { ENDPOINT } from '../../../../common/js/config'
 import DynamicModal from '../../../../common/js/modaldialog'
 import { looksLikeMail } from '../../../../common/js/utils'
 import {updateSettings} from '../settings'
+import {CURRENT_USER_ID} from '../composition_helper'
 
 let CURRENT_CONTRIBUTORS = []
 let NEW_CONTRIBUTORS = []
@@ -37,7 +38,7 @@ export const setUIContributors = (contributors) => {
     }
 }
 
-export const addContributorButtonHandler = (compositionId) => {
+export const addContributorButtonHandler = (compositionId, compUserId) => {
 
     const button = document.getElementById('addContribButton')
     const input = document.getElementById('contributorinput')
@@ -49,7 +50,7 @@ export const addContributorButtonHandler = (compositionId) => {
         document.getElementById('contributorinput').classList.remove('is-invalid')     
         document.getElementById('validationemailresult').innerText = ''        
         if (input.value && looksLikeMail(input.value)) {           
-            addContributorToList(ul, input.value.trim(), compositionId, role)
+            addContributorToList(ul, input.value.trim(), compositionId, role, compUserId)
         } else {
             document.getElementById('contributorinput').classList.add('is-invalid')     
             document.getElementById('validationemailresult').innerText = 'Sorry, invalid email address format.'
@@ -57,11 +58,11 @@ export const addContributorButtonHandler = (compositionId) => {
     })
 }
 
-const addContributorToUI = (ul, contrib) => {    
+const addContributorToUI = (ul, contrib, uid) => {
     const role = ROLES[contrib.role]
     const li = document.createElement('li')
     li.className = 'list-group-item'
-    li.id = contrib.user_uid
+    li.id = uid || contrib.user_uid
     li.textContent = contrib.email + ' (' + role + ')'    
     const deleteSwitch = `&nbsp;<div class='custom-control custom-switch custom-control-inline float-right'>
     <input type='checkbox' class='custom-control-input is-invalid' id='removeContSwitch${contrib.user_uid}'>
@@ -72,7 +73,7 @@ const addContributorToUI = (ul, contrib) => {
     removeContributorSwitchHandler(contrib)
 }
 
-const addContributorToList = async (ul, contrib, compositionId, role) => {
+const addContributorToList = async (ul, contrib, compositionId, role, compUserId) => {
     const roleInput = document.getElementById('inputGroupSelectRole').value    
     if(parseInt(roleInput) !== 0){
         
@@ -93,23 +94,29 @@ const addContributorToList = async (ul, contrib, compositionId, role) => {
         
         if(canAdd){
             // #TODO: replace with API call to new endpoint to validate contributor
-            const response = await fetch(ENDPOINT + '/checkuser/' + contrib)                       
-            if(response?.ok || (response?.status === 404)){
-                if(response?.status === 200){
-                    const respJson = await response.json()
-                    newcontrib.user_uid = respJson.user_uid
-                }                                                        
-                NEW_CONTRIBUTORS.push(newcontrib)            
-                addContributorToUI(ul, newcontrib)
-                if(response?.status === 404){
-                    displayModalDialog('An invitation via email will be sent to: '+ contrib + ', after clicking on the button Confirm')
+            const response = await fetch(ENDPOINT + '/checkuser/' + contrib)
+            if((response?.ok || (response?.status === 404))){
+                const respJson = await response.json()
+                if(compUserId !== respJson.user_uid){
+                    if(response?.status === 200){
+                        newcontrib.user_uid = respJson.user_uid
+                    }                                                        
+                    NEW_CONTRIBUTORS.push(newcontrib)            
+                    addContributorToUI(ul, newcontrib)
+                    if(response?.status === 404){
+                        displayModalDialog('An invitation via email will be sent to: '+ contrib + ', after clicking on the button Confirm')
+                    }
+                } else {
+                    displayModalDialog(`Can't add ${contrib} as contributor`)
                 }
             } else {
-                displayModalDialog(`User can't be added`)
+                displayModalDialog(`${contrib} can't be added`)
             }
         } else {
-            displayModalDialog(`Duplicate user`)
+            displayModalDialog(`${contrib} can't be updated`)
         }
+    } else {
+        displayModalDialog(`Choose a role, please`)
     }   
 }
 
@@ -128,18 +135,17 @@ const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) 
     
     let canAdd = false
     const uid = CURRENT_CONTRIBUTORS[atIndexCurrent]?.user_uid || NEW_CONTRIBUTORS[atIndexNew]?.user_uid
-    const contribListElem = document.getElementById(uid)    
+    const contribListElem = document.getElementById(uid)
     if(contribListElem){
     
         if(atIndexCurrent >= 0 && atIndexNew < 0){
-            
-            if(CURRENT_CONTRIBUTORS[atIndexCurrent].role !== newcontrib.role){
+            const isTheSame = CURRENT_USER_ID === CURRENT_CONTRIBUTORS[atIndexCurrent].user_uid
+            if(!isTheSame &&(CURRENT_CONTRIBUTORS[atIndexCurrent].role !== newcontrib.role)){
                 canAdd = true
                 contribListElem.remove()  
             }
         } 
         if(atIndexNew >= 0 && atIndexCurrent < 0){
-            
             if(NEW_CONTRIBUTORS[atIndexNew].role !== newcontrib.role){
                 canAdd = true
                 NEW_CONTRIBUTORS.splice(atIndexNew,1)
@@ -147,17 +153,16 @@ const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) 
             } 
         }
         if(atIndexNew >= 0 && atIndexCurrent >= 0){
-                     
-           if(CURRENT_CONTRIBUTORS[atIndexCurrent].role === newcontrib.role){
+            if(CURRENT_CONTRIBUTORS[atIndexCurrent].role === newcontrib.role){
                 NEW_CONTRIBUTORS.splice(atIndexNew,1)
                 contribListElem.remove()                
-                addContributorToUI(ul, newcontrib)
-           } 
-           if(NEW_CONTRIBUTORS.length && (NEW_CONTRIBUTORS[atIndexNew].role !== newcontrib.role)){
+                addContributorToUI(ul, newcontrib, uid)
+            } 
+            if(NEW_CONTRIBUTORS.length && (NEW_CONTRIBUTORS[atIndexNew].role !== newcontrib.role)){
                 canAdd = true
                 NEW_CONTRIBUTORS.splice(atIndexNew,1)
                 contribListElem.remove() 
-           }
+            }
         }              
     }
     return canAdd
@@ -169,13 +174,23 @@ export const saveNewContributors = async () => {
         for (let i=0; i < NEW_CONTRIBUTORS.length; i++){                    
             const newcontrib = NEW_CONTRIBUTORS[i]
             const resultAddContrib = await updateSettings('POST', '/addcontributorbyemail', newcontrib)                    
-            if(resultAddContrib?.ok){                
+            if(resultAddContrib?.ok){
                 NEW_CONTRIBUTORS[i].id = resultAddContrib.contribid                
                 if(newcontrib.email === newcontrib.user_uid){
                     NEW_CONTRIBUTORS[i].user_uid = resultAddContrib.uuid
                     document.getElementById(newcontrib.email).id = resultAddContrib.uuid                    
                 }                
                 copy_new_contribs[i] = null                       
+            } else {
+                DynamicModal.dynamicModalDialog(
+                    resultAddContrib?.error + ': ' + newcontrib.email
+                    || 'An error happened, contributor not added', 
+                    null, 
+                    '',
+                    'Close',
+                    'Error',
+                    'bg-danger'
+                )
             }                       
         }
         const noEmptyNewValues = copy_new_contribs.filter((value) => value != null)                
