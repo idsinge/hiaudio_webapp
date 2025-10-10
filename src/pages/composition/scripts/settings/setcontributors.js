@@ -171,7 +171,8 @@ const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) 
 export const saveNewContributors = async () => {
     if(NEW_CONTRIBUTORS.length > 0){
         let copy_new_contribs = [...NEW_CONTRIBUTORS]
-        for (let i=0; i < NEW_CONTRIBUTORS.length; i++){                    
+        let errorContribsAdd = 0
+        for (let i=0; i < NEW_CONTRIBUTORS.length; i++){
             const newcontrib = NEW_CONTRIBUTORS[i]
             const resultAddContrib = await updateSettings('POST', '/addcontributorbyemail', newcontrib)                    
             if(resultAddContrib?.ok){
@@ -182,30 +183,42 @@ export const saveNewContributors = async () => {
                 }                
                 copy_new_contribs[i] = null                       
             } else {
-                DynamicModal.dynamicModalDialog(
-                    resultAddContrib?.error + ': ' + newcontrib.email
-                    || 'An error happened, contributor not added', 
-                    null, 
-                    '',
-                    'Close',
-                    'Error',
-                    'bg-danger'
-                )
+                errorContribsAdd++
             }                       
         }
-        const noEmptyNewValues = copy_new_contribs.filter((value) => value != null)                
-        CURRENT_CONTRIBUTORS = CURRENT_CONTRIBUTORS.concat(NEW_CONTRIBUTORS)
-        document.getElementById('contributorinput').value = ''
-        NEW_CONTRIBUTORS = noEmptyNewValues                                       
+        if(errorContribsAdd > 0){
+            NEW_CONTRIBUTORS.splice(errorContribsAdd - NEW_CONTRIBUTORS.length)
+            const errorMessage = `${errorContribsAdd} contributor/s can't be added`
+            handleErrorContribs(errorMessage)
+        } else {
+            const noEmptyNewValues = copy_new_contribs.filter((value) => value != null)
+            CURRENT_CONTRIBUTORS = CURRENT_CONTRIBUTORS.concat(NEW_CONTRIBUTORS)
+            document.getElementById('contributorinput').value = ''
+            NEW_CONTRIBUTORS = noEmptyNewValues
+        }
     }   
+}
+
+const handleErrorContribs = (errorMessage) => {
+    clearUIContributors()     
+    setUIContributors(getCurrentContributors())
+    DynamicModal.dynamicModalDialog(
+        errorMessage, 
+        null, 
+        '',
+        'Close',
+        'Error',
+        'bg-danger'
+    )
 }
 
 export const saveRemoveContributors = async (compId) => {
     if(TOREMOVE_CONTRIBUTORS.length > 0){
         let copy_toremove_contribs = [...TOREMOVE_CONTRIBUTORS]
+        let errorContribsRemove = 0
         for (let j=0; j < TOREMOVE_CONTRIBUTORS.length; j++){ 
             const indexContribInCurrent = CURRENT_CONTRIBUTORS.findIndex(x => x.email === TOREMOVE_CONTRIBUTORS[j])                              
-            const contribToRemId = CURRENT_CONTRIBUTORS[indexContribInCurrent].user_uid 
+            const contribToRemId = CURRENT_CONTRIBUTORS[indexContribInCurrent]?.user_uid 
             const contribToRem = {contrib_uuid:contribToRemId, comp_uuid:compId}
             const resultRemoveContrib = await updateSettings('DELETE', '/deletecontributor', contribToRem)                    
             if(resultRemoveContrib?.ok){                        
@@ -213,11 +226,17 @@ export const saveRemoveContributors = async (compId) => {
                 CURRENT_CONTRIBUTORS.splice(indexContribInCurrent,1)
                 document.getElementById(contribToRemId).remove()
             } else {
-                document.getElementById('removeContSwitch'+contribToRemId).checked = false
+                errorContribsRemove++
             }                   
         }
-        const noEmptyValuesRm = copy_toremove_contribs.filter((value) => value != null)
-        TOREMOVE_CONTRIBUTORS = noEmptyValuesRm                
+        if(errorContribsRemove > 0){
+            TOREMOVE_CONTRIBUTORS.splice(errorContribsRemove - TOREMOVE_CONTRIBUTORS.length)
+            const errorMessage = `${errorContribsRemove} contributor/s can't be removed`
+            handleErrorContribs(errorMessage)
+        } else {
+            const noEmptyValuesRm = copy_toremove_contribs.filter((value) => value != null)
+            TOREMOVE_CONTRIBUTORS = noEmptyValuesRm
+        }
     }         
 }
 
