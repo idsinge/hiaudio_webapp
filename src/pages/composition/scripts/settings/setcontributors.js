@@ -274,6 +274,11 @@ const removeContributorSwitchHandler = (contrib) => {
                         chk.checked = true
                     })
                 }
+            } else {
+                const indexToRemove = TOREMOVE_CONTRIBUTORS.indexOf(contrib.email)
+                if(indexToRemove > -1){
+                    TOREMOVE_CONTRIBUTORS.splice(indexToRemove,1)
+                }
             }
         }
     })
