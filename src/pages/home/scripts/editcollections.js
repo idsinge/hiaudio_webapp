@@ -118,18 +118,30 @@ const confirmDeleteCollectionModal = async (event, collectionId, collectionTitle
 }
 
 const removeCollectionFromModalDialog = (collectionId) => {
+    const totalCollBadge = document.getElementById('totalcollectionsbadge')
+    const totalCompBadge = document.getElementById('totalcompositionsbadge')
+    let numberOfColl = parseInt(totalCollBadge?.textContent)
+    let numberOfComp = parseInt(totalCompBadge?.textContent)
+    
     const listElemToDelete = document.getElementById(collectionId)
-    let ids = null
+    let coll_ids = null
+    let comp_children = 0
     if(listElemToDelete?.nextSibling?.tagName === 'UL'){
-        ids = Array.from(listElemToDelete.nextSibling.querySelectorAll('li[id]')).map(li => li.id)
+        comp_children = listElemToDelete.nextSibling.querySelectorAll('a')?.length
+        coll_ids = Array.from(listElemToDelete.nextSibling.querySelectorAll('li[id]')).map(li => li.id)
         listElemToDelete.nextSibling.remove()
     }
     listElemToDelete.remove()
     removeCollectionFromHomePage(collectionId)
+    numberOfColl--
+    
     document.getElementById('removeCollIcon'+collectionId).remove()
-    ids && ids.forEach(id => {
+    coll_ids && coll_ids.forEach(id => {
         removeCollectionFromHomePage(id)
+        numberOfColl--
     })
+    totalCollBadge && (totalCollBadge.textContent = numberOfColl)
+    totalCompBadge && (totalCompBadge.textContent = numberOfComp - comp_children)
     const collection_uid = window.location.search.split('collectionid=')[1]
     if(collectionId === collection_uid){
         window.location.href = window.location.origin
