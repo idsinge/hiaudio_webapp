@@ -1,7 +1,7 @@
 import { ENDPOINT } from '../../../common/js/config'
 import DynamicModal from '../../../common/js/modaldialog'
 import { DB, openDB, getTracksByCompId } from '../../../common/js/indexedDB'
-import { cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, uriUserPage, uriCollectionPage, UserRole } from '../../../common/js/utils'
+import { cancelLoader, PRIVACY_BADGE_STYLE, PRIVACY_BADGE_TEXT, ROLE_BADGE_STYLE, uriUserPage, uriCollectionPage, UserRole } from '../../../common/js/utils'
 import { setUserPermission, trackHandler, playlist } from './composition'
 import {enableCompositionSettings} from './settings'
 import {ROLES} from './settings/setcontributors'
@@ -177,7 +177,7 @@ const createTrackList = (arrayLoad, canUpload, userRole) => {
 
 const getUserNameLabel = (compInfo) => {
 
-    return `<span class="badge badge-light">OWNER:&nbsp;</span>
+    return `<span class="badge badge-light">HOLDER:&nbsp;</span>
             <i class="fa fa-user"></i>&nbsp;
             <a id="owner-badge" href="${uriUserPage + compInfo.user_id}" class="card-url">${compInfo.username}&nbsp;</a>`
 }
@@ -185,8 +185,8 @@ const getUserNameLabel = (compInfo) => {
 const getRoleLabel = (compInfo) => {
     return `${compInfo.role ? 
         `<span class="badge badge-light">YOUR ROLE:&nbsp;</span>
-        <span id="rolebadgetext" class="badge badge-success">
-         ${ROLES[compInfo.role]}
+        <span id="rolebadgetext" class="badge ${compInfo.owner ? 'badge-holder' : ROLE_BADGE_STYLE[compInfo.role]}">
+         ${compInfo.owner ? 'Holder' : ROLES[compInfo.role]}
         </span>&nbsp;` 
         : ''}`
 }

@@ -137,10 +137,10 @@ const checkDuplicateBeforeAdding = (newcontrib, atIndexNew, atIndexCurrent, ul) 
     const uid = CURRENT_CONTRIBUTORS[atIndexCurrent]?.user_uid || NEW_CONTRIBUTORS[atIndexNew]?.user_uid
     const contribListElem = document.getElementById(uid)
     if(contribListElem){
-    
         if(atIndexCurrent >= 0 && atIndexNew < 0){
-            const isTheSame = CURRENT_USER_ID === CURRENT_CONTRIBUTORS[atIndexCurrent].user_uid
-            if(!isTheSame &&(CURRENT_CONTRIBUTORS[atIndexCurrent].role !== newcontrib.role)){
+            const isTheSameAsCurrentUser = CURRENT_USER_ID === CURRENT_CONTRIBUTORS[atIndexCurrent].user_uid
+            const sameContributorSameRole = (CURRENT_CONTRIBUTORS[atIndexCurrent].email === newcontrib.email) && (CURRENT_CONTRIBUTORS[atIndexCurrent].role === newcontrib.role)
+            if(!isTheSameAsCurrentUser && !sameContributorSameRole){
                 canAdd = true
                 contribListElem.remove()  
             }
@@ -180,7 +180,7 @@ export const saveNewContributors = async () => {
                 if(newcontrib.email === newcontrib.user_uid){
                     NEW_CONTRIBUTORS[i].user_uid = resultAddContrib.uuid
                     document.getElementById(newcontrib.email).id = resultAddContrib.uuid                    
-                }                
+                }
                 copy_new_contribs[i] = null                       
             } else {
                 errorContribsAdd++
@@ -192,6 +192,13 @@ export const saveNewContributors = async () => {
             handleErrorContribs(errorMessage)
         } else {
             const noEmptyNewValues = copy_new_contribs.filter((value) => value != null)
+            for (let i=0; i < NEW_CONTRIBUTORS.length; i++){ 
+                const indexContributorDuplicated = CURRENT_CONTRIBUTORS.findIndex(x => x.email === NEW_CONTRIBUTORS[i].email)
+                if(indexContributorDuplicated > -1){
+                    CURRENT_CONTRIBUTORS[indexContributorDuplicated].role = NEW_CONTRIBUTORS[i].role
+                    NEW_CONTRIBUTORS.splice(i, 1)
+                }
+            }
             CURRENT_CONTRIBUTORS = CURRENT_CONTRIBUTORS.concat(NEW_CONTRIBUTORS)
             document.getElementById('contributorinput').value = ''
             NEW_CONTRIBUTORS = noEmptyNewValues

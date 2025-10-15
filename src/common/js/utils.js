@@ -19,6 +19,7 @@ export const LevelPrivacy = Object.freeze({
 
 export const PRIVACY_BADGE_STYLE = {[LevelPrivacy.public] : 'badge-public', [LevelPrivacy.onlyreg] : 'badge-onlyreg', [LevelPrivacy.private] : 'badge-private'}
 export const PRIVACY_BADGE_TEXT = {[LevelPrivacy.public] : 'PUBLIC', [LevelPrivacy.onlyreg] : 'REG USERS', [LevelPrivacy.private] : 'PRIVATE'}
+export const ROLE_BADGE_STYLE = {[UserRole.owner] : 'badge-owner', [UserRole.admin] : 'badge-admin', [UserRole.member] : 'badge-member', [UserRole.guest] : 'badge-guest'}
 
 export const startLoader = (loadingMessage) => {    
     const loaderElement = document.getElementById('loader')    
