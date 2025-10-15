@@ -14,25 +14,25 @@
 
 .badge-holder {
     color: white;
-    background-color: #1f5fa3; /* deep blue, professional and distinct */
+    background-color: #1f5fa3;
 }
 
 .badge-owner {    
     color: black;
-    background-color: #f4c542; /* warm gold, bright enough for black text */
+    background-color: #f4c542;
 }
 
 .badge-admin {
     color: white;
-    background-color: #b22222; /* firebrick red — authority and urgency */
+    background-color: #b22222;
 }
 
 .badge-member {
     color: white;
-    background-color: #6c2ca0; /* rich purple, conveys community/membership */
+    background-color: #6c2ca0;
 }
 
 .badge-guest {
     color: black;
-    background-color: #a7d0e6; /* light sky blue, friendly and welcoming */
+    background-color: #a7d0e6;
 }
