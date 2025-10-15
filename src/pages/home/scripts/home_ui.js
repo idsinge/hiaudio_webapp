@@ -210,7 +210,7 @@ export const updateUIWithCollectionInfo = (collectiontitle, username, owner_uuid
                                           <div class="card-header bg-transparent border-collection"><b>Collection</b></div>
                                           <div class="card-body text-dark">
                                             <h5 class="card-title">${collectiontitle}</h5>
-                                            <p class="card-text" style="width:300px;">Owner: <a href=${uriUserPage + owner_uuid} class="card-url">${username}</a></p>
+                                            <p class="card-text" style="width:300px;">Holder: <a href=${uriUserPage + owner_uuid} class="card-url">${username}</a></p>
                                           </div>
                                         </div>`
     document.getElementById('welcomecontainer').appendChild(collectionInfoContainer)
