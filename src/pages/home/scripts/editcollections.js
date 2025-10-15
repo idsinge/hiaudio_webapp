@@ -118,9 +118,7 @@ const confirmDeleteCollectionModal = async (event, collectionId, collectionTitle
 }
 
 const removeCollectionFromModalDialog = (collectionId) => {
-    const totalCollBadge = document.getElementById('totalcollectionsbadge')
     const totalCompBadge = document.getElementById('totalcompositionsbadge')
-    let numberOfColl = parseInt(totalCollBadge?.textContent)
     let numberOfComp = parseInt(totalCompBadge?.textContent)
     
     const listElemToDelete = document.getElementById(collectionId)
@@ -133,14 +131,11 @@ const removeCollectionFromModalDialog = (collectionId) => {
     }
     listElemToDelete.remove()
     removeCollectionFromHomePage(collectionId)
-    numberOfColl--
     
     document.getElementById('removeCollIcon'+collectionId).remove()
     coll_ids && coll_ids.forEach(id => {
         removeCollectionFromHomePage(id)
-        numberOfColl--
     })
-    totalCollBadge && (totalCollBadge.textContent = numberOfColl)
     totalCompBadge && (totalCompBadge.textContent = numberOfComp - comp_children)
     const collection_uid = window.location.search.split('collectionid=')[1]
     if(collectionId === collection_uid){
@@ -151,6 +146,10 @@ const removeCollectionFromModalDialog = (collectionId) => {
 const removeCollectionFromHomePage = (collectionId) => {
     const cardElemToDelete = document.getElementById(collectionId)
     if(cardElemToDelete){
+        const totalCollBadge = document.getElementById('totalcollectionsbadge')
+        let numberOfColl = parseInt(totalCollBadge?.textContent)
+        numberOfColl--
+        totalCollBadge && (totalCollBadge.textContent = numberOfColl)
         cardElemToDelete.remove()
     }
 }
