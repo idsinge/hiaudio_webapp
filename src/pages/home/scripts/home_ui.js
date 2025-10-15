@@ -76,10 +76,10 @@ export const getLegendButtons = (numberGroupsByCollections, numberGroupsCustom, 
     const displayGroupsByLabel = (numberGroupsByCollections || ((!isuserpage(endpoint)) && numberGroupsCustom) || numberSinglComp)
     return `<ul class="nav justify-content-end">
               ${displayGroupsByLabel ? '<li class="legenditem nav-item"><h4><span class="badge badge-light">Groups by:&nbsp;</span></h4></li>' : ''}
-              ${numberGroupsByCollections ? '<li class="legenditem nav-item"><h4><span class="badge badge-collection">Collections&nbsp;<span class="badge badge-light">' + numberGroupsByCollections + '</span></span></h4></li>' : ''}            
+              ${numberGroupsByCollections ? '<li class="legenditem nav-item"><h4><span class="badge badge-collection">Collections&nbsp;<span id="totalcollectionsbadge" class="badge badge-light">' + numberGroupsByCollections + '</span></span></h4></li>' : ''}            
               ${((!isuserpage(endpoint)) && numberGroupsCustom) ? '<li class="legenditem nav-item"><h4><span class="badge badge-warning">Users&nbsp;<span class="badge badge-light">' + numberGroupsCustom + '</span></span></h4></li>' : ''}
               ${numberSinglComp ? '<li class="legenditem nav-item"><h4><span class="badge badge-success">Singles&nbsp;<span class="badge badge-light">' + numberSinglComp + '</span></span></h4></li>' : ''}
-              <li class="legenditem nav-item"><h4><span class="badge badge-light">Total compositions:&nbsp;</span><span class="badge badge-light">${totalcomps}</span></h4></li>
+              <li class="legenditem nav-item"><h4><span class="badge badge-light">Total compositions:&nbsp;</span><span id="totalcompositionsbadge" class="badge badge-light">${totalcomps}</span></h4></li>
             </ul>`
 }
 
