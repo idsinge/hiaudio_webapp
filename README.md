@@ -26,10 +26,9 @@ First clone and run backend repo. Backend can be found at: https://github.com/id
 1. **Inside backend folder repo clone hiaudio webapp**: `git clone https://github.com/idsinge/hiaudio_webapp.git`
 2. `cd hiaudio_webapp` (Rename folder to `webapp`)
 3. `npm i`
-4. Duplicate and rename `src/common/js/config_template.js` to `src/common/js/config.js`. See `Note 1`.
-5. `npm run dev`
-7. Open `https://localhost:7007/`. See `Note 1` to use port `8000`. For HTTP see `Notes 2 and 3`.
-8. To build a new version for backend repo, run the command `npm run build` and the sources will be placed at `public` folder.
+4. `npm run dev`
+5. Open `https://localhost:7007/`. See `Note 1` to use port `8000`. For HTTP see `Notes 2 and 3`.
+6. To build a new version for backend repo, run the command `npm run build` and the sources will be placed at `public` folder.
 
 
 #### NOTES:
