@@ -1,0 +1,3 @@
+[submodule "waveform-playlist"]
+	path = waveform-playlist
+	url = https://github.com/gilpanal/waveform-playlist
