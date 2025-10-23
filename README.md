@@ -17,24 +17,36 @@ https://github.com/idsinge/hiaudio_backend
 
 Requirement: Node.js v14 or above
 
-**NOTE: currently this project needs from the backend to be running in parallel.**
+Install Node.js: https://nodejs.org/en/download
 
-First clone and run backend repo. Backend can be found at: https://github.com/idsinge/hiaudio_backend
+Recommentation: in case you have problems with Node versions use [NVM](https://github.com/nvm-sh/nvm). NVM may be required to develop features for `waveform-playlist`. See `Note 4`.
 
-0. `nvm use 14` In case you have problems with Node versions (https://github.com/nvm-sh/nvm)
+**IMPORTANT: currently this project needs from the backend to be running in parallel. See Note 3.**
 
-1. **Inside backend folder repo clone hiaudio webapp**: `git clone https://github.com/idsinge/hiaudio_webapp.git`
+First clone and run backend repo. More info at: 
+
+https://github.com/idsinge/hiaudio_backend/wiki/Working-with-the-frontend-and-backend-at-the-same-time-for-development
+
+
+
+1. **Inside backend folder repo clone hiaudio webapp**:
+
+`git clone https://github.com/idsinge/hiaudio_webapp.git`
+
 2. `cd hiaudio_webapp` (Rename folder to `webapp`)
 3. `npm i`
 4. `npm run dev`
-5. Open `https://localhost:7007/`. See `Note 1` to use port `8000`. For HTTP see `Notes 2 and 3`.
-6. To build a new version for backend repo, run the command `npm run build` and the sources will be placed at `public` folder.
+5. Open `https://localhost:7007/`. See `Note 1` to use port `8000`. For HTTP see `Notes 2`.
+6. To build a new version for backend repo, run the command `npm run build` and the sources will be placed at `../public` folder.
 
 
 #### NOTES:
-1. For a different endpoint change `MODE=DEV` at `config.js`. `DEVPORT` is `7007` by default. Open `https://localhost:8000/` to connect the local dev app to Hi-Audio prod env.
+1. For a different endpoint change `MODE=DEV` at `config.js`. `DEVPORT` is `7007` by default.
 2. For http remove the `--https` param in `package.json`: `... --port 8000 --https"`
 3. Webapp local dev version does not work isolated, it means without server instance. It can be used to point prod server and check info available there, but for full authenticated API methods the backend is required.
+4. To work with `waveform-playlist` repo for development check the following documentation:
+
+https://github.com/idsinge/hiaudio_webapp/wiki/Running-waveform%E2%80%90playlist-for-development
 
 ## More info:
 
