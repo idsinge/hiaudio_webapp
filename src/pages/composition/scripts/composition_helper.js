@@ -35,13 +35,14 @@ export const getComposition = (compositionId, callback, extraParams) => {
         },
     })
     .then((r) => {
-        if (!r.ok) {
-            errorIs = r.statusText
+        if(compositionId !== 'demopage'){
+            if (!r.ok) {
+                errorIs = r.statusText
+            }
+            return r.json()
         }
-        return r.json()
     })
     .then((data) => {
-        
         if (data && compositionId !== 'demopage') {
             tracksInfo = data
         }

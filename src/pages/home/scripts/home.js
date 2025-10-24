@@ -87,21 +87,13 @@ const getCompositionsByColelctionUid = async (collectionuid, auth) => {
 export const getRecentCompositions = async (withScroll) => {
   const endpoint = '/recentcompositions'
   const data = await callJsonApi('/recentcompositions', 'GET', null, 'Loading recent...')
-  if(data.compositions){
-    return renderHomePage(data.compositions, endpoint, withScroll)
-  } else {
-    alert('invalid return value for compisitions list')
-  }
+  return renderHomePage(data?.compositions || [], endpoint, withScroll)
 }
 
 export const getAllCompositions = async (withScroll) => {
   const endpoint = '/compositions'
   const data = await callJsonApi('/compositions', 'GET', null, 'Loading all...')
-  if(data.compositions){
-    return renderHomePage(data.compositions, endpoint, withScroll)
-  } else {
-    alert('invalid return value for compisitions list')
-  }
+  return renderHomePage(data?.compositions || [], endpoint, withScroll)
 }
 
 const renderHomePage = (compositionsList, endpoint, withScroll) => {
