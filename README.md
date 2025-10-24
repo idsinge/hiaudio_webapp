@@ -41,7 +41,7 @@ https://github.com/idsinge/hiaudio_backend/wiki/Working-with-the-frontend-and-ba
 
 
 #### NOTES:
-1. For a different endpoint change `MODE=DEV` at `config.js`. `DEVPORT` is `7007` by default.
+1. For a different endpoint change `MODE=DEV` at `config.js`. By default port for development is `7007` when the backend is running, otherwise the application can be open from `https://localhost:8000/` for pure frontend development when access to either API or DB is not required.
 2. For http remove the `--https` param in `package.json`: `... --port 8000 --https"`
 3. Webapp local dev version does not work isolated, it means without server instance. It can be used to point prod server and check info available there, but for full authenticated API methods the backend is required.
 4. To work with `waveform-playlist` repo for development check the following documentation:
