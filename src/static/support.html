@@ -32,6 +32,7 @@
                 <li><a href="#ios">iOS</a></li>
                 <li><a href="#android">Android</a></li>
                 <li><a href="#bluetooth">Bluetooth devices</a></li>
+                <li><a href="#inline">Line-in instruments</a></li>
                 <li><a href="#audioformats">Audio Formats</a></li>
             </ul>
         </div>
@@ -165,6 +166,20 @@
                         <p>Bluetooth headphones, even those with built-in microphones, are generally <b>discouraged for recording</b> due to the high and variant latency they introduce, which is difficult to estimate and compensate for accurately. Furthermore, the audio capture codecs used in Bluetooth devices are often optimized for voice transmission rather than music, leading to significant degradation in input signal quality due to limited spectral fidelity. Therefore, it <b>is recommended to use wired headphones or microphones</b>.</p>
                     </td>
                     <td>Bluetooth not recommended, only wired devices</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a name="inline"></a>
+        <h2><a href="#inline">Line-in instruments</a></h2>
+        <table class="table" width="100%">
+            <tbody>
+                <tr>
+                    <td width="70%">
+                        <p>Alternative recording methods involving line-in instrument inputs—such as electric guitars or keyboards connected directly to an audio interface—are <b>not recommended</b>, as they may pose challenges in accurately estimating latency. Proper operation in such cases depends on the audio interface in use, particularly whether it supports input monitoring or loopback functionality. For MIDI sources, compatibility is not guaranteed, as <b>the system does not natively support the Web MIDI API</b>. </p>
+                        <img src='./images/plugged_guitar.webp' class='mx-auto d-block visible-animate' alt='...' width='266' height='266'>
+                    </td>
+                    <td>Depends on the audio interface</td>
                 </tr>
             </tbody>
         </table>
