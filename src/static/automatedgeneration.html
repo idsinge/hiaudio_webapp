@@ -70,9 +70,12 @@
         </p>
 
         <p>
-            This extraction is implemented using the <code>pydub</code> Python library and associated decoding
-            backends. The resulting metadata is used to normalize audio asset descriptions and improve indexing,
+            This extraction is implemented using the <code>pydub</code> Python library. The resulting metadata is used to normalize audio asset descriptions and improve indexing,
             filtering, and corpus management.
+        </p>
+        <p>
+            Service used:
+            <a href="https://www.pydub.com/" target="_blank" rel="noopener noreferrer">Pydub</a>
         </p>
 
         <a name="copyright-identification"></a>
@@ -84,10 +87,10 @@
         </p>
 
         <p>
-            When a fingerprint match is obtained, the system may retrieve and associate metadata such as the identified
-            artist name, track title, and confidence or matching score. This process is intended to assist in the
-            detection and annotation of potentially copyrighted material and to improve the descriptive quality of
-            uploaded records.
+            When a fingerprint match is obtained, the system may retrieve and associate metadata such as the
+            identified artist name, track title, and confidence or matching score. This process assists in the
+            detection and annotation of potentially copyrighted material. Content flagged through this process
+            is subject to manual review and may be removed from the platform in cases of confirmed infringement.
         </p>
 
         <p>
@@ -138,8 +141,10 @@
         </ul>
 
         <p>
-            These descriptors are automatically computed to enrich audio records with signal-level and music-relevant
-            information.
+            These descriptors are automatically computed to enrich audio records with signal-level and
+            music-relevant information. When the analysis detects the presence of human speech or non-singing
+            voice content, the corresponding recordings may be flagged for manual review and potential removal
+            in order to ensure compliance with applicable data protection regulations, including the GDPR.
         </p>
 
         <p>
