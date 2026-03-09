@@ -23,6 +23,7 @@ class HiAudioFooter extends HTMLElement {
             <li><a href="${staticPath}github.html">GitHub</a></li>
             <li><a href="${staticPath}research.html">Research</a></li>
             <li><a href="${staticPath}support.html">Support</a></li>
+            <li><a href="${staticPath}automatedgeneration.html">Automated Data Generation</a></li>
           </ul>
           <span id="companyName">&copy; Hi-Audio</span>
         </div>
