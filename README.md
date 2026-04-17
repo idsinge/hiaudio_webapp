@@ -71,11 +71,13 @@ The Hi-Audio platform is developed as part of the project *Hybrid and Interpreta
 
 <img src="./doc/ERC_logo.png" alt="European Research Council logo" width="250"/>
 
+We also thank [Naomi Aro](https://github.com/naomiaro) (@naomiaro) for publishing and maintaining the [waveform-playlist](https://github.com/naomiaro/waveform-playlist) repository (version [v4.3.3](https://github.com/naomiaro/waveform-playlist/tree/v4.3.3) used in this project).
+
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/naomiaro"><img src="https://avatars2.githubusercontent.com/u/35253?v=4" width="100px;" alt=""/><br /><sub><b>Naomi Aro</b></sub></a><br /><a href="https://github.com/naomiaro/waveform-playlist" title="Code">waveform-playlist</a></td> 
+    <td align="center"><a href="https://github.com/naomiaro"><img src="https://avatars.githubusercontent.com/u/35253?v=4" width="100px;" alt=""/><br /><sub><b>Naomi Aro</b></sub></a><br /><a href="https://github.com/naomiaro/waveform-playlist" title="Code">waveform-playlist</a></td> 
   </tr>
 </table>
 <!-- markdownlint-enable -->
