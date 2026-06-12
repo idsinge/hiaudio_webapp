@@ -2,7 +2,7 @@ import { TrackHandler } from './track_handler'
 import { FileUploader } from './fileuploader'
 import WaveformPlaylist from './waveform-playlist.umd'
 import { Recorder } from './record'
-import { triggerTestLatencyButton, triggerLatencyTestHandler } from './latencytesthandler'
+import { triggerTestLatencyButton } from './latencytesthandler'
 import DynamicModal from '../../../common/js/modaldialog'
 import { activateGoHomeLink } from '../../../common/js/utils'
 import detectBrowser from '../../../common/js/detect-browser.js'
@@ -53,7 +53,6 @@ export const createWaveformPlaylist = (audCtxt, stream) => {
   })
   trackHandler = new TrackHandler()
   fileUploader = new FileUploader(COMPOSITION_ID, trackHandler)
-  triggerLatencyTestHandler(stream)
   triggerLMetronomeHandler()
 }
 

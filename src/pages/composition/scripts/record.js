@@ -4,6 +4,7 @@ import { getComposition, doAfterCompositionFetched } from './composition_helper'
 import { MEDIA_CONSTRAINTS } from '../../../common/js/utils'
 import { TestMic } from './webdictaphone/webdictaphone'
 import {initEventEmitter, enableUpdatesOnEmitter} from './eventemitter'
+import { triggerLatencyTestHandler } from './latencytesthandler'
 
 let AudioContext = window.AudioContext || window.webkitAudioContext || false
 
@@ -23,13 +24,9 @@ export class Recorder {
         const gotStream = (stream) => {
             const audCtxt = new AudioContext({ latencyHint: 0 })
             createWaveformPlaylist(audCtxt, stream)
-            userMediaStream = this.getCorrectStreamForSafari(stream)  
-            // userMediaStream.getTracks().forEach(async function(track) {
-            //     console.log('Record Track ', track)
-            //     console.log('Record Track Settings', track.getSettings())
-            //     console.log('Record Track Capabilities', track.getCapabilities())
-            // })
+            userMediaStream = this.getCorrectStreamForSafari(stream)
             playlist.initRecorder(userMediaStream, undefined, "Voice Track")
+            triggerLatencyTestHandler(userMediaStream)
             $(".btn-record").removeClass("disabled")
             this.setRecordGainNodeForTest(this.recordGainNode)
             initEventEmitter()

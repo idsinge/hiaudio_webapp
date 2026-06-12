@@ -1,4 +1,4 @@
-import '@adasp/latency-test'
+import "../../../../node_modules/@adasp/latency-test/dist/latency-test.legacy.esm.js"
 import DynamicModal from '../../../common/js/modaldialog'
 import detectBrowser from '../../../common/js/detect-browser.js'
 import { playlist, MIC_ERROR, displayMicErrorPopUp } from './composition'
@@ -81,7 +81,7 @@ const openLatencyTestDialog = (stream) => {
                 <input type='range' min='0' max='500' class='form-control-range' id='latencyslider' value='${currentLat || 0}'>
             </p>
         </details>
-        <latency-test id="lt"></latency-test>
+        <latency-test id="lt" recording-mode="mediarecorder-1ch"></latency-test>
         <div id="test-ui">
             <button id="start-btn" class="btn btn-outline-primary">Test Latency</button>
             <p id="result"></p>
