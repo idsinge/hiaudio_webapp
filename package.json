@@ -44,5 +44,8 @@
   "bugs": {
     "url": "https://github.com/idsinge/hiaudio_webapp/issues"
   },
-  "homepage": "https://github.com/idsinge/hiaudio_webapp"
+  "homepage": "https://github.com/idsinge/hiaudio_webapp",
+  "dependencies": {
+    "@adasp/latency-test": "^1.2.0"
+  }
 }

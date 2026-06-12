@@ -1,4 +1,4 @@
-import { TestLatencyMLS } from './latencymls/test'
+import '@adasp/latency-test'
 import DynamicModal from '../../../common/js/modaldialog'
 import detectBrowser from '../../../common/js/detect-browser.js'
 import { playlist, MIC_ERROR, displayMicErrorPopUp } from './composition'
@@ -81,6 +81,11 @@ const openLatencyTestDialog = (stream) => {
                 <input type='range' min='0' max='500' class='form-control-range' id='latencyslider' value='${currentLat || 0}'>
             </p>
         </details>
+        <latency-test id="lt"></latency-test>
+        <div id="test-ui">
+            <button id="start-btn" class="btn btn-outline-primary">Test Latency</button>
+            <p id="result"></p>
+        </div>
         ${latencyWarningModal}
        `,
         null,
@@ -94,9 +99,30 @@ const openLatencyTestDialog = (stream) => {
     
     if (!latencyTestInitialized) {
         latencyTestInitialized = true
-        active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, stream, TEST_LAT_MLS_BTN_ID, debugCanvas, browserId)
+        const lt = document.getElementById('lt')
+        lt.inputStream = stream
+        lt.audioContext = playlist.ac
+        const startBtn = document.getElementById('start-btn')
+        startBtn.addEventListener('click', () => lt.start())
+        lt.addEventListener('latency-result', (e) => {
+            const { latency, ratio, reliable } = e.detail
+            console.log(latency)
+            localStorage.setItem('latency', latency)
+            //result.textContent = `${latency.toFixed(2)} ms — ratio: ${ratio.toFixed(2)} dB${reliable ? '' : ' ⚠️ unreliable'}`
+        })
+        lt.addEventListener('latency-complete', (e) => {
+            const { results, mean, std, min, max } = e.detail
+            //if (results.length > 1)
+            //    stats.textContent = `Mean: ${mean.toFixed(2)} ms | SD: ${std.toFixed(2)} | Min: ${min.toFixed(2)} | Max: ${max.toFixed(2)}`
+        })
+        lt.addEventListener('latency-error', (e) => {
+            console.log(e)
+            //result.textContent = `Error: ${e.detail.message}`
+        })
+        //active_lat_test.mls && TestLatencyMLS.initialize(playlist.ac, stream, TEST_LAT_MLS_BTN_ID, debugCanvas, browserId)
     } else {
-        active_lat_test.mls && TestLatencyMLS.displayStart()
+        console.log('Latency Test already initialized')
+        //active_lat_test.mls && TestLatencyMLS.displayStart()
     }
 }
 
