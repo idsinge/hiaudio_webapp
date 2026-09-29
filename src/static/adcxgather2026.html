@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hi-Audio studio (mockup)</title>
+    <style>
+        :root { --ink: #212529; --muted: #495057; --blue: #0056b3; --glow: #ffd54a; --line: #dee2e6; }
+        * { box-sizing: border-box; }
+        body { margin: 0; color: var(--ink); background: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+            clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+        header.bar { display: flex; align-items: center; justify-content: space-between; padding: .5rem 1rem;
+            background: #f8f9fa; border-bottom: 1px solid var(--line); }
+        .brand { font-weight: 800; font-size: 1.35rem; letter-spacing: .02em; color: #1c1446; }
+        .brand span { color: #1a73e8; }
+        .bar small { color: var(--muted); }
+        main { max-width: 1040px; margin: 0 auto; padding: 1rem; }
+        .mock-note { background: #fff3cd; border: 1px solid #ffe08a; color: #664d03; border-radius: .25rem;
+            padding: .4rem .75rem; font-size: .875rem; margin-bottom: .75rem; }
+        h1 { font-size: 1.4rem; margin: .1rem 0; }
+        .intro { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .25rem 1rem; }
+        .intro .toolbar { margin: 0 0 .5rem; }
+        .lead { color: var(--muted); margin: 0 0 .5rem; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 .75rem; }
+        .btn { font: inherit; font-size: .95rem; border: 1px solid var(--blue); color: var(--blue); background: #fff;
+            border-radius: .25rem; padding: .35rem .75rem; cursor: pointer; text-decoration: none; }
+        .btn:hover { background: #eef4fb; }
+        .btn[aria-pressed="true"], .btn-primary { background: var(--blue); color: #fff; }
+        a { color: var(--blue); }
+        a[target="_blank"]::after { content: "\00a0\2197\FE0E"; content: "\00a0\2197\FE0E" / ""; }
+        :focus-visible { outline: 3px solid #212529; outline-offset: 2px; }
+
+        /* ---------- the studio ---------- */
+        .scene { position: relative; width: min(100%, calc((100vh - 190px) * 320 / 180)); min-width: min(100%, 560px);
+            margin: 0 auto; aspect-ratio: 320 / 180; background: #1b1c2a;
+            border-radius: .5rem; box-shadow: 0 2px 12px rgba(0, 0, 0, .25); }
+        .scene img { image-rendering: pixelated; image-rendering: crisp-edges; }
+        .scene .bg { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: .5rem; }
+        .npc { position: absolute; pointer-events: none; }
+        .npc img { display: block; width: 100%; height: 100%; }
+        .obj { position: absolute; padding: 0; margin: 0; border: 0; background: none; cursor: pointer;
+            transform-origin: 50% 100%; transition: transform .15s ease-out, filter .15s ease-out; }
+        .obj[data-origin="top"] { transform-origin: 50% 0; }
+        .obj[data-origin="center"] { transform-origin: 50% 50%; }
+        .obj img { display: block; width: 100%; height: 100%; }
+        .obj:hover, .obj:focus-visible { transform: scale(var(--z, 1.5)); z-index: 5;
+            filter: drop-shadow(0 0 1px #fff8d6) drop-shadow(0 0 6px var(--glow)); }
+        .obj:focus-visible { outline: 2px dashed #fff; outline-offset: 2px; }
+        .obj .tag { position: absolute; left: 50%; bottom: calc(100% + 3px); transform: translateX(-50%) scale(calc(1 / var(--z, 1.5)));
+            transform-origin: 50% 100%; background: #15141d; color: #fff; font-size: .8rem; line-height: 1.2;
+            padding: .2rem .5rem; border-radius: .25rem; white-space: nowrap; opacity: 0; pointer-events: none; }
+        .obj[data-origin="top"] .tag { top: calc(100% + 3px); bottom: auto; transform-origin: 50% 0; }
+        .obj:hover .tag, .obj:focus-visible .tag, .scene.show-all .obj .tag { opacity: 1; }
+        .scene.show-all .obj { filter: drop-shadow(0 0 1px #fff8d6) drop-shadow(0 0 4px var(--glow)); }
+        @media (prefers-reduced-motion: reduce) { .obj { transition: none; } }
+
+        .guides { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin: .75rem 0; color: var(--muted);
+            font-size: .95rem; }
+        .guides img { width: 40px; height: 40px; image-rendering: pixelated; background: #e9eef5; border-radius: .25rem;
+            vertical-align: middle; margin-right: .35rem; }
+        details.list { margin-top: .5rem; }
+        details.list summary { cursor: pointer; font-weight: 600; padding: .25rem 0; }
+        details.list ol { padding-left: 1.4rem; margin: .25rem 0; }
+        details.list li { margin: .2rem 0; }
+        .linklike { font: inherit; background: none; border: 0; padding: 0; color: var(--blue); text-decoration: underline;
+            cursor: pointer; text-align: left; }
+        .linklike small { color: var(--muted); text-decoration: none; }
+
+        /* ---------- story card ---------- */
+        dialog { width: min(640px, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); border: 0; border-radius: .5rem;
+            padding: 0; box-shadow: 0 10px 40px rgba(0, 0, 0, .4); }
+        dialog::backdrop { background: rgba(15, 14, 25, .6); }
+        .story-head { display: flex; gap: .75rem; align-items: flex-start; padding: 1rem 1rem .5rem; border-bottom: 1px solid var(--line); }
+        .story-head .narrator { width: 64px; height: 64px; image-rendering: pixelated; background: #e9eef5; border-radius: .35rem; flex: none; }
+        .story-head .who { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--muted); margin: 0; }
+        .story-head h2 { font-size: 1.25rem; margin: .1rem 0 .15rem; }
+        .story-head .when { font-size: .875rem; color: var(--muted); margin: 0; }
+        .story-head .close { margin-left: auto; font-size: 1.4rem; line-height: 1; border: 0; background: none; cursor: pointer; padding: .25rem .5rem; }
+        .story-body { padding: .75rem 1rem; overflow-y: auto; max-height: 55vh; }
+        .story-body p { margin: 0 0 .75rem; line-height: 1.5; }
+        .placeholder { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 140px;
+            border: 2px dashed #adb5bd; border-radius: .35rem; color: var(--muted); background: #f8f9fa; margin: 0 0 .75rem;
+            padding: .5rem; font-size: .9rem; }
+        .story-links { display: flex; flex-wrap: wrap; gap: .5rem 1rem; font-size: .925rem; margin: 0 0 .5rem; }
+        .story-actions { display: flex; gap: .5rem; align-items: center; padding: .5rem 1rem 1rem; border-top: 1px solid var(--line); }
+        .story-actions .hint { font-size: .8rem; color: var(--muted); }
+    </style>
+</head>
+
+<body>
+    <header class="bar">
+        <span class="brand">Hi-<span>AUDiO</span></span>
+        <small>ADCx Gather 2026 · online poster</small>
+    </header>
+
+    <main>
+        <p class="mock-note"><strong>Mockup.</strong> Photos, voices and some links are placeholders. The Listen button
+            uses your browser's voice until the real narration files exist.</p>
+        <div class="intro">
+            <div>
+                <h1>Hi-Audio: four years in one studio</h1>
+                <p class="lead">Every object hides a story from the Hi-Audio platform. Click it, or use Tab and Enter.</p>
+            </div>
+            <div class="toolbar">
+                <button class="btn" id="show-all" aria-pressed="false">Show all objects</button>
+                <a class="btn" href="https://hiaudio.fr/static/adcxgather2026.html" target="_blank" rel="noopener">Text
+                    version<span class="sr-only"> (opens in a new tab)</span></a>
+            </div>
+        </div>
+
+        <div class="scene" id="scene" role="group" aria-label="Recording studio with 9 objects to explore">
+            <img class="bg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAC0CAYAAADl5PURAAAMlklEQVR4nO3dXYgd5R3H8WeX3STbmN3sGpNd16xdXauRFi2NNLEoFTFC2iI0JEVKoPVKCoUYCr2UWrwoFBt6IblqL8QLE7wotClGisVSY2kUSy9i4+rWvLibF/fkJA2buCHbi2R2z8ucPTNz5nn+z/P8vx+Q7Jkz58x/jnt+87zMzHaN3nH/ggEAhbqlCwAAKQQgALUIQABqEYAA1OqRLqDR2rW3tV3nwoVzDioBYIsv3/OuzVufXujt7bO+oVbm5+dM7fYvzn7c9jX9Q3db275rbJ/ta9y+6+95K3SBAajlXRcYunw6+TexbU9s2ia2bfjBuwBMmr3vvPZY03MP/+At1+XAgVcGB5xvc3el6nybWOLL99y7AEwkH8KKlf3mi6sXhasBYMND3z9kenv7xL7njAHCK0++eWjxv+Rx7XOtXrPc61u9DiAA4Z03nthe93i5AHvyzUPmjSe2L66TvLb2PWqfB2p5HYArVvbX/Qud2gVYu3BLQhJ+kvyeex2AQGK5AGsXbrQA0QoBCO90ElZpY4dAK95dCZJIaw7bmCXSeia+L9ufPHZY7DSYiU3bxPef7c+Z1bdsqFvmcjaYFiAAtbw9DxB6cFIypHgZgK1mgzgpOj53Tjwi2gWDnBUr+838/Fzqclffcy8DEO5Uzp+QLkG99SP3SpegFgEIINWso4PjpWq59/0bWjeWeV3vArDdyZB0gwF3HtryPWOMMZXZaWOMMYNDI14/njx+NNf+eReAPnN1RCxb1iPiwrrbLVdSrq7znxljwqvbmKXaQ5CESyiP8yAAc4r9iAjUqg2XanW27jnfH2fh1XmAWa8FlL42WPoIZ/OICKSRDjMb4WcMLcDcYj8iIpuRiQfN9OQH0mVYl/QoQnl87swnJg+vWoAhkQ4zwg+uSPdgVIwB5u3WSs0GSx/hbB8Rkc305AcqWoGx93hoARYgfYRjDBCuSYcZY4CeiP2I2Ki2lTM4Mm4q01Mdv2csNLQCpXswKsYAi87qSs4GS4eZqzHA5EtujDGV6SkzODJeyvsiHNI9GBVjgKGQPsJJjAHWtnSSEKQleEPsrcDYezxetABDI32EkxgDpCWom3SYMQbYguvZ4NiPiMuhJZgu5lagdA9GxRhgiKTDTOo8QFqC+kj3YBgD9Ij0Ec6H8wCztATv+ObjpW3v1D/+Uvi1ruqItRUYe49HNABb3RG2yPtIdYNDeGxDlhAcWD/c8XaqZ2c6fg9f6giZdJgxBuiJ2I+IeTAmWC+21p8x8j0YxgA9JR1m0uGXYEwwftI9mCjHAMs+idlVN1j6COfDGGCjtJZgrb27nzIvvfKHptflXQ73Yu/x0AIsQPoI58MYYKPGluDlE0vB2xhme3c/lWu5Lcn2si7XTDrMGAP0ROxHxE7UjoGtHrur6fmkZZcWfGnLy9bYskx+zrpcI+keTJRjgLau4XV5bbB0mPkWflm0ChNXIVMbbHmWayfdg4luDLBxrC6kv/ImfYTzcQwwNNJBHJLYezyMARYgfYTzcQwQcZMOM8YAPRH7ERGoJd2Dsd3jIQALkg6zEMLPl6snfKkjVNI9mOjGAEMmfYQLZQywk+t3y+RLHaGKvcdDABYgfYSzdUTsXfWlQq+Tcu3mv6HVbcxS7aGQDjPGAD0R+xERqCXdg4nyPMAYSIcZ4QdXpHswjAF6RPoIF8oYIOIQe4+HFmAB0kc4zgOEa9JhxhigJ2I/IrZy6cyJ0t6rLH03//WxNmOMWbNhTLqEjkn3YBgD9JR0mDEGCFekezCMAXpE+gjHGCBcir3HQwuwAOkjnA9jgDtf3dW07MPfr25a9q+vrVf12lhJhxljgJ6I/YiY1cEfHmhadt+PLzcte+DfZ1W9tqh9L/2s5XN79v66tO3kJd2D4VpgT0mHGWOA8fnjobealn13+2MCldST7sGIjgFuHzle+M1DdWj6Ky2fkz7CMQYYr41j/s0ax97jaRuAM5XymvmxkD7C+TAGiPKdPNF8Os8DX71boJJm0mHGGKAnYj8iQo6PLcDJ40frHjf2KHx7nFfbAHz/ytdTlw9d+uviz7Nrvl24gPn5OdPb29d+xZI01l10+9JhRvjFx7cW4NA6+4Hs+vvfiBZgTtJjeq7GACsnPir0Oqe6u4wxxly7elW4kHSNn+Hg2D3Lru/DhIc2nAdYgPSYHmOAQDloAebEGCAQDwKwIOkwI/ziUnuy885d28zBA4cFq9GjcAB2MvEhqdO6Y58VAzShBZiDjVkx6VkwQDMmQQCoRQACUIsABKAWAQhALSZBsOjaqcnFn9fcvMoiBKHUWvv5wg+0AAGoRQtQqYsXZowxxqzqGxCuBMn/i/61w8KV6EMLEIBaBCAAtegCK5V0t6SvRGH7XAkkiRYgALUIQABq0QVGbudmPsz9mtuG77NQiV1a9lMzAhCFrL4l++kzl/9XtViJXVr2Uyu6wCjNyU+PSZfghJb91IAARCmSUIg9HLTspxYEIAC1CECUYuOdm+r+jZWW/dSCAEQptHQNteynFswCoyNpQZAsi6mVpGU/taEFiNJs+dZ3pEtwQst+akAAohRJKMQeDlr2UwsCEIBaBCBK8e7f/1T3b6y07KcWBCBKoyUUtOynBswCoyPJDGjtLGmMs6Ja9lMbAhCl0BIGWvZTCwIQhWi584mW/dSKAEQmGzYMp/4cs07388yZmZIqgS0EIDI5d/aUdAkB4uvlO2aBAahFAKKwV8ev1T0e/+ULdY///MKFusc/+u1Y1K9HeLo2b316QfOfBWT72bbf3cWXPa/rC+27wGmf/85d28zBA4dtldV2+y5Jb58WIAC1CEAAajFNhUyS7tyl6mnhSvy3ZmBUugRkRAsQgFoEIAC1CEB0pDLbfLUDyxAKAhCAWkyCoLDXX//d4s87djwjWEn5Yt43LCEAES1CDO0QgChsx45nTGV2xgwO2bs7jFSIudg3yCMAYV3MIUYrM2w91dnPpGtAQFauWuV0eyGG2PkzH3vxHmiPFiCsCzHEsqKrHDYCEN4gxOAaAYhSxRxijPfFp+e5R6RLQEhe/qe9944lxDr9Tl0p4T2QDS1AlCqWEEtDVzk+PcemzknXgKBsLOVdYg6xTr9T4w92/h7IpscYY4Zv7ZeuI7OZzy9Sr0Vt6z3vrpZWfG+JLff5Zf198OV3Jrrf3wZ0gSHC9xCDDtwNBh1JCzCWIRQEIAC1CEAAavUYc2PgMCTUa9fy9Q44qyNU7f5/t3t+PMM6LvlUSxZ56u16cdeWBVtFxDx7JE263pePzC3+/JOt7f+wtXS9eWWtN+/nsJy+R/c0LZt7e1+m18b6+drGLLBnrndl+1+yft2QuW6phu6Fa5beGWmS4EvCru/RPXU/1z6HchGAnpmpXJYuwdy+dqV0CWrUhl2atFBEeQhAIIf9Ryp1j5NZxOsm/T6Jjesnnvv5L4wxzS27/Ucqxhx53jy7dbBu+dzb+2gNWkAAeiZr66txDOWdj842rfPwPetLq0urxgBrDKZkDLDbXDH7j1xpen3j+sbcaM395lfPp27v2a2DLVt7tAbL1/XTx++3MgkCtz6Zbf7y3TXk9u7NQGi4FtgyV/WmBWCR7fL52kW9duWtlxOhAahFAAJQiwAEoBYBCEAtZoEjwSwwkF+PrRme2GePpDXWW9YssC2hf76+o95i1J8I/Z+jSXCsMNWp5hDxV0O9KTdpWdo3HwT++Xove733bqZnkGAMEIBa6luAiS+vCfs+d5+b5nughb5PKNd/L1WlS/AOLUAAavXYvNtrGHeSXSFdAOCUL99LH+pQfy1w2sDxxOhoae/vynvTJ5uWhbgfKNfk6dNNy/J8f3yZrc2KvwtcgrRfGmnvdTcHXDuvTb+77PPfuL6xaDlAFBgDBKAWAQhALbrAgaC7CpSPvwvMLDCUyfv9iTkf1F8LHNblTkDnfPhe+pIPjAECUIsALCDv+XWsz/ou10d2BGBOE6OjZvL06cy/lKzP+i7XRz5dL+7aYuWGqL708dtJbhmV58YByS8l67O+j+u3ktwMwYfbYfmSD+rvCF2dujELzJ1TELskAAfGvxCuxB9cC8wsMJThWuAljAECUIsABKAWAQhALQIQgFpcC8y1wFCGa4GXcC1wJHeEBtJ0ekdoW3zJB26HlcLHO0IDKB9jgADUIgABqEUX+Cb+aDSgD38XmFlgKOPL99KHOtRfCzx8a2lvlcqX2a6sqNcuP+rNfjcYP+rNjmuBASAjAhCAWgQgALUIQABqqb8jNAC91F8LnKBeu6jXLuothi4wALUIQABqEYAA1CIAAaj1f5iXD261J4rBAAAAAElFTkSuQmCC" alt="">
+            <div class="npc" style="left:18.438%;top:51.111%;width:8.750%;height:21.667%" aria-hidden="true"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAnCAYAAAAcsCj6AAACfklEQVR4nO2YTWgTQRTH/1sbcvBQ4+5WKC4aA4E9KDUpQkAPHioIpV4NCGKkHtSiSGkpxFshKEEoGgUDWwUhOdo0ILQHkSKCH+mhlIVKTCUqxGxMexCUEtZDmSH7mWwScpD8YZmdN+/Nb97szOwmDEzEc4JqZgeAslJkrNqakSGY5wRVWpiHKIoGZ1mWEblyqy1oX7MwABBFEdLCvO0MNA3Uw2RZ1jiServQPqsGfZZWWbcNZEtrYEtrlgF2bc2o38yYXFkHsI6J0eM6GzS2toHeygbG76ZofenlIjKJKMZvzGlsT26HWwaaPsNMIoqayw0AFFZzuZFJRDV+ZOHYLSCeE1RyASZTGgoOIyZlcfrE3iKZjYwhJmUBADEpi1BwmPr+zD/EoG9SJaV+f/KcoOZSXloPhKEagLORMU39++e8qQ0Avr1/oCn1mdbDiAwjSktxBNgacpV92H37BgDwh11G8OSQIdiJDp+6g0HfpPnRlpbiloEXI1NITrsxcf8vcikvAuECLeulz84WSO5fx69R+9mpp/Q+Oe1umBEZEFEgXEBZKTIUSEBHRi4DAH7k31HnIV8IAPD143MAwObiPU3n/gszBmBZKTLGRVPYy5DnBPXA0TMNR22l7a1VyzdI/YyVlSJjeZYSLaWtn+f21qotjEDIBQAMzwmqy+PH/oFDpgED3DHsKF8M9t87JexWNx2/Gxtm+OLRdSf9tQ+8dPNxd4H/R4Ybz652tNOGwG6KbnyXx+84uJVtoTnaRs+dNzhUKgpYljPYV5ZftfR92vUp7QF7wB7QOTD36UN3gZ0WPUs9Bz2mDtVfVdi1dfwTo9PqB+g/E6a/gJpoc6R/s2ICf7ixXWgAAAAASUVORK5CYII=" alt=""></div>
+            <div class="npc" style="left:74.062%;top:48.889%;width:6.250%;height:23.333%" aria-hidden="true"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAqCAYAAACz+XvQAAAB4UlEQVR4nO2XPUgjQRiGnyTXKsTzh+RIpYlwNooIkiIQLGyivZBObEQwzWGhHGIXUgmCWthZxCsvAbFIFlJcoYWVjWIh/izcHQbucpUJsbhk3M3M/omFRd5q5pt3nv12dmb3Wx8KDfRHmqq4Ub9+3/pU8Q8qWHQw4MQDIk0V1O8GNvLpoxSLDgaUdyKAdpktz00r4yqoX+k0KJ/LEB6Oks9lnKzOwE6IG6glMJ/LkFrJklrJAoi2E9Q2w0b9ieLOGgDFnTUa9afXZwhwvLcBwMP1lalvJ7GPOp+yLyBtUaFmoy7aVz8bpk1uPaulxakJ0T44O3fM0BKYTMTRKj8kSDIRp6xVLIGWa1jWKiQTcU8w2wwB9o80Cl/nRX9u6ztO59wP/x9IeD0tDU7ufrHtA4TX06bj57eCAeh3OpuhUQA2Q6Pod7rSZ4Sa1vDf0oLUbkPbMJXHKGkNVaaLYom+8c+2nrYc3zYAY6kZNzb3wItiyRuwEBuiEBuidnOvNBlv16jazb2Y6ylDL+oC3yHQBy+lR2866Rnw51ADXkoTUykx0B9pxmZXpUl/qzo9wZAUvzzZlmqc97+GXWAX2JJ++u1tgV5kqr6CfUGlqfpYxW7MePzePEPxXW5dRfnD42JM6BnBLKmfR+xuKQAAAABJRU5ErkJggg==" alt=""></div>
+            <button class="obj" data-story="organ" data-origin="bottom" style="left:3.438%;top:46.111%;width:11.875%;height:25.556%" aria-label="Street organ: a barrel organ in Palaiseau"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAuCAYAAABEbmvDAAACkElEQVR4nNVYPWsUQRh+ThJtQvzIblKYKVJ4nVqo/TZ7wR8QgqSR2Ah2goWFkEYsBBubq0QCauEPELMgKQRBjaLpLuURiN4ZNYhGFxkLmXE2+87efF28e5rZe3fmmWefdz6vBk/EEeNUvNNt13x4R3waxxHjr+6dJN+dWwT3EeckTOeSrp6LQOsGccT45TOHrNo0135aiztg1cM+gkylaapsUMVJuVkKuKTKF1SqhyuVl67U91VEc3G9FCNnShwxfv/C8b4LAoCLjzbJMTZcqQSAze3vfelw6/MP7Tt1QTZa+Rvz04Fk/cVyc4MU9fjEOABgDowbb0kLV18HEfXgzlmjegM7xoIIe/52uVC64s3CDcxt7KDTbdeCCNtaf1gobRFHjF9fuo1bS9fk0uElTOeQrXN7RXkL0zlk41xj9jwZdxJm6ohpvbUXz0oxpxOsqSMm9VaePgFQPvpYOeY663q10+6VccS4yeHQdda5tBuJI8bT+igAIAPzutmExOCu/J1uu5a1cgBAWh/ty3nfBQPrmBxPhbHWynFz9qis1JifDnq6UI89d1/ukrPSeB0zPa6EQkGp6loyMybjX779Ctrpbv5bPns7puJU+5hV/fds27qPwuBXZ+j/hpNjLg7YghSWtXIkM/9+Hxk7GKxD6pYUR+UdRzv4Vbz7Oi6fTx/ecRZVxZO18sIkqEylSrQ3ZiPQhYf8twcAJqcmZCxJUqyuZrIU+PjhU09RpjyVqVTFCcIkSUvvBSlFGIqntFfqyNK0IZ9FfHJqQrvp+/JUbuLiiwSZKNU0mMCFp1KY+KIsWymUVFpC8wzPGNM11v02hS2P0ddS6OWWL08lMbWmibXL5tLiwmNErk5ln1uUDc8fbjJqNlHIC/IAAAAASUVORK5CYII=" alt=""><span class="tag" aria-hidden="true">Street organ</span></button>
+            <button class="obj" data-story="radio" data-origin="bottom" style="left:4.062%;top:22.222%;width:8.750%;height:11.111%" aria-label="Old radio: on air with the Female Laptop Orchestra"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAUCAYAAACeXl35AAABOklEQVR4nGNkIABERWT/E1KDDF6/ecyITx6nJMyiMjc+Uuxj6Nr1Ca/FGILkWkSsxSgcURHZ/9gsevDiK1GWKEhwY7UY2VI4A5tl6BYpSHAzBOZVMDAwMDCsn9QBZ/dX1eK1GNlSJlyuRbassK2ZobCtGZdSBgUJbhR5fCHCxMCA6TuYhsK2ZqzBhAsgq0e2tMyND542cPqQVgCnhfiCkBDAp3fw+JDuFqIndVIAPr1YLSQlZeICuMzAsHD9hfcM6y+8Z1CQ4Gbor6plSO+Zx7Bu034GMTk1hv8K5gxicmoM6zbtxyouJqfG8ODFVwYFCW64OQQtxObKjJx0FNps/0ms4vh8BgMs6AKBBoJ4NRALcJnDyMCAu9CmJoCVp4yiIrL/XdVIqmPJBrtvMdI/H8KDlB6WvX7zmBEAYvl97VTX3hgAAAAASUVORK5CYII=" alt=""><span class="tag" aria-hidden="true">Old radio</span></button>
+            <button class="obj" data-story="journal" data-origin="bottom" style="left:14.062%;top:23.333%;width:4.375%;height:10.000%" aria-label="Journal: the article"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAASCAYAAABrXO8xAAAAuElEQVR4nGNkYGBgEBWR/c9AAnj95jEjo6iI7P8tO3YyhDUtJlrjt2NLGFjQBR9sbMOpQcG/Cs7G0LjgyHMMDQ3dkzHEMDRiU4QNwDVeXVZLlAYGBgYGRQU0P/5bGoJXA1P0GgQbmwLdrfp4+Vg16m7VZ7jsfRGuGJ2PVSNMEQMDA1wxMh+nRnRJdD5epxILUEIVOdRI0rhszV68iqNCnBGWEGsDsiaSNKK7BsWp6KbiA4wMDORlZACWJT3V1g+u0wAAAABJRU5ErkJggg==" alt=""><span class="tag" aria-hidden="true">Journal</span></button>
+            <button class="obj" data-story="moon" data-origin="top" style="left:29.375%;top:2.778%;width:6.250%;height:17.778%" aria-label="Half moon: Au clair de la lune"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAgCAYAAAASYli2AAAA8UlEQVR4nGNgIBKIisj+J1YtUYadv3DrPzGGMlHN1lEDRw0cSgaSmuVYCBn08KAvAwMDA8PN38QZyEjIIAYGBgZ5+80MDAwMDK/fPMZQj9dAURHZ/8gGwQwjxiAYoF2kYHMdOYAFm2Fvnz8i20AML799/ohh+rwTDNPnnSDLQJRkA3NZZpIFWYYxMAyprIcrIs6t0Ccp+8ENFJaUgws+O/kOq6HEGAzPAaIisv/PrdBHMVTKXAhDg1HERRQ+ei7CyHrIhuIDMB+hZ02yIgU5eNABztIGl0uRXcbAQMDLuAxGdhGhooxgsYQes6QUZYMTAAAXXl9TWm5rNgAAAABJRU5ErkJggg==" alt=""><span class="tag" aria-hidden="true">Half moon</span></button>
+            <button class="obj" data-story="cake" data-origin="bottom" style="left:32.188%;top:59.444%;width:8.125%;height:12.222%" aria-label="Birthday cake: Happy Birthday, in many voices"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAWCAYAAADeiIy1AAABP0lEQVR4nGNgGKxAVET2P80NFBWR/f+/muE/LsvwOYIJl4ZX6Y+xa7RhxukwnHpwWYTNQFER2f/uS04yiMVKMbgvOUmSI/BatPX6KpyacIEeqUrSLcIF3JecJNkBJFn0+s1jxp0x5gw7Y8zJsogFmYMrpeHSTCj1vX7zmBEmxogseb96Clwxt9NWhq/7vOH8Lkt7hrLjB1EMnO50miFznylEfYEfw9cJm1DkFVtz4JbhtIgaANkilKD75/CSgemAOMM/h5dwMVL4b58+YBC9bc7wWhUzwWAkBmRDsAFC8tgswWoRtS2GAZSg41UNIkoTLsCrii6yGLtFn2+vo8iit08f4JQjuWQgF9DXIqpXZkgAZjajqIjs/1Pnz9LKHgYGBgYGM0NjRGK4ces+TSzRUFNkYGCAFkG0DDoGBkjhCgAi1HiGoxoZGwAAAABJRU5ErkJggg==" alt=""><span class="tag" aria-hidden="true">Birthday cake</span></button>
+            <button class="obj" data-story="cassette" data-origin="bottom" style="left:49.062%;top:48.889%;width:6.875%;height:7.778%" aria-label="Cassette: Now and Then, a voice rescued from a cassette"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAOCAYAAAArMezNAAAA2ElEQVR4nGNkYGBgEBWR/c9ARfD6zWNGFlER2f9q6urUNJeBgYHhPwuMFZ+azxDuIkCRaSv3fGBYOHsiAwMDAwPc4A2rFjPYLH1PkcEbWAXhbBZkCen5dRQZzJA2GbvBMDBz2nyizEnPSsQph9VgfBqIBSgGRyJ55ebNK0QZoK6uQ9hgdHDs2FEGBgYGhqZEaxTxuvkQcSsraww9RBmMS+MOPAbiNfjjx3cMEhJSBDXD1PLzC2GIM8EYAWGxGJIPHtzBaSA2OWQzGGmRpW/dvMnAyMBAm0IIAODoOafOwvKHAAAAAElFTkSuQmCC" alt=""><span class="tag" aria-hidden="true">Cassette</span></button>
+            <button class="obj" data-story="headphones" data-origin="bottom" style="left:55.625%;top:45.556%;width:6.250%;height:10.000%" aria-label="Headphones: the user study with La Scène"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAA40lEQVR4nNWTPQ7CMAyFnYgb0CYqoiOIrVXvw00YuQn3Qe2GYARRtcBALxAmV4nzB4KFNyWO/enFTgB+LBY6TJNcueK3+9lbNwmBhBS+OuUDW4E0yRWCsmxukdr2Mq77rregxgZhOqip9wawKCsDTKHjgsIQRB1gO4qyckKNHuowX+Mx3tSgdCiK6+5iMArGWwgpRuecutOvFRLm0MGxNMnVYrmyCk7Hg9dpqMZ6h113jZkz8qScGXEOADDd7N6ChIQMHsn7WH8CfGzXX4OQYU0ZpzY8hyCAThfFANwPOfZbfDUvcTVyad0sTYEAAAAASUVORK5CYII=" alt=""><span class="tag" aria-hidden="true">Headphones</span></button>
+            <button class="obj" data-story="crown" data-origin="center" style="left:67.812%;top:30.000%;width:7.500%;height:6.667%" aria-label="Flower crown: San Francisco, ISMIR 2024"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAMCAYAAAB4MH11AAABUElEQVR4nJ1SoU4DQRScS0ARFLu4pWkIGllTBXXtBxDcmQsCQxMMTeqqSO4QCFyTEwRTQVIESYMu8jQhDdT1StLAoRCD6Zbday/tsWo3+2bem3kD5DhSKOapX5lMCkUpFLt+h/qu/5c1XcsiH8Xv2JY7BIBSo4ATnqF6+Ig2rnDjBACA5xY48Cso1nsEgHg8dJZOLYUiSTLySJK1oMwsBUnokpHHJHStOpPTMclLjcJ0sjdMFcCcTApFc0oplFYArVTjLTVSKNaCMj+D+5W9NbHmvdmfzNTMkTPyrCZ5jiZn5LHZn9gcaQX/jeMiBQt3cItz7LZOZ8B4PHTS/muM+R74FRx9vFg7mAO8Nq6xefCAr6cqjnEJwF66bgYA7Yu/yN5t7WFjfx3f0Q+K9V52ZKVQllXp2Go7u36HjDwruknoZsc03SQdx7RdZn1WjAHgF1L6BLPw1OyfAAAAAElFTkSuQmCC" alt=""><span class="tag" aria-hidden="true">Flower crown</span></button>
+            <button class="obj" data-story="piano" data-origin="bottom" style="left:80.312%;top:42.778%;width:16.875%;height:26.667%" aria-label="Piano: Tetiana at the piano"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAAwCAYAAABaHInAAAACCElEQVR4nO2aMU/CQBTHXwmSVihqAotJF41sDLiZsLg7wOTg7KdydnB3dzFxNMGwmIBDE0OiiYYGaUpiHcw1V7i279orpUd/0/F6vfu/e3fX16MKUDQbhgs55uPTVEi5TArNhuGetE6zUSQOlzhXylpJWpTpH5PJOCsdsbHtH6Zd2ohJ61iZZVTV6rp1xMK2Z4HXmI6F3ZAXpJ2K0jpWrLG8wXSMh9lsCgAA49enxGIAAI5aZwAAUK3WE7WTyhprd7rQ7nS5r4nEy4abDcPV6/vcDdARu727TyTm6vKCO2J0SrVwHC/DTzwVl4WxIBF6eX4U2V0oRcSwwmgwkUormkXEsMI2BWGOkZHeFHyOWdZXVjpWiKfFW1l+x3T9AAaD/wzCMI4BAMA0R74yTVAd3voi2tS0Giwcx7OvZB7D4duyaQVMnazblPa1RVrHAndF0xx54abLmDq89UW02e/3fHZpIyatY76USikpYXU3HvfXhe06u6/V9rLSEZvlJJgQuCtqmp6uIkFs3Z8SqOx+PrfS1sEFZjZJG7HCsbwhrWOozSMvWz/NdkSMftiRsqrurlcRkqAHMyFyKlrTb+5OH24OvfL59TuXDctOpRJ6HbXG6E95okjy2RK2H0wfvtcW1ijQp6tY6I7JvVgbtv0orUJPggkskVibKKTdFX0jxpq7aY5qEqK0/gGAyjODl2IqjwAAAABJRU5ErkJggg==" alt=""><span class="tag" aria-hidden="true">Piano</span></button>
+        </div>
+
+        <div class="guides">
+            <span><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAClklEQVR4nMVWP2haQRj/mbpIESQZ5D0LQo0InVpooVgi2KFSsGuolECJCKVkEIq0gQwOQlok0CFDIJitWDoLoYVEMODi4JShpAoB9ZGhIfQPXRJeB3uPO+/dn6dDf9t99933+9333X13wH+Gz4tz1AzbOn6nozPtuH4vxJFQQDPs2F9HiNIhaoZtEfFiZAHfht+Fa4cXf5Qi5mYhf/nkPhYjC8L1kVBAWTahABm5F6hESDNAY3KnleIKzFgcleKK0lcG1/qodv+xWuRsT0vvpUSi86CdARm5zK6CUgCdThXJ5LxOKbT6AB08u/bOsTW2XwttqpJoC5i854RAZXNb6wbPZwAAHr+oaNl0IBXgVsP5ZE7o7zanOgeeM3DermN/Z8MZj3onAID9nQ2ct+tew8kF0DUkRDTcbJN21TnQzsCr3c+czYzFYcbiWr4iaHdC37Xxham/XUPuzbZrMHrOvrpk5kSdUCmAPLlEAEH+3h1mXOt0mbF9dck811O3YhIgnUoy9n4ggFqni1qni36AzRbx1ekDnh6jh+kUmq22NGA6lcRhs8XZZ3qMyF0+bLa4TIjIdZ9kLQF0KrOJILYKGc5nq5BBNhF0XSMDlxLVB/TsUQofbga56zfqneBZ/yfCX/j0A+MSAPxHlTnaUTNsh0qr48Gue1eLP7iLMoBy7ytjLxsJxA3gh0CAE7e6Z9MinBIw5BJYA8shpMnpORlCpVXmjzjnhfx3IecQWQMLZSOBspGANbDwKfOc8dEVod2KRYGPGwcAgKXaJo7y69oiCHyy3V//dw5EAY0bBgA29Uf5dSzVNrXWX1T34Pcv81eKQGcnx40DzN++NdV6/3Jmuh8RgTWwOHK6FDqYA4Bfp8NZdEwFwvkXbWoZEU8CTk4AAAAASUVORK5CYII=" alt="">J, José M. Gil Panal, builds the platform</span>
+            <span><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACnElEQVR4nMVWQWgTQRR9SbQ55BBMrIubQ6ghhYW2By9FWEoh9GTJuQcPEigUDb0rPUq9S2othdKDB48a21MpiASklwbsYaFJlB4SWGssPQjVUuIhzDCzO8n8XQUfLMyf/+e/N39n/i7wnxEJEpw1jR4l7qTjkvOSAhnx/scPpKSFmVmyEG1A1jR6jNhxHFiWxX1e2ztXmJnViojqyCsb69y2LAuO40i2SOydq2ysa1/bUAEiVAQ6MRSQBKhKrxNDFaEV0Gw2yWK8pN61oQQAgJ26QNqtS3PMtiwLabcuCUu7ddipC0pqXCNFCaR2Cqg5DuwUBooKAvIhFKHaHXXHXgSqwObeER8vzk2Sff9EQPHxM8l+//YdqmsrWp8O2lcwd+MXH1fXVnB1PS4RM3Kvz7t2EIa2yaxp9HZXy8jkc3i+tePzPynNA8BAX7vRwv2nlaHtmPwKGJmIdqOFTD6n9FER6hZ4RfwNtBXYO4tjqhvD3fSVz5fJ5wauO+zG8PksrhVA+hxvvXoBAFzEQbWG07FxKW706zGmizYnB4DS0rL2cxyoDwDAztE3zBdtHFRr0vx00e77Jm8Fyqc9AycdN1JaWua2ad4GAJyOjUuP6ANouycJEEWw0nrJxPFhN0YmB0L8lO6uluGmxpV+48ex9t6HFiD+WrHmJII1HQaqCOUhVP3HjU4tapPJMZu+HCpR0gQjHjELvuTJm3cke3shzqvQbrTw8I3c98+/f/Hl+N3Z9wnhg6xp9FTEw4RsL/QbjUiuIlYJYSIiQchF/Dx3YebuAQA6rU9IJI1A65mIaBhyAEgkDbyuPOLjoBgxC8iaRi8K9HcTBg/KL0OtEzmjl4mJ0ElYBcLiMjGBiJkv8OsStJTsQFIOngix4n8AhxkvUhv0yfoAAAAASUVORK5CYII=" alt="">G, Gaël Richard, leads the HI-Audio project</span>
+        </div>
+
+        <details class="list">
+            <summary>All 9 stories, in date order</summary>
+            <ol>
+                <li><button class="linklike" data-story="cassette">Cassette: Now and Then, a voice rescued from a cassette <small>(Nov 2023)</small></button></li>
+                <li><button class="linklike" data-story="organ">Street organ: a barrel organ in Palaiseau <small>(Nov 2023)</small></button></li>
+                <li><button class="linklike" data-story="crown">Flower crown: San Francisco, ISMIR 2024 <small>(Nov 2024)</small></button></li>
+                <li><button class="linklike" data-story="cake">Birthday cake: Happy Birthday, in many voices <small>(Nov 2024)</small></button></li>
+                <li><button class="linklike" data-story="moon">Half moon: Au clair de la lune <small>(Apr 2025)</small></button></li>
+                <li><button class="linklike" data-story="headphones">Headphones: 22 musicians put them on <small>(Nov–Dec 2025)</small></button></li>
+                <li><button class="linklike" data-story="radio">Old radio: on air with the Female Laptop Orchestra <small>(Feb–Mar 2026)</small></button></li>
+                <li><button class="linklike" data-story="journal">Journal: the article <small>(Mar 2026)</small></button></li>
+                <li><button class="linklike" data-story="piano">Piano: Tetiana at the piano <small>(date to confirm)</small></button></li>
+            </ol>
+        </details>
+    </main>
+
+    <dialog id="story" aria-labelledby="story-title">
+        <div class="story-head">
+            <img class="narrator" id="story-narrator-img" alt="">
+            <div>
+                <p class="who" id="story-who"></p>
+                <h2 id="story-title"></h2>
+                <p class="when" id="story-when"></p>
+            </div>
+            <button class="close" id="story-close" aria-label="Close story">×</button>
+        </div>
+        <div class="story-body" id="story-body"></div>
+        <div class="story-actions">
+            <button class="btn btn-primary" id="story-listen">Listen</button>
+            <span class="hint" id="story-hint">Mockup: browser voice</span>
+        </div>
+    </dialog>
+
+    <!-- ================= Stories (one template per object) ================= -->
+    <template id="t-cake" data-title="Happy Birthday, in many voices" data-who="g"
+        data-when="Collection first shown at ISMIR 2024">
+        <p>Everyone knows this tune, which makes it a perfect test for music research: many renditions of the same
+            melody, on different instruments and in different languages. It is also free for everyone to use.</p>
+        <p>The melody began in 1893 as <cite>Good Morning to All</cite>, by the sisters Patty and Mildred Hill; Patty ran
+            a kindergarten in Louisville, Kentucky. For decades a publisher collected licence fees on the song, until
+            documentary filmmaker Jennifer Nelson took the case to court in 2013. In 2015 a US judge found the copyright
+            claim invalid. The song was declared public domain in the US in 2016, and its copyright expired in the
+            European Union on 1 January 2017.</p>
+        <div class="placeholder">Photo: Gaël playing the trumpet for the collection</div>
+        <p class="story-links">
+            <a href="https://hiaudio.fr/index.html?collectionid=n5hoJCqxToAMAtKwFgBide" target="_blank" rel="noopener">Listen to the collection<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://en.wikipedia.org/wiki/Happy_Birthday_to_You" target="_blank" rel="noopener">The story of the song<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+    </template>
+
+    <template id="t-cassette" data-title="Now and Then: a voice rescued from a cassette" data-who="g"
+        data-when="2 November 2023">
+        <p>Days before ISMIR 2023, The Beatles release <cite>Now and Then</cite>. John Lennon's voice comes from a home
+            demo he recorded around 1977; Yoko Ono handed the cassette to Paul McCartney in 1994. A machine-learning
+            system built by Peter Jackson's team separated Lennon's voice from the piano.</p>
+        <p>The following week, the Hi-Audio platform is presented at ISMIR in Milan. ChatGPT had come out less than a year
+            before, on 30 November 2022. AI was changing how music is made and heard, and Hi-Audio set out to be part of
+            that future, with open data for research.</p>
+        <p class="story-links">
+            <a href="https://en.wikipedia.org/wiki/Now_and_Then_(Beatles_song)" target="_blank" rel="noopener">About <cite>Now and Then</cite><span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://ismir2023program.ismir.net/lbd_323.html" target="_blank" rel="noopener">Hi-Audio at ISMIR 2023<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+    </template>
+
+    <template id="t-organ" data-title="A street organ in Palaiseau" data-who="j"
+        data-when="4 November 2023 · Place de la Victoire, Palaiseau">
+        <p>Two days after <cite>Now and Then</cite>, the other end of music technology: an <span lang="fr">orgue de
+                Barbarie</span>, or barrel organ. The player turns a crank; bellows push air through the pipes, and the
+            tune is stored mechanically, as pins on a barrel or holes punched in a paper roll or a folded cardboard book.
+        </p>
+        <p>Chantal's street performance was filmed and its sound uploaded to Hi-Audio as field data: a real outdoor
+            recording, street noise included.</p>
+        <div class="placeholder">Video or photo: Chantal's street performance</div>
+        <p class="story-links">
+            <a href="https://en.wikipedia.org/wiki/Barrel_organ" target="_blank" rel="noopener">What is a barrel organ?<span class="sr-only"> (opens in a new tab)</span></a>
+            <span>Link to the recording on Hi-Audio: to come</span>
+        </p>
+    </template>
+
+    <template id="t-piano" data-title="Tetiana at the piano" data-who="j" data-when="Date to confirm">
+        <p>Tetiana Viktory teaches piano at Télécom Paris. She recorded pieces for Hi-Audio in the school's own
+            facilities: clean, well-documented piano tracks that researchers can use.</p>
+        <div class="placeholder">Photo: Tetiana in the Télécom Paris studio</div>
+        <p class="story-links"><span>Links to her recordings: to come</span></p>
+    </template>
+
+    <template id="t-journal" data-title="In print: the journal article" data-who="g" data-when="31 March 2026">
+        <p>The platform is described in full in an open-access article in the <cite>EURASIP Journal on Audio, Speech, and
+                Music Processing</cite>, published by Springer Nature in the special issue on Signal Processing for the
+            Internet of Sounds: its architecture, automatic analysis, latency method and first user study.</p>
+        <p class="story-links">
+            <a href="https://link.springer.com/article/10.1186/s13636-026-00459-0" target="_blank" rel="noopener">Read the article<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+    </template>
+
+    <template id="t-crown" data-title="San Francisco, ISMIR 2024" data-who="g" data-when="10–14 November 2024">
+        <p>Hi-Audio's second Late-Breaking Demo, in San Francisco: the extended platform, and what it takes to collect
+            varied, multi-genre music data on the web.</p>
+        <p>The flower crown is a nod to the 1967 song <cite>San Francisco (Be Sure to Wear Flowers in Your Hair)</cite>.
+            Unlike <cite>Happy Birthday</cite>, it is still under copyright, so it cannot play here.</p>
+        <p class="story-links">
+            <a href="https://ismir2024program.ismir.net/lbd_448.html" target="_blank" rel="noopener">Demo page<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://drive.google.com/file/d/1wfrsiGCc2GL8YhnV647Yysr-bdBCDEAM/preview" target="_blank" rel="noopener">Poster<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://drive.google.com/file/d/186178KvHVwWoN8hNOgw-xqanh4qNpwYu/preview" target="_blank" rel="noopener">Video<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+    </template>
+
+    <template id="t-moon" data-title="Au clair de la lune" data-who="j"
+        data-when="Recorded 1860 · heard again 2008 · our workshop, 29 April 2025">
+        <p>In 1860, Édouard-Léon Scott de Martinville captured a voice singing <cite lang="fr">Au clair de la lune</cite>
+            with his phonautograph, a machine that drew sound waves on paper but could not play them back. In 2008 the
+            First Sounds group turned the drawing into sound: it is the earliest known intelligible recording of singing.
+            Played at the right speed, the singer is a man, possibly Scott himself.</p>
+        <p>In April 2025, musicians at our Télécom Paris workshop recorded their own version on Hi-Audio.</p>
+        <p class="story-links">
+            <a href="https://hiaudio.fr/index.html?collectionid=LZqAYCziRVyfdX5jMQGavt" target="_blank" rel="noopener">Listen to the workshop collection<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://en.wikipedia.org/wiki/%C3%89douard-L%C3%A9on_Scott_de_Martinville" target="_blank" rel="noopener">The 1860 recording<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+    </template>
+
+    <template id="t-radio" data-title="On air: the Female Laptop Orchestra" data-who="j"
+        data-when="13 February – 13 March 2026">
+        <p>Nine performers of the Female Laptop Orchestra, in nine countries, recorded 16 tracks on Hi-Audio without
+            meeting in a room, then mixed <cite>Hi-Audio Radiophrenia 2026 Jam</cite> for the Radiophrenia 2026 festival
+            (87.9 FM in Glasgow, and online).</p>
+        <p>The practice-based study, led by Nela Brown, Director of FLO Lab, found what works (nothing to install, easy
+            onboarding) and what professional musicians still miss.</p>
+        <div class="placeholder">Photo: Nela Brown</div>
+        <p class="story-links">
+            <a href="https://idsinge.github.io/hiaudio_FLO_practice-based_evaluation/" target="_blank" rel="noopener">Study results<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://radiophrenia.scot/" target="_blank" rel="noopener">Radiophrenia<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+    </template>
+
+    <template id="t-headphones" data-title="22 musicians put on the headphones" data-who="j"
+        data-when="November – December 2025">
+        <p>In a study organised with La Scène, the music association of Télécom Paris, 22 participants completed ten
+            tasks: recording, annotation, collaboration and latency measurement. 72% of task attempts succeeded.</p>
+        <p>Recording worked for everyone; annotation and collaboration controls were harder to find. The usability score
+            (SUS) was 55.8 out of 100, “marginal”: a clear list of what to fix next.</p>
+        <div class="placeholder">Logo: La Scène</div>
+        <p class="story-links">
+            <a href="https://idsinge.github.io/hiaudio_user_evaluation_results/" target="_blank" rel="noopener">Full results<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+    </template>
+
+    <script>
+        (function () {
+            const scene = document.getElementById('scene');
+            const dlg = document.getElementById('story');
+            const PORTRAIT = { j: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAClklEQVR4nMVWP2haQRj/mbpIESQZ5D0LQo0InVpooVgi2KFSsGuolECJCKVkEIq0gQwOQlok0CFDIJitWDoLoYVEMODi4JShpAoB9ZGhIfQPXRJeB3uPO+/dn6dDf9t99933+9333X13wH+Gz4tz1AzbOn6nozPtuH4vxJFQQDPs2F9HiNIhaoZtEfFiZAHfht+Fa4cXf5Qi5mYhf/nkPhYjC8L1kVBAWTahABm5F6hESDNAY3KnleIKzFgcleKK0lcG1/qodv+xWuRsT0vvpUSi86CdARm5zK6CUgCdThXJ5LxOKbT6AB08u/bOsTW2XwttqpJoC5i854RAZXNb6wbPZwAAHr+oaNl0IBXgVsP5ZE7o7zanOgeeM3DermN/Z8MZj3onAID9nQ2ct+tew8kF0DUkRDTcbJN21TnQzsCr3c+czYzFYcbiWr4iaHdC37Xxham/XUPuzbZrMHrOvrpk5kSdUCmAPLlEAEH+3h1mXOt0mbF9dck811O3YhIgnUoy9n4ggFqni1qni36AzRbx1ekDnh6jh+kUmq22NGA6lcRhs8XZZ3qMyF0+bLa4TIjIdZ9kLQF0KrOJILYKGc5nq5BBNhF0XSMDlxLVB/TsUQofbga56zfqneBZ/yfCX/j0A+MSAPxHlTnaUTNsh0qr48Gue1eLP7iLMoBy7ytjLxsJxA3gh0CAE7e6Z9MinBIw5BJYA8shpMnpORlCpVXmjzjnhfx3IecQWQMLZSOBspGANbDwKfOc8dEVod2KRYGPGwcAgKXaJo7y69oiCHyy3V//dw5EAY0bBgA29Uf5dSzVNrXWX1T34Pcv81eKQGcnx40DzN++NdV6/3Jmuh8RgTWwOHK6FDqYA4Bfp8NZdEwFwvkXbWoZEU8CTk4AAAAASUVORK5CYII=', g: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACnElEQVR4nMVWQWgTQRR9SbQ55BBMrIubQ6ghhYW2By9FWEoh9GTJuQcPEigUDb0rPUq9S2othdKDB48a21MpiASklwbsYaFJlB4SWGssPQjVUuIhzDCzO8n8XQUfLMyf/+e/N39n/i7wnxEJEpw1jR4l7qTjkvOSAhnx/scPpKSFmVmyEG1A1jR6jNhxHFiWxX1e2ztXmJnViojqyCsb69y2LAuO40i2SOydq2ysa1/bUAEiVAQ6MRSQBKhKrxNDFaEV0Gw2yWK8pN61oQQAgJ26QNqtS3PMtiwLabcuCUu7ddipC0pqXCNFCaR2Cqg5DuwUBooKAvIhFKHaHXXHXgSqwObeER8vzk2Sff9EQPHxM8l+//YdqmsrWp8O2lcwd+MXH1fXVnB1PS4RM3Kvz7t2EIa2yaxp9HZXy8jkc3i+tePzPynNA8BAX7vRwv2nlaHtmPwKGJmIdqOFTD6n9FER6hZ4RfwNtBXYO4tjqhvD3fSVz5fJ5wauO+zG8PksrhVA+hxvvXoBAFzEQbWG07FxKW706zGmizYnB4DS0rL2cxyoDwDAztE3zBdtHFRr0vx00e77Jm8Fyqc9AycdN1JaWua2ad4GAJyOjUuP6ANouycJEEWw0nrJxPFhN0YmB0L8lO6uluGmxpV+48ex9t6HFiD+WrHmJII1HQaqCOUhVP3HjU4tapPJMZu+HCpR0gQjHjELvuTJm3cke3shzqvQbrTw8I3c98+/f/Hl+N3Z9wnhg6xp9FTEw4RsL/QbjUiuIlYJYSIiQchF/Dx3YebuAQA6rU9IJI1A65mIaBhyAEgkDbyuPOLjoBgxC8iaRi8K9HcTBg/KL0OtEzmjl4mJ0ElYBcLiMjGBiJkv8OsStJTsQFIOngix4n8AhxkvUhv0yfoAAAAASUVORK5CYII=' };
+            const NAME = { j: 'Told by J', g: 'Told by G' };
+            let opener = null;
+            const synth = window.speechSynthesis;
+
+            function stopSpeech() {
+                if (synth) synth.cancel();
+                document.getElementById('story-listen').textContent = 'Listen';
+            }
+
+            function openStory(id, fromEl) {
+                const t = document.getElementById('t-' + id);
+                if (!t) return;
+                opener = fromEl || document.activeElement;
+                document.getElementById('story-title').textContent = t.dataset.title;
+                document.getElementById('story-when').textContent = t.dataset.when;
+                document.getElementById('story-who').textContent = NAME[t.dataset.who];
+                document.getElementById('story-narrator-img').src = PORTRAIT[t.dataset.who];
+                const body = document.getElementById('story-body');
+                body.replaceChildren(t.content.cloneNode(true));
+                dlg.dataset.who = t.dataset.who;
+                stopSpeech();
+                dlg.showModal();
+                document.getElementById('story-close').focus();
+            }
+
+            function closeStory() {
+                stopSpeech();
+                if (dlg.open) dlg.close();
+            }
+
+            dlg.addEventListener('close', function () {
+                stopSpeech();
+                if (opener && document.contains(opener)) opener.focus();
+            });
+            dlg.addEventListener('click', function (e) { if (e.target === dlg) closeStory(); });
+            document.getElementById('story-close').addEventListener('click', closeStory);
+
+            document.getElementById('story-listen').addEventListener('click', function () {
+                if (!synth) { document.getElementById('story-hint').textContent = 'No voice available in this browser.'; return; }
+                if (synth.speaking) { stopSpeech(); return; }
+                const text = document.getElementById('story-title').textContent + '. ' +
+                    Array.from(document.querySelectorAll('#story-body p:not(.story-links)')).map(p => p.textContent.replace(/\s+/g, ' ').trim()).join(' ');
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-GB';
+                const voices = synth.getVoices().filter(v => /^en/i.test(v.lang));
+                if (voices.length) u.voice = voices[(dlg.dataset.who === 'g' ? 1 : 0) % voices.length];
+                u.onend = stopSpeech;
+                synth.speak(u);
+                this.textContent = 'Stop';
+            });
+
+            document.querySelectorAll('[data-story]').forEach(function (el) {
+                el.addEventListener('click', function () { openStory(el.dataset.story, el); });
+            });
+
+            if (window.matchMedia('(max-width: 600px)').matches) document.querySelector('details.list').open = true;
+            const toggle = document.getElementById('show-all');
+            toggle.addEventListener('click', function () {
+                const on = toggle.getAttribute('aria-pressed') !== 'true';
+                toggle.setAttribute('aria-pressed', String(on));
+                scene.classList.toggle('show-all', on);
+            });
+        })();
+    </script>
+</body>
+
+</html>
