@@ -85,6 +85,17 @@
             border: 2px dashed #adb5bd; border-radius: .35rem; color: var(--muted); background: #f8f9fa; margin: 0 0 .75rem;
             padding: .5rem; font-size: .9rem; }
         .story-links { display: flex; flex-wrap: wrap; gap: .5rem 1rem; font-size: .925rem; margin: 0 0 .5rem; }
+        .story-video { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: .35rem; background: #000;
+            margin: 0 0 .75rem; }
+        .story-collage { display: flex; gap: .75rem; align-items: center; justify-content: center; margin: 0 0 .75rem; }
+        .story-collage img { border-radius: .35rem; max-width: 100%; height: auto; }
+        .story-collage .photo { flex: 0 1 180px; }
+        .story-collage .logo { flex: 0 1 140px; background: #fff; padding: .5rem; }
+        .story-collage .pic { flex: 0 1 250px; }
+        .story-photo { display: block; width: 100%; height: auto; border-radius: .35rem; margin: 0 0 .75rem; }
+        .story-audio { display: block; width: 100%; margin: 0 0 .75rem; }
+        .story-cover { display: block; width: min(100%, 220px); height: auto; margin: 0 auto .75rem; border-radius: .35rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.2); }
         .story-actions { display: flex; gap: .5rem; align-items: center; padding: .5rem 1rem 1rem; border-top: 1px solid var(--line); }
         .story-actions .hint { font-size: .8rem; color: var(--muted); }
     </style>
@@ -174,10 +185,19 @@
             documentary filmmaker Jennifer Nelson took the case to court in 2013. In 2015 a US judge found the copyright
             claim invalid. The song was declared public domain in the US in 2016, and its copyright expired in the
             European Union on 1 January 2017.</p>
+        <iframe class="story-video" src="https://www.youtube-nocookie.com/embed/QyY3OE6iC6w"
+            title="Video: Happy Birthday, in many voices" loading="lazy"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <audio class="story-audio" controls preload="none" src="https://hi-audio.imt.fr/wp-content/uploads/2026/04/happy_birthday_mix.m4a"
+            aria-label="Happy Birthday: a mix of the collection's renditions">
+            Your browser does not support the audio element. <a href="https://hi-audio.imt.fr/wp-content/uploads/2026/04/happy_birthday_mix.m4a">Download the mix</a>.
+        </audio>
         <div class="placeholder">Photo: Gaël playing the trumpet for the collection</div>
         <p class="story-links">
             <a href="https://hiaudio.fr/index.html?collectionid=n5hoJCqxToAMAtKwFgBide" target="_blank" rel="noopener">Listen to the collection<span class="sr-only"> (opens in a new tab)</span></a>
             <a href="https://en.wikipedia.org/wiki/Happy_Birthday_to_You" target="_blank" rel="noopener">The story of the song<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://youtu.be/y3whtVeMalo" target="_blank" rel="noopener">Watch the documentary<span class="sr-only"> (opens in a new tab)</span></a>
         </p>
     </template>
 
@@ -189,6 +209,8 @@
         <p>The following week, the Hi-Audio platform is presented at ISMIR in Milan. ChatGPT had come out less than a year
             before, on 30 November 2022. AI was changing how music is made and heard, and Hi-Audio set out to be part of
             that future, with open data for research.</p>
+        <img class="story-photo" src="https://adasp.telecom-paris.fr/rc/posts/hiaudio_summary/ismir2023.jpg" loading="lazy"
+            alt="Hi-Audio presented at the ISMIR 2023 Late-Breaking Demo session in Milan">
         <p class="story-links">
             <a href="https://en.wikipedia.org/wiki/Now_and_Then_(Beatles_song)" target="_blank" rel="noopener">About <cite>Now and Then</cite><span class="sr-only"> (opens in a new tab)</span></a>
             <a href="https://ismir2023program.ismir.net/lbd_323.html" target="_blank" rel="noopener">Hi-Audio at ISMIR 2023<span class="sr-only"> (opens in a new tab)</span></a>
@@ -197,30 +219,40 @@
 
     <template id="t-organ" data-title="A street organ in Palaiseau" data-who="j"
         data-when="4 November 2023 · Place de la Victoire, Palaiseau">
-        <p>Two days after <cite>Now and Then</cite>, the other end of music technology: an <span lang="fr">orgue de
+        <p>The other end of music technology: an <span lang="fr">orgue de
                 Barbarie</span>, or barrel organ. The player turns a crank; bellows push air through the pipes, and the
             tune is stored mechanically, as pins on a barrel or holes punched in a paper roll or a folded cardboard book.
         </p>
         <p>Chantal's street performance was filmed and its sound uploaded to Hi-Audio as field data: a real outdoor
             recording, street noise included.</p>
-        <div class="placeholder">Video or photo: Chantal's street performance</div>
+        <iframe class="story-video" src="https://www.youtube-nocookie.com/embed/YJz38mTGAIc"
+            title="Video: Chantal's street organ performance in Palaiseau" loading="lazy"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         <p class="story-links">
             <a href="https://en.wikipedia.org/wiki/Barrel_organ" target="_blank" rel="noopener">What is a barrel organ?<span class="sr-only"> (opens in a new tab)</span></a>
-            <span>Link to the recording on Hi-Audio: to come</span>
+            <a href="https://youtu.be/YJz38mTGAIc" target="_blank" rel="noopener">Watch on YouTube<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://hiaudio.fr/index.html?collectionid=HjpGYd3apnr9PpS8P8PTLr" target="_blank" rel="noopener">Collection <span lang="fr">Orgue de Barbarie</span> on Hi-Audio<span class="sr-only"> (opens in a new tab)</span></a>
         </p>
     </template>
 
     <template id="t-piano" data-title="Tetiana at the piano" data-who="j" data-when="Date to confirm">
         <p>Tetiana Viktory teaches piano at Télécom Paris. She recorded pieces for Hi-Audio in the school's own
             facilities: clean, well-documented piano tracks that researchers can use.</p>
-        <div class="placeholder">Photo: Tetiana in the Télécom Paris studio</div>
-        <p class="story-links"><span>Links to her recordings: to come</span></p>
+        <img class="story-photo" src="./images/tetiana_viktory.jpg" width="1024" height="768" loading="lazy"
+            alt="Tetiana Viktory, wearing headphones, playing an upright Yamaha piano with microphones set up in the Télécom Paris studio">
+        <p class="story-links">
+            <a href="https://hiaudio.fr/index.html?collectionid=cASFH4H6UWCTjgEJh4Guj5" target="_blank" rel="noopener">Her recordings on Hi-Audio<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://mag.pianorevenge.art/between-roots-and-horizons-tetiana-viktory/" target="_blank" rel="noopener">Interview: “Between roots and horizons”<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
     </template>
 
     <template id="t-journal" data-title="In print: the journal article" data-who="g" data-when="31 March 2026">
         <p>The platform is described in full in an open-access article in the <cite>EURASIP Journal on Audio, Speech, and
                 Music Processing</cite>, published by Springer Nature in the special issue on Signal Processing for the
             Internet of Sounds: its architecture, automatic analysis, latency method and first user study.</p>
+        <img class="story-cover" src="https://media.springernature.com/full/springer-static/cover-hires/journal/13636?as=webp"
+            loading="lazy" alt="Cover of the EURASIP Journal on Audio, Speech, and Music Processing">
         <p class="story-links">
             <a href="https://link.springer.com/article/10.1186/s13636-026-00459-0" target="_blank" rel="noopener">Read the article<span class="sr-only"> (opens in a new tab)</span></a>
         </p>
@@ -229,12 +261,14 @@
     <template id="t-crown" data-title="San Francisco, ISMIR 2024" data-who="g" data-when="10–14 November 2024">
         <p>Hi-Audio's second Late-Breaking Demo, in San Francisco: the extended platform, and what it takes to collect
             varied, multi-genre music data on the web.</p>
-        <p>The flower crown is a nod to the 1967 song <cite>San Francisco (Be Sure to Wear Flowers in Your Hair)</cite>.
-            Unlike <cite>Happy Birthday</cite>, it is still under copyright, so it cannot play here.</p>
+        <iframe class="story-video" src="https://www.youtube-nocookie.com/embed/Em2trweIgVU"
+            title="Video: Hi-Audio Late-Breaking Demo at ISMIR 2024" loading="lazy"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         <p class="story-links">
             <a href="https://ismir2024program.ismir.net/lbd_448.html" target="_blank" rel="noopener">Demo page<span class="sr-only"> (opens in a new tab)</span></a>
             <a href="https://drive.google.com/file/d/1wfrsiGCc2GL8YhnV647Yysr-bdBCDEAM/preview" target="_blank" rel="noopener">Poster<span class="sr-only"> (opens in a new tab)</span></a>
-            <a href="https://drive.google.com/file/d/186178KvHVwWoN8hNOgw-xqanh4qNpwYu/preview" target="_blank" rel="noopener">Video<span class="sr-only"> (opens in a new tab)</span></a>
+            <a href="https://youtu.be/Em2trweIgVU" target="_blank" rel="noopener">Watch on YouTube<span class="sr-only"> (opens in a new tab)</span></a>
         </p>
     </template>
 
@@ -244,7 +278,17 @@
             with his phonautograph, a machine that drew sound waves on paper but could not play them back. In 2008 the
             First Sounds group turned the drawing into sound: it is the earliest known intelligible recording of singing.
             Played at the right speed, the singer is a man, possibly Scott himself.</p>
+        <div class="story-collage">
+            <img class="pic" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/T6-_d640_-_Fig._468._%E2%80%94_L%C3%A9on_Scott.png/250px-T6-_d640_-_Fig._468._%E2%80%94_L%C3%A9on_Scott.png"
+                loading="lazy" alt="19th-century engraving of Édouard-Léon Scott de Martinville">
+            <img class="pic" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Phonautograph_1909.jpg/250px-Phonautograph_1909.jpg"
+                loading="lazy" alt="A phonautograph, photographed in 1909">
+        </div>
         <p>In April 2025, musicians at our Télécom Paris workshop recorded their own version on Hi-Audio.</p>
+        <audio class="story-audio" controls preload="none" src="https://hi-audio.imt.fr/wp-content/uploads/2026/04/AuClairDeLaLune.mp3"
+            aria-label="Au clair de la lune, recorded at the Télécom Paris workshop">
+            Your browser does not support the audio element. <a href="https://hi-audio.imt.fr/wp-content/uploads/2026/04/AuClairDeLaLune.mp3">Download the recording</a>.
+        </audio>
         <p class="story-links">
             <a href="https://hiaudio.fr/index.html?collectionid=LZqAYCziRVyfdX5jMQGavt" target="_blank" rel="noopener">Listen to the workshop collection<span class="sr-only"> (opens in a new tab)</span></a>
             <a href="https://en.wikipedia.org/wiki/%C3%89douard-L%C3%A9on_Scott_de_Martinville" target="_blank" rel="noopener">The 1860 recording<span class="sr-only"> (opens in a new tab)</span></a>
@@ -271,7 +315,12 @@
             tasks: recording, annotation, collaboration and latency measurement. 72% of task attempts succeeded.</p>
         <p>Recording worked for everyone; annotation and collaboration controls were harder to find. The usability score
             (SUS) was 55.8 out of 100, “marginal”: a clear list of what to fix next.</p>
-        <div class="placeholder">Logo: La Scène</div>
+        <div class="story-collage">
+            <img class="photo" src="https://hi-audio.imt.fr/wp-content/uploads/2025/11/pexels-cottonbro-5081386-1-240x360.jpg"
+                width="240" height="360" alt="A person wearing headphones" loading="lazy">
+            <img class="logo" src="https://hi-audio.imt.fr/wp-content/uploads/2025/11/lascene-180x180.png"
+                width="180" height="180" alt="La Scène, music association of Télécom Paris" loading="lazy">
+        </div>
         <p class="story-links">
             <a href="https://idsinge.github.io/hiaudio_user_evaluation_results/" target="_blank" rel="noopener">Full results<span class="sr-only"> (opens in a new tab)</span></a>
         </p>
@@ -314,6 +363,7 @@
 
             dlg.addEventListener('close', function () {
                 stopSpeech();
+                document.getElementById('story-body').replaceChildren(); // stops any embedded video
                 if (opener && document.contains(opener)) opener.focus();
             });
             dlg.addEventListener('click', function (e) { if (e.target === dlg) closeStory(); });
