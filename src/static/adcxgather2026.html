@@ -83,6 +83,7 @@
         /* ---------- story card ---------- */
         dialog { width: min(900px, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem);
             border: 0; border-radius: .5rem; padding: 0; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, .4); }
+        #story { position: fixed; top: 50%; left: 50%; margin: 0; transform: translate(-50%, -50%); }
         dialog[open] { display: flex; flex-direction: column; }
         dialog::backdrop { background: rgba(15, 14, 25, .6); }
         .story-head { display: flex; gap: .75rem; align-items: flex-start; padding: 1rem 1rem .5rem; border-bottom: 1px solid var(--line); }
@@ -639,6 +640,22 @@
                 journal: 'story-audio-journal',
                 'profile-gael': 'story-audio-gael'
             };
+
+            const visualOrder = (a, b) =>
+                parseFloat(a.style.top) - parseFloat(b.style.top) ||
+                parseFloat(a.style.left) - parseFloat(b.style.left);
+            const sceneItems = Array.from(scene.querySelectorAll('.obj')).sort(visualOrder);
+            sceneItems.forEach(item => scene.appendChild(item));
+
+            const objectList = document.querySelector('details.list ol');
+            const sceneItemsByStory = new Map(sceneItems.map(item => [item.dataset.story, item]));
+            Array.from(objectList.children)
+                .sort((a, b) => visualOrder(
+                    sceneItemsByStory.get(a.querySelector('[data-story]')?.dataset.story),
+                    sceneItemsByStory.get(b.querySelector('[data-story]')?.dataset.story)
+                ))
+                .forEach(item => objectList.appendChild(item));
+
             let opener = null;
             const synth = window.speechSynthesis;
             let storyAudio = null;
@@ -649,7 +666,7 @@
                     audio.pause();
                     audio.currentTime = 0;
                 });
-                document.getElementById('story-listen').textContent = 'Listen';
+                document.getElementById('story-listen').textContent = dlg.dataset.audio ? 'Play' : 'Listen';
                 document.getElementById('story-browser-voice').textContent = 'Browser voice';
             }
 
@@ -680,7 +697,7 @@
                 dlg.dataset.who = t.dataset.who;
                 dlg.dataset.audio = CUSTOM_AUDIO[id] ? id : '';
                 storyAudio = dlg.dataset.audio ? document.getElementById(CUSTOM_AUDIO[id]) : null;
-                document.getElementById('story-listen').textContent = 'Listen';
+                document.getElementById('story-listen').textContent = dlg.dataset.audio ? 'Play' : 'Listen';
                 document.getElementById('story-browser-voice').hidden = !dlg.dataset.audio;
                 document.getElementById('story-hint').textContent = dlg.dataset.audio
                     ? 'Choose the custom recording or browser voice.'
@@ -691,7 +708,7 @@
                     if (synth) synth.cancel();
                     storyAudio.currentTime = 0;
                     storyAudio.play().then(function () {
-                        document.getElementById('story-listen').textContent = 'Stop';
+                        document.getElementById('story-listen').textContent = 'Pause';
                     }).catch(function () {
                         const storyName = id === 'profile-naomi' ? 'Naomi’s' : 'custom';
                         document.getElementById('story-hint').textContent = 'Press Listen to play the ' + storyName + ' recording.';
@@ -722,17 +739,42 @@
             document.getElementById('poster-preview-close').addEventListener('click', function () { posterPreview.close(); });
             posterPreview.addEventListener('click', function (e) { if (e.target === posterPreview) posterPreview.close(); });
 
+            function playCustomAudio(fromStart) {
+                if (!dlg.dataset.audio || !storyAudio) return;
+                if (synth) synth.cancel();
+                if (fromStart) storyAudio.currentTime = 0;
+                storyAudio.play().then(() => {
+                    document.getElementById('story-listen').textContent = 'Pause';
+                }).catch(() => {
+                    document.getElementById('story-hint').textContent = 'The custom recording could not be played.';
+                });
+            }
+
+            function toggleCustomAudioPause() {
+                if (!dlg.dataset.audio || !storyAudio) return;
+                if (storyAudio.paused) {
+                    playCustomAudio(false);
+                    return;
+                }
+                storyAudio.pause();
+                document.getElementById('story-listen').textContent = 'Play';
+            }
+
             document.getElementById('story-listen').addEventListener('click', function () {
                 if (dlg.dataset.audio) {
-                    if (!storyAudio.paused) { stopPlayback(); return; }
-                    if (synth) synth.cancel();
-                    storyAudio.currentTime = 0;
-                    storyAudio.play().then(() => { this.textContent = 'Stop'; }).catch(() => {
-                        document.getElementById('story-hint').textContent = 'The custom recording could not be played.';
-                    });
+                    toggleCustomAudioPause();
                     return;
                 }
                 speakWithBrowserVoice(this);
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (!dlg.open || !dlg.dataset.audio || (event.code !== 'Space' && event.key !== ' ')) return;
+                const focusedEditor = event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]');
+                if (focusedEditor) return;
+                event.preventDefault();
+                if (event.repeat) return;
+                toggleCustomAudioPause();
             });
 
             function speakWithBrowserVoice(button) {
