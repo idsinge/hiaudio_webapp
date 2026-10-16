@@ -14,8 +14,11 @@
             clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
         header.bar { display: flex; align-items: center; justify-content: space-between; padding: .5rem 1rem;
             background: #f8f9fa; border-bottom: 1px solid var(--line); }
+        .bar-brand-group { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; }
         .brand { font-weight: 800; font-size: 1.35rem; letter-spacing: .02em; color: #1c1446; }
+        .brand-link { text-decoration: none; }
         .brand span { color: #1a73e8; }
+        .bar-description { color: var(--muted); font-size: .875rem; }
         .bar small { color: var(--muted); }
         main { max-width: 1040px; margin: 0 auto; padding: 1rem; }
         .mock-note { background: #fff3cd; border: 1px solid #ffe08a; color: #664d03; border-radius: .25rem;
@@ -157,7 +160,11 @@
 
 <body>
     <header class="bar">
-        <span class="brand">Hi-<span>AUDiO</span></span>
+        <div class="bar-brand-group">
+            <a class="brand brand-link" href="https://hiaudio.fr/" target="_blank" rel="noopener" aria-label="Hi-Audio platform (opens in a new tab)">Hi-<span>AUDiO</span></a>
+            <strong class="bar-description">A collaborative online DAW for music research</strong>
+            <a href="https://hiaudio.fr/" target="_blank" rel="noopener">hiaudio.fr<span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
         <small>ADCx Gather 2026 · online poster</small>
     </header>
 
@@ -165,7 +172,7 @@
         <div class="intro">
             <div>
                 <h1>Hi-Audio: four years, in a virtual studio</h1>
-                <p class="lead">Explore the studio: click its objects and people, or use Tab and Enter.</p>
+                <p class="lead">Explore the studio: click its objects and people, or use <strong>Tab</strong> and <strong>Enter</strong>.</p>
             </div>
             <div class="toolbar">
                 <button class="btn" id="show-all" aria-pressed="false">Discover all objects</button>
@@ -646,6 +653,47 @@
                 parseFloat(a.style.left) - parseFloat(b.style.left);
             const sceneItems = Array.from(scene.querySelectorAll('.obj')).sort(visualOrder);
             sceneItems.forEach(item => scene.appendChild(item));
+
+            document.addEventListener('keydown', function (event) {
+                const directions = {
+                    ArrowUp: { primary: 'y', sign: -1 },
+                    ArrowDown: { primary: 'y', sign: 1 },
+                    ArrowLeft: { primary: 'x', sign: -1 },
+                    ArrowRight: { primary: 'x', sign: 1 }
+                };
+                const direction = directions[event.key];
+                if (!direction || dlg.open) return;
+                const focusedEditor = event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]');
+                if (focusedEditor) return;
+                const focusedItem = event.target instanceof Element && event.target.closest('.obj');
+                const current = focusedItem || (document.activeElement === document.body ? sceneItems[0] : null);
+                if (!current) return;
+
+                event.preventDefault();
+                const sceneWidth = scene.clientWidth;
+                const sceneHeight = scene.clientHeight;
+                const center = item => ({
+                    x: (parseFloat(item.style.left) + parseFloat(item.style.width) / 2) * sceneWidth / 100,
+                    y: (parseFloat(item.style.top) + parseFloat(item.style.height) / 2) * sceneHeight / 100
+                });
+                const currentCenter = center(current);
+                const candidates = sceneItems
+                    .filter(item => item !== current)
+                    .map(item => {
+                        const itemCenter = center(item);
+                        const dx = itemCenter.x - currentCenter.x;
+                        const dy = itemCenter.y - currentCenter.y;
+                        const primary = direction.primary === 'x' ? dx : dy;
+                        const perpendicular = direction.primary === 'x' ? dy : dx;
+                        return { item, primary, perpendicular };
+                    })
+                    .filter(candidate => candidate.primary * direction.sign > 0)
+                    .sort((a, b) =>
+                        (Math.abs(a.primary) + Math.abs(a.perpendicular) * 2) -
+                        (Math.abs(b.primary) + Math.abs(b.perpendicular) * 2)
+                    );
+                (candidates[0]?.item || current).focus();
+            });
 
             const objectList = document.querySelector('details.list ol');
             const sceneItemsByStory = new Map(sceneItems.map(item => [item.dataset.story, item]));
