@@ -20,6 +20,18 @@
         .brand span { color: #1a73e8; }
         .bar-description { color: var(--muted); font-size: .875rem; }
         .bar small { color: var(--muted); }
+        #welcome-dialog { width: min(420px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); background: #fffbe8;
+            border: 4px solid #171827; border-radius: 0; padding: 1.25rem; color: var(--ink);
+            box-shadow: 6px 6px 0 #171827; image-rendering: pixelated; }
+        #welcome-dialog[open] { display: block; }
+        #welcome-dialog::backdrop { background: rgba(15, 14, 25, .78); }
+        .welcome-art { display: block; width: 48px; height: 48px; margin: 0 auto .75rem; }
+        #welcome-dialog h2 { margin: 0 0 .5rem; text-align: center; font-size: 1.35rem; }
+        #welcome-dialog p { margin: 0 0 1rem; text-align: center; line-height: 1.5; }
+        #welcome-start { display: block; margin: 0 auto; border: 3px solid #171827; border-radius: 0; padding: .55rem 1rem;
+            background: #ffd54a; color: #171827; font: inherit; font-weight: 700; cursor: pointer;
+            box-shadow: 3px 3px 0 #171827; }
+        #welcome-start:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #171827; }
         main { max-width: 1040px; margin: 0 auto; padding: 1rem; }
         .mock-note { background: #fff3cd; border: 1px solid #ffe08a; color: #664d03; border-radius: .25rem;
             padding: .4rem .75rem; font-size: .875rem; margin-bottom: .75rem; }
@@ -172,7 +184,7 @@
         <div class="intro">
             <div>
                 <h1>Hi-Audio: four years, in a virtual studio</h1>
-                <p class="lead">Explore the studio: click its objects and people, or use <strong>Tab</strong> and <strong>Enter</strong>.</p>
+                <p class="lead">Explore the studio: each object reveals a story from our journey.</p>
             </div>
             <div class="toolbar">
                 <button class="btn" id="show-all" aria-pressed="false">Discover all objects</button>
@@ -275,6 +287,17 @@
         </details>
     </main>
 
+    <dialog id="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-description">
+        <svg class="welcome-art" viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
+            <path fill="#171827" d="M2 3h12v10H2zM4 5h8v2H4zM4 9h2v2H4zm6 0h2v2h-2z"/>
+            <path fill="#1a73e8" d="M5 5h6v1H5z"/>
+            <path fill="#ffd54a" d="M3 4h10v1H3zM3 11h10v1H3z"/>
+        </svg>
+        <h2 id="welcome-title">Ready to explore?</h2>
+        <p id="welcome-description">Click below to enter the studio. Use the <strong>arrow keys</strong> to move between objects, then press <strong>Enter</strong> or click an object to open its story.</p>
+        <button id="welcome-start" type="button">Start the visit</button>
+    </dialog>
+
     <dialog id="story" aria-labelledby="story-title">
         <div class="story-head">
             <img class="narrator" id="story-narrator-img" alt="">
@@ -301,6 +324,7 @@
             <audio class="story-custom-audio" id="story-audio-moon" src="./audio/au_clair_lune.mp3" preload="none" hidden></audio>
             <audio class="story-custom-audio" id="story-audio-journal" src="./audio/eurasip_journal.mp3" preload="none" hidden></audio>
             <audio class="story-custom-audio" id="story-audio-gael" src="./audio/gael_richard.mp3" preload="none" hidden></audio>
+            <audio class="story-custom-audio" id="story-audio-jose" src="./audio/about_jose.mp3" preload="none" hidden></audio>
             <audio class="story-custom-audio" id="story-audio-headphones" src="./audio/user_evaluation.mp3" preload="none" hidden></audio>
             <audio class="story-custom-audio" id="story-audio-crown" src="./audio/san_francisco.mp3" preload="none" hidden></audio>
             <audio class="story-custom-audio" id="story-audio-partners" src="./audio/acknowledge.mp3" preload="none" hidden></audio>
@@ -421,7 +445,10 @@
 
     <template id="t-profile-jose" data-title="Research engineer and music lover" data-who="j" data-when="Profile">
         <div class="story-journal story-split">
-            <p>Jose is a research engineer who enjoys songwriting, plays guitar, and sings.</p>
+            <div>
+                <p>Jose is a Research Engineer at Télécom Paris. He has been developing Hi-Audio since November 2022. His experience spans web audio, Music Information Retrieval integration, and research software. Under Gaël Richard’s supervision, he has been leading the platform’s implementation and evaluation.</p>
+                <p>An experienced songwriter with a strong background in home-studio recording and music production, Jose brings first-hand insight into musicians’ creative workflows and technical constraints. This helps align Hi-Audio’s development and evaluation with practical user needs.</p>
+            </div>
             <img class="story-photo jose-photo" src="./images/jose_gilpanal.jpg" width="2815" height="3705" loading="lazy"
                 alt="Jose standing beside a research poster at a conference">
         </div>
@@ -627,6 +654,7 @@
         (function () {
             const scene = document.getElementById('scene');
             const dlg = document.getElementById('story');
+            const welcomeDialog = document.getElementById('welcome-dialog');
             const posterPreview = document.getElementById('poster-preview');
             const posterPreviewImage = document.getElementById('poster-preview-image');
             const PORTRAIT = { j: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAClklEQVR4nMVWP2haQRj/mbpIESQZ5D0LQo0InVpooVgi2KFSsGuolECJCKVkEIq0gQwOQlok0CFDIJitWDoLoYVEMODi4JShpAoB9ZGhIfQPXRJeB3uPO+/dn6dDf9t99933+9333X13wH+Gz4tz1AzbOn6nozPtuH4vxJFQQDPs2F9HiNIhaoZtEfFiZAHfht+Fa4cXf5Qi5mYhf/nkPhYjC8L1kVBAWTahABm5F6hESDNAY3KnleIKzFgcleKK0lcG1/qodv+xWuRsT0vvpUSi86CdARm5zK6CUgCdThXJ5LxOKbT6AB08u/bOsTW2XwttqpJoC5i854RAZXNb6wbPZwAAHr+oaNl0IBXgVsP5ZE7o7zanOgeeM3DermN/Z8MZj3onAID9nQ2ct+tew8kF0DUkRDTcbJN21TnQzsCr3c+czYzFYcbiWr4iaHdC37Xxham/XUPuzbZrMHrOvrpk5kSdUCmAPLlEAEH+3h1mXOt0mbF9dck811O3YhIgnUoy9n4ggFqni1qni36AzRbx1ekDnh6jh+kUmq22NGA6lcRhs8XZZ3qMyF0+bLa4TIjIdZ9kLQF0KrOJILYKGc5nq5BBNhF0XSMDlxLVB/TsUQofbga56zfqneBZ/yfCX/j0A+MSAPxHlTnaUTNsh0qr48Gue1eLP7iLMoBy7ytjLxsJxA3gh0CAE7e6Z9MinBIw5BJYA8shpMnpORlCpVXmjzjnhfx3IecQWQMLZSOBspGANbDwKfOc8dEVod2KRYGPGwcAgKXaJo7y69oiCHyy3V//dw5EAY0bBgA29Uf5dSzVNrXWX1T34Pcv81eKQGcnx40DzN++NdV6/3Jmuh8RgTWwOHK6FDqYA4Bfp8NZdEwFwvkXbWoZEU8CTk4AAAAASUVORK5CYII=', g: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACnElEQVR4nMVWQWgTQRR9SbQ55BBMrIubQ6ghhYW2By9FWEoh9GTJuQcPEigUDb0rPUq9S2othdKDB48a21MpiASklwbsYaFJlB4SWGssPQjVUuIhzDCzO8n8XQUfLMyf/+e/N39n/i7wnxEJEpw1jR4l7qTjkvOSAhnx/scPpKSFmVmyEG1A1jR6jNhxHFiWxX1e2ztXmJnViojqyCsb69y2LAuO40i2SOydq2ysa1/bUAEiVAQ6MRSQBKhKrxNDFaEV0Gw2yWK8pN61oQQAgJ26QNqtS3PMtiwLabcuCUu7ddipC0pqXCNFCaR2Cqg5DuwUBooKAvIhFKHaHXXHXgSqwObeER8vzk2Sff9EQPHxM8l+//YdqmsrWp8O2lcwd+MXH1fXVnB1PS4RM3Kvz7t2EIa2yaxp9HZXy8jkc3i+tePzPynNA8BAX7vRwv2nlaHtmPwKGJmIdqOFTD6n9FER6hZ4RfwNtBXYO4tjqhvD3fSVz5fJ5wauO+zG8PksrhVA+hxvvXoBAFzEQbWG07FxKW706zGmizYnB4DS0rL2cxyoDwDAztE3zBdtHFRr0vx00e77Jm8Fyqc9AycdN1JaWua2ad4GAJyOjUuP6ANouycJEEWw0nrJxPFhN0YmB0L8lO6uluGmxpV+48ex9t6HFiD+WrHmJII1HQaqCOUhVP3HjU4tapPJMZu+HCpR0gQjHjELvuTJm3cke3shzqvQbrTw8I3c98+/f/Hl+N3Z9wnhg6xp9FTEw4RsL/QbjUiuIlYJYSIiQchF/Dx3YebuAQA6rU9IJI1A65mIaBhyAEgkDbyuPOLjoBgxC8iaRi8K9HcTBg/KL0OtEzmjl4mJ0ElYBcLiMjGBiJkv8OsStJTsQFIOngix4n8AhxkvUhv0yfoAAAAASUVORK5CYII=' };
@@ -645,7 +673,8 @@
                 mridangam: 'story-audio-mridangam',
                 moon: 'story-audio-moon',
                 journal: 'story-audio-journal',
-                'profile-gael': 'story-audio-gael'
+                'profile-gael': 'story-audio-gael',
+                'profile-jose': 'story-audio-jose'
             };
 
             const visualOrder = (a, b) =>
@@ -653,6 +682,13 @@
                 parseFloat(a.style.left) - parseFloat(b.style.left);
             const sceneItems = Array.from(scene.querySelectorAll('.obj')).sort(visualOrder);
             sceneItems.forEach(item => scene.appendChild(item));
+
+            document.getElementById('welcome-start').addEventListener('click', function () {
+                welcomeDialog.close();
+                sceneItems[0].focus({ preventScroll: true });
+            });
+            welcomeDialog.addEventListener('cancel', event => event.preventDefault());
+            welcomeDialog.showModal();
 
             document.addEventListener('keydown', function (event) {
                 const directions = {
@@ -752,7 +788,7 @@
                     : 'Browser voice';
                 dlg.showModal();
                 document.getElementById('story-close').focus();
-                if (['profile-naomi', 'headphones', 'crown', 'partners', 'piano', 'organ', 'cake', 'radio', 'wac', 'cassette', 'mridangam', 'moon', 'journal', 'profile-gael'].includes(id)) {
+                if (['profile-naomi', 'headphones', 'crown', 'partners', 'piano', 'organ', 'cake', 'radio', 'wac', 'cassette', 'mridangam', 'moon', 'journal', 'profile-gael', 'profile-jose'].includes(id)) {
                     if (synth) synth.cancel();
                     storyAudio.currentTime = 0;
                     storyAudio.play().then(function () {
